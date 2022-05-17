@@ -45,107 +45,89 @@
                 "source-layer": "pois",
             });
             if(name=="foods"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20,156,168)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(255, 51, 0)")
             }
             if(name=="religion"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(170,20,42)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(255, 204, 0)")
             }
             if(name=="natural"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(230,200,53)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(102, 153, 0)")
             }
             if(name=="museums"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(225,97,237)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(51, 153, 255)")
             }
-        }
-
-        function APIreq(xid) {
-            return new Promise(function (resolve, reject) {
-                var url ="https://api.opentripmap.com/0.1/en/places/xid/"+xid+"?apikey="+OpenTripMapKey;
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => resolve(data))
-                    .catch(function (err) {
-                        console.log("Fetch Error :-S", err);
-                    });
-            });
-        }
-    
-        function showInfo(data, lngLat) {
-            let poi = document.createElement("div");
-            poi.innerHTML = "<h2>" + data.name + "<h2>";
-            poi.innerHTML += "<p><i>" + getCategoryName(data.kinds) + "</i></p>";
-            if (data.preview) {
-                poi.innerHTML += "<img src='"+data.preview.source+"'>";
+            if(name=="architecture"){
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(255, 51, 204)")
             }
-            poi.innerHTML += data.wikipedia_extracts
-                ? data.wikipedia_extracts.html
-                : data.info
-                    ? data.info.descr
-                    : "No description";
-    
-            poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
-            
-            var info=document.getElementById('info');
-            info.innerHTML="";
-            info.appendChild(poi);
 
-        }
-
-        /*map.on("click", "OTM-pois-"+name, function(e) {
-            let coordinates = e.features[0].geometry.coordinates.slice();
-            let id = e.features[0].properties.id;
-            let poiname = e.features[0].properties.name;
-            APIreq(id).then(data => showInfo(data, e.lngLat));
-        });
-        */
-        map.on("click", "OTM-pois-"+name, function(e) {
-            let coordinates = e.features[0].geometry.coordinates.slice();
-            let id = e.features[0].properties.id;
-            let poiname = e.features[0].properties.name;
-            APIreq(id).then(data => showInfo(data, e.lngLat));
-            var data={
-                name:poiname
-            }
-            var dataString=JSON.stringify(data);
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:3000/data",
-                dataType: "json",
-                data: {
-                    info: dataString
-                },
-                success: function(data) {
-                    alert('success')
-                },
-                error: function() {
-                    alert('error')
+            map.on("click", "OTM-pois-"+name, function(e) {
+                //let coordinates = e.features[0].geometry.coordinates.slice();
+                let id = e.features[0].properties.id;
+                let poiname = e.features[0].properties.name;
+                var datatoserver={
+                    name:poiname,
+                    id:id
                 }
-            })
-
-        });
+                var dataString=JSON.stringify(datatoserver);
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:3000/poinfo",
+                    dataType: "json",
+                    data: {
+                        info: dataString
+                    },
+                    success: function(data) {
+                        showInfo(data)
+                    },
+                    error: function() {
+                        alert('error')
+                    }
+                });
+            });
         
+            let popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false,
+            });
+        
+            map.on("mouseenter", "OTM-pois-"+name, function (e) {
+                map.getCanvas().style.cursor = "pointer";
+                let coordinates = e.features[0].geometry.coordinates.slice();
+                let id = e.features[0].properties.id;
+                let poiname = e.features[0].properties.name;
+                popup
+                    .setLngLat(coordinates)
+                    .setHTML("<strong>" + poiname + "</strong>")
+                    .addTo(map);
+            });
+        
+            map.on("mouseleave", "OTM-pois-"+name, function () {
+                map.getCanvas().style.cursor = "";
+                popup.remove();
+            });   
+        }
+    };
+    
+    function showInfo(data) {
+        let poi = document.createElement("div");
+        poi.innerHTML = "<h2>" + data.name + "<h2>";
+        poi.innerHTML += "<p><i>" + getCategoryName(data.kinds) + "</i></p>";
+        if (data.preview) {
+            poi.innerHTML += "<img src='"+data.preview.source+"'>";
+        }
+        poi.innerHTML += data.wikipedia_extracts
+            ? data.wikipedia_extracts.html
+            : data.info
+                ? data.info.descr
+                : "No description";
 
-        let popup = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false,
-        });
-
-        map.on("mouseenter", "OTM-pois-"+name, function (e) {
-            map.getCanvas().style.cursor = "pointer";
-            let coordinates = e.features[0].geometry.coordinates.slice();
-            let id = e.features[0].properties.id;
-            let poiname = e.features[0].properties.name;
-            popup
-                .setLngLat(coordinates)
-                .setHTML("<strong>" + poiname + "</strong>")
-                .addTo(map);
-        });
-
-        map.on("mouseleave", "OTM-pois-"+name, function () {
-            map.getCanvas().style.cursor = "";
-            popup.remove();
-        });   
+        poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
+        
+        var info=document.getElementById('info');
+        info.innerHTML="";
+        info.appendChild(poi);
 
     }
+
 
 
