@@ -8,7 +8,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 
-app.get('/', function(req, res){
+app.get('/', function(request, response, next){
+	response.sendFile('/app/form.html', {root: __dirname});
+});
+app.post('/', function(req, res){
+  // datainizio, data fine e località in req.body
+  console.log(req.body)
   res.sendFile('/app/index.html', {root: __dirname});
 });
 
