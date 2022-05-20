@@ -1,6 +1,12 @@
 var express = require('express');
 var bodyParser = require("body-parser");
 var request = require('request');
+const getEventFromDb = require('./middlewares/getEventFromDb');
+const addEvent = require('./middlewares/addEvent')
+const codeRequest = require('./middlewares/codeRequest')
+const tokenRequest = require('./middlewares/tokenRequest')
+const oAuthSet = require ('./middlewares/oAuthSet')
+
 
 var app = express();
 app.use(express.static('app'));
@@ -9,8 +15,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 
 app.get('/', function(req, res){
-  res.sendFile('/app/index.html', {root: __dirname});
+  res.sendFile('/app/form.html', {root: __dirname});
 });
+
+app.post('/', function(req, res){
+//  dati in req.body 
+  console.log(req.body);
+  response.sendFile('/app/index.html', {root: __dirname} )
+});
+
+
 
 app.post('/poinfo', function(req, res){
   var data = JSON.parse(req.body.info);
@@ -34,5 +48,30 @@ app.post('/addpois', function(req, res){
     console.log(element.id);
   });
 });
+
+
+var oAuth
+
+app.get('/OAuth',oAuthSet, codeRequest,
+    function (req,res){
+        const oAuth2Client = req.params.oAuth2Client 
+        app.get('/',
+            function(req,res,next){
+                req.params.oAuth2Client = oAuth2Client
+                next()
+            },
+            tokenRequest,
+            function(req,res){oAuth = req.params.oAuth2Client}
+        )
+    }
+)
+
+app.get('/add_event',getEventFromDb,function(req,res,next){
+    req.params.oAuth2Client = oAuth
+    next()
+    },
+    addEvent)
+
+
 
 app.listen(3000);
