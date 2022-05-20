@@ -11,7 +11,12 @@
     });
 
     map.addControl(new mapboxgl.NavigationControl());
-    var btn=document.getElementsByTagName("button");
+
+    var sendbtn=document.getElementById("send");
+    sendbtn.addEventListener("click", sendToServer);
+
+    var cont=document.getElementById("buttons");
+    var btn=cont.getElementsByTagName("button");
     for(i=0; i<btn.length; i++){
         btn[i].addEventListener("click", showLayer)
     }
@@ -122,12 +127,43 @@
                 : "No description";
 
         poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
-        
+        poi.innerHTML += "<button id='add' type='button' class='btn btn-primary btn-s'>add to your travel</button>"
         var info=document.getElementById('info');
         info.innerHTML="";
         info.appendChild(poi);
-
+        document.getElementById("add").addEventListener("click", function(){
+            let planner=document.createElement("div");
+            planner.classList.add("toSend");
+            $(planner).data(data);
+            planner.innerHTML=data.name;
+            planner.innerHTML+="<button id='remove' type='button' class='btn btn-primary btn-s'>remove</button>";
+            document.getElementById("planner").appendChild(planner);
+            document.getElementById("remove").addEventListener("click", function(){this.parentElement.remove();});
+        });
     }
 
-
+    function sendToServer(e){
+        let toSend=[];
+        let values=document.getElementsByClassName("toSend");
+        let tmp;
+        for(i=0; i<values.length; i++){
+            tmp={"id" : $(values[i]).data().xid};
+            toSend.push(tmp);
+        }
+        var valuesToSend=JSON.stringify(toSend);
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:3000/addpois",
+            dataType: "json",
+            data: {
+                info: valuesToSend
+            },
+            success: function(data) {
+                alert("success")
+            },
+            error: function() {
+                alert('error')
+            }
+        });
+    }
 
