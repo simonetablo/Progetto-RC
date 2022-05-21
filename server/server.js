@@ -14,14 +14,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 
+var lat=0;
+var lon=0;
+var inizio_viaggio;
+var fine_viaggio;
+
 app.get('/', function(req, res){
   app.use(express.static('./app'));
   res.sendFile('./app/form.html', {root: __dirname});
 });
 
 app.post('/', function(req, res){
-  var inizio_viaggio=req.body.inizio_viaggio;
-  var fine_viaggio=req.body.fine_viaggio;
+  inizio_viaggio=req.body.inizio_viaggio;
+  fine_viaggio=req.body.fine_viaggio;
   var localita=req.body.localita;
   console.log(inizio_viaggio);
   console.log(fine_viaggio);
@@ -34,17 +39,18 @@ app.post('/', function(req, res){
     if(error) {
       console.log(error);
     } else if (!error && response.statusCode==200){
-      var info=JSON.parse(body);
-      var lat=info.lat;
-      var lon=info.lon;
+      let info=JSON.parse(body);
+      lat=info.lat;
+      lon=info.lon;
       console.log(lon+", "+lat);
+      res.sendFile('./app/planner.html', {root: __dirname} )
     }
   })
-  
-  res.sendFile('./app/planner.html', {root: __dirname} )
 });
 
-
+app.post('/formdata', function(req, res){
+  res.json({ inizio:inizio_viaggio, fine:fine_viaggio, lat:lat, lon:lon});
+});
 
 app.post('/poinfo', function(req, res){
   var data = JSON.parse(req.body.info);

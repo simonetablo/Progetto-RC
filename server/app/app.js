@@ -2,13 +2,33 @@
    var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
    var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww"
 
+    var inizio_viaggio;
+    var fine_viaggio;
+
     mapboxgl.accessToken = mapBoxAT;
     var map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [12.5, 41.9],
         zoom: 8
     });
+
+   $.ajax({
+        type: "POST",
+        url: "http://localhost:3000/formdata",
+        success: function(data) {
+            let lat=data.lat;
+            let lon=data.lon;
+            inizio_viaggio=data.inizio;
+            fine_viaggio=data.fine;
+            alert(lat+", "+lon+", "+inizio_viaggio);
+            map.setCenter([lon, lat]);
+            //map.flyTo({center: [lon, lat], zoom: 9});
+        },
+        error: function() {
+            alert('error')
+        }
+    });
+
 
     map.addControl(new mapboxgl.NavigationControl());
 
