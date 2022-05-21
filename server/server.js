@@ -9,19 +9,21 @@ const oAuthSet = require ('./middlewares/oAuthSet')
 
 
 var app = express();
-app.use(express.static('app'));
+//app.use(express.static('app'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 
 app.get('/', function(req, res){
-  res.sendFile('/app/form.html', {root: __dirname});
+  app.use(express.static('./app'));
+  res.sendFile('./app/form.html', {root: __dirname});
 });
 
 app.post('/', function(req, res){
 //  dati in req.body 
   console.log(req.body);
-  response.sendFile('/app/index.html', {root: __dirname} )
+  
+  res.sendFile('./app/index.html', {root: __dirname} )
 });
 
 
