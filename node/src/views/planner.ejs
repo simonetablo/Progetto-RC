@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Progetto RC/LTW</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script type="text/javascript" src="../libraries/jquery.min.js"></script>
+    <link rel="stylesheet" href="../libraries/bootstrap.min.css"/>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js"></script>
+    <script type="text/javascript" src="https://opentripmap.io/js/directory.en.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css"/>
+    <link rel="stylesheet" href="../styles/style.css"/>
+    <BASE href="/">
+</head>
+<body>
+    <div id="lon" data-*="<%=lon%>"></div>
+    <div id="lat" data-*="<%=lat%>"></div>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="#">
+                Trip Planner
+          </a>
+        </div>
+      </nav>
+    <p>user: <%= username %> </p>
+    <div class="container">
+        <div class="row">
+            <div class="col" id="left">
+                <div id="planner" class="box"></div>
+                <button id="send" type="button" class="btn btn-primary btn-sm">Send</button>
+                <%let date=new Date(inizio_viaggio); %>
+                    <%while(date<=fine_viaggio){ %>
+                    <%    let d=date.getDate();     %>
+                    <%    let m=date.getMonth()+1;  %>
+                    <%    let y=date.getFullYear(); %>
+                    <div class="day"><h1><%=d%>/<%=m%>/<%=y%><h1></div>
+                    <%let newDate=date.setDate(date.getDate()+1); %>
+                    <%date=new Date(newDate);%>
+                    <%} %>
+            </div>
+            <div class="col" id="center">
+                <div id="buttons">
+                    <button id="museums" type="button" class="btn btn-primary btn-sm" >Museum</button>
+                    <button id="foods" type="button" class="btn btn-primary btn-sm">Food</button>
+                    <button id="religion" type="button" class="btn btn-primary btn-sm">Church</button>
+                    <button id="natural" type="button" class="btn btn-primary btn-sm">Nature</button>
+                    <button id="architecture" type="button" class="btn btn-primary btn-sm">Architecture</button>
+                </div>
+                <div id="info">
+                </div>
+            </div>
+            <div class="col" id="right">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="../libraries/bootstrap.min.js"></script>
+    <script src="../js/app.js"></script>
+</body>
+</html>
