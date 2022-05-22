@@ -18,9 +18,14 @@
         success: function(data) {
             let lat=data.lat;
             let lon=data.lon;
-            inizio_viaggio=data.inizio;
-            fine_viaggio=data.fine;
-            alert(lat+", "+lon+", "+inizio_viaggio);
+            inizio_viaggio=Date.parse(data.inizio);
+            fine_viaggio=Date.parse(data.fine);
+            let loop=new Date(inizio_viaggio);
+            while(loop<=fine_viaggio){
+                dailyPlanner(loop);
+                let newDate=loop.setDate(loop.getDate()+1);
+                loop=new Date(newDate);
+            }
             map.setCenter([lon, lat]);
             //map.flyTo({center: [lon, lat], zoom: 9});
         },
@@ -133,6 +138,16 @@
         }
     };
     
+    function dailyPlanner(date){
+        let d=date.getDate();
+        let m=date.getMonth()+1;
+        let y=date.getFullYear();
+        let day=document.createElement("div");
+        day.innerHTML="<h1>"+d+"/"+m+"/"+y+"<h1";
+        day.classList.add("day");
+        document.getElementById("left").appendChild(day);
+    }
+
     function showInfo(data) {
         let poi = document.createElement("div");
         poi.innerHTML = "<h2>" + data.name + "<h2>";
@@ -147,7 +162,7 @@
                 : "No description";
 
         poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
-        poi.innerHTML += "<button id='add' type='button' class='btn btn-primary btn-s'>add to your travel</button>"
+        poi.innerHTML += "<button id='add' type='button' class='btn btn-primary btn-s'>add to your travel</button>";
         var info=document.getElementById('info');
         info.innerHTML="";
         info.appendChild(poi);
@@ -156,9 +171,8 @@
             planner.classList.add("toSend");
             $(planner).data(data);
             planner.innerHTML=data.name;
-            planner.innerHTML+="<button id='remove' type='button' class='btn btn-primary btn-s'>remove</button>";
-            document.getElementById("planner").appendChild(planner);
-            document.getElementById("remove").addEventListener("click", function(){this.parentElement.remove();});
+            planner.innerHTML+="<button onclick='this.parentElement.remove()' id='remove' type='button' class='btn btn-primary btn-s'>remove</button>";
+            document.getElementById("planner").appendChild(planner);    
         });
     }
 
