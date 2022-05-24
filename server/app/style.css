@@ -1,56 +1,117 @@
-#map {
-    display: block;
-    width: 40%;
+html, body{
+    width: 100%;
     height: 100%;
-    position: absolute;
 }
 
-img {
-    margin: auto;
-    padding: 10px;
-    display: block;
-    width: 200px;
-}
-
-h2 {
-    font-size: 1.25rem;
-    margin-bottom: .5rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-top: 0;
-}
-
-#info {
-    padding-top: 50px;
+#container{
+    width: 100%;
+    height: 94%;
 }
 
 #left {
-    overflow: auto;
+    background-color: rgb(156, 195, 253);
+    width: 100%;
+    height: 50%;
+    float: left;
 }
 
-.box {
-    border-radius:10px;
-    padding:10px;
-    height: 200px;
+#center {
+    background-color: rgb(241, 217, 150);
+    width: 100%;
+    height: 50%;
+    float: left;
+    overflow:auto;
+}
+
+#right {
+    width: 100%;
+    height: 50%;
+    float:left;
+}
+
+#map {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position:relative;
+}
+
+#buttons{
+    text-align: center;
+    margin:5px;
+}
+
+#days{
+    height: 95%;
+    overflow: auto;
+    background-color: rgb(253, 189, 237);
+}
+.day{
+    height: 25%;
     overflow: auto;
     border:solid 1px;
-}
-
-.day {
     border-radius:10px;
-    padding:10px;
-    height: 200px;
-    border:solid 1px;
+    margin: 5px;
+    
+}
+.day>date{
+    font-size: 80%;
 }
 
-@media (min-width: 600px){
-    img {
-        margin: auto;
-        padding: 10px;
-        display: block;
-        width: 400px;
+#send{
+    height: 4%;
+}
+
+.info{
+    margin:10px;
+}
+.info>img{
+    max-height: 40%;
+    border-radius: 7px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.poi{
+    border:solid 1px;
+    border-radius:5px;
+    background-color: aquamarine;
+}
+
+.toSend{
+    border:solid 1px;
+    border-radius:5px;
+}
+
+.remove{
+    width: 24px;
+    height: 24px;
+    background-image: url(./icons/x-square-fill.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    float: right;
+    padding-right: 10px;
+}
+
+@media only screen and (min-width:1600px){
+    #left, #center, #right{
+        width: 33.33%;
+        height: 100%;
+        float: right;
     }
-    .mapboxgl-popup {
-        max-width: 500px !important;
+}
+
+@media only screen and (min-width:800px) and (max-width:1599px) {
+    #left, #center {
+        width: 50%;
+        height: 50%;
+        float: left;
+    }
+    #right{
+        width: 100%;
+        height: 50%;
+        float: right;
     }
 }

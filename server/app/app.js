@@ -34,7 +34,6 @@
         }
     });
 
-
     map.addControl(new mapboxgl.NavigationControl());
 
     var sendbtn=document.getElementById("send");
@@ -143,13 +142,17 @@
         let m=date.getMonth()+1;
         let y=date.getFullYear();
         let day=document.createElement("div");
-        day.innerHTML="<h1>"+d+"/"+m+"/"+y+"<h1";
+        day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
+        day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
-        document.getElementById("left").appendChild(day);
+        document.getElementById("days").appendChild(day);
+        day.addEventListener('drop', handleDrop);
+        day.addEventListener('dragover', allowDrop);
     }
 
     function showInfo(data) {
         let poi = document.createElement("div");
+        poi.classList.add("info");
         poi.innerHTML = "<h2>" + data.name + "<h2>";
         poi.innerHTML += "<p><i>" + getCategoryName(data.kinds) + "</i></p>";
         if (data.preview) {
@@ -162,26 +165,36 @@
                 : "No description";
 
         poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
-        poi.innerHTML += "<button id='add' type='button' class='btn btn-primary btn-s'>add to your travel</button>";
+        poi.innerHTML += "<button id='add' type='button' class='btn btn-primary btn-sm'>add to your travel</button>";
         var info=document.getElementById('info');
         info.innerHTML="";
         info.appendChild(poi);
         document.getElementById("add").addEventListener("click", function(){
             let planner=document.createElement("div");
-            planner.classList.add("toSend");
+            planner.classList.add("poi");
+            planner.setAttribute('draggable', true);
             $(planner).data(data);
             planner.innerHTML=data.name;
-            planner.innerHTML+="<button onclick='this.parentElement.remove()' id='remove' type='button' class='btn btn-primary btn-s'>remove</button>";
-            document.getElementById("planner").appendChild(planner);    
+            planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'></button>";
+            document.getElementById("days").firstChild.appendChild(planner); 
+            planner.addEventListener("dragstart", handleDragStart);
+            planner.addEventListener("dragleave", handleDragLeave);
+            planner.addEventListener("dragend", handleDragEnd)
+            planner.addEventListener('drop', handleDrop);
+            planner.addEventListener('dragover', allowDrop);
         });
     }
 
     function sendToServer(e){
         let toSend=[];
-        let values=document.getElementsByClassName("toSend");
-        let tmp;
-        for(i=0; i<values.length; i++){
-            tmp={"id" : $(values[i]).data().xid};
+        let days=document.getElementsByClassName("day");
+        for(i=0; i<days.length; i++){
+            let tmp=[];
+            let values=days[i].getElementsByClassName("poi");
+            tmp.push({"day" : i});
+            for(j=0; j<values.length; j++){
+                tmp.push({id : $(values[j]).data().xid});
+            }
             toSend.push(tmp);
         }
         var valuesToSend=JSON.stringify(toSend);
@@ -201,3 +214,69 @@
         });
     }
 
+    var dragging=null;
+
+    function handleDragStart(e){
+        dragging=e.target
+        this.style.opacity='0.4';
+        e.dataTransfer.setData("text/html", dragging);
+    }
+
+    function handleDragEnd(){
+        this.style.opacity='1'
+    }
+
+    function handleDrop(e){
+        e.preventDefault();
+        if(e.target.classList.contains("poi")){
+            var target=getPOI(e.target)
+            if (target.style['border-bottom'] !== '' ) {
+                target.style['border-bottom'] = '';
+                target.parentNode.insertBefore(dragging, e.target.nextSibling);
+            } else if (target.style['border-top'] !== '' ){
+                target.style['border-top'] = '';
+                target.parentNode.insertBefore(dragging, e.target);
+            }
+        }else if(e.target.classList.contains("day")){
+            var clone=dragging.cloneNode(true);
+            clone.style.opacity='';
+            $(clone).data($(dragging).data());
+            clone.addEventListener("dragstart", handleDragStart);
+            clone.addEventListener("dragleave", handleDragLeave);
+            clone.addEventListener("dragend", handleDragEnd)
+            clone.addEventListener('drop', handleDrop);
+            clone.addEventListener('dragover', allowDrop);
+            e.target.appendChild(clone);
+        }
+    }
+
+    function allowDrop(e){
+        e.preventDefault();
+        if(e.target.classList.contains("poi")){
+            var target=getPOI(e.target)
+            var bounding=target.getBoundingClientRect();
+            var offset=bounding.y+(bounding.height/2);
+            if(e.clientY-offset>0){
+                target.style['border-bottom']='solid 4px blue';
+                target.style['border-top']='';
+            }else{
+                target.style['border-top']='solid 4px blue';
+                target.style['border-bottom']='';
+            }
+        }
+    }
+
+    function handleDragLeave(e){
+        e.target.style["border-bottom"]="";
+        e.target.style["border-top"]="";
+    }
+
+    function getPOI(target){
+        while(target.parentNode.classList.contains("poi")){
+            target=target.parentNode;
+        }
+        if(target.classList.contains("poi")){
+            return target;
+        }
+        else{return false;}
+    }

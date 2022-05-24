@@ -70,9 +70,7 @@ app.post('/poinfo', function(req, res){
 
 app.post('/addpois', function(req, res){
   var data=JSON.parse(req.body.info);
-  data.forEach(element => {
-    console.log(element.id);
-  });
+  console.log(data);
 });
 
 
