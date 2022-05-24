@@ -2,6 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const Expression = require('couchdb-expression')(session);
 const request = require("request");
+const cors = require("cors");
 const path = require('path')
 
 const auth_routes = require('./routes/auth');
@@ -14,6 +15,10 @@ const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399
 function server_start(){
 
     const app = express();
+    app.use(cors({
+        origin: "*"
+    }));
+
     app.set("views", path.join(__dirname, "views"));
     app.set('view engine', 'ejs');
     //app.use(express.static(file da serivre))
@@ -38,13 +43,18 @@ function server_start(){
     }))
 
     app.get('/', (req, res) => {
+        render_object = {
+            'authenticated' : req.session.isAuth,
+            'username' : req.session.username,
+            'email' : req.session.email
+        }
         //if(req.session.isAuth){
         //    //res.send('content: you are logged in as '+ req.session.username);   //user is authenticated, show protected content
         //    res.render('index', {username : req.session.username});
         //}else{
         //    res.send('you are not authenticated, protected content');  //user is not authenticated, cant show protected content
         //}
-        res.render('form', {username : "test_username"});
+        res.render('home', render_object);
     });
 
     app.post('/', (req, res) => {

@@ -20,16 +20,22 @@ router.post('/login/', async (req, res) => {
                     if(await bcrypt.compare(req.body.password, json_response.password)){
                         req.session.isAuth = true;
                         req.session.username = req.body.username;
-                        res.send('successfully logged in');  //username and password are correct, login
+                        req.session.email = req.body.email;
+                        res.json({status:"ok"});  //username and password are correct, login
                     }else{
-                        res.send('failed, wrong password'); //username exists but wrong password
+                        //res.send('failed, wrong password'); //username exists but wrong password
+                        res.json({status:'error', 
+                                username:'',
+                                password: "wrong password"}); //username is not registered yet );
                     }
                 }catch{
                     res.status(500).send('error, bcrypt');
                 }
             }
             else{
-                res.send('no user with that username is registered'); //username is not registered yet 
+                res.json({status:"error",
+                        username:'no user with that username is registered',
+                         password: ""}); //username is not registered yet 
             }
         }
     });
@@ -66,10 +72,16 @@ router.post('/register/', async (req, res) => {
                 res.status(500).send('error, database request');  //internal request error
             } else {
                 if(response.statusCode === 201){
-                    res.send('you successfully registered');  //username is valid, the user was successfully registered
+                    req.session.isAuth = true;
+                    req.session.username = req.body.username;
+                    req.session.email = req.body.email;
+                    res.json({status:"ok"});  //username is valid, the user was successfully registered
                 }
                 else{
-                    res.send('user already exists');  //user with same username already exists
+                    res.json({status:"error",
+                        username:'no user with that username is registered',
+                        email:"",
+                        password: ""});;  //user with same username already exists
                 }
             }
         });
