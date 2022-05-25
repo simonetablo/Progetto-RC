@@ -47,16 +47,17 @@ html, body{
     height: 92%;
     width: 100%;
     overflow: auto;
-    background-color: rgb(253, 189, 237);
     bottom:0;
 }
+
 .day{
-    height: 25%;
+    height: 50%;
     overflow: auto;
     border:solid 1px;
     border-radius:10px;
     margin: 5px;
-    
+    background-color: rgb(253, 189, 237);
+    padding: 4px;
 }
 .day>date{
     font-size: 80%;
@@ -74,8 +75,17 @@ html, body{
     position: absolute;
 }
 
+#add{
+    position: relative;
+}
+
 .info{
     margin:10px;
+    border:solid 1px;
+    border-radius:10px;
+    margin: 5px;
+    background-color: rgb(147, 238, 188);
+    padding: 8px;
 }
 .info>img{
     max-height: 40%;
@@ -104,7 +114,37 @@ html, body{
     background-repeat: no-repeat;
     background-position: center;
     float: right;
-    padding-right: 10px;
+}
+
+.clone{
+    width: 24px;
+    height: 24px;
+    background-image: url(./icons/plus-square-fill.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    float: right;
+}
+
+.show{
+    width: 24px;
+    height: 24px;
+    background-image: url(./icons/eye-fill.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+    float: right;
+}
+
+.infobtn{
+    width: 24px;
+    height: 24px;
+    background-image: url(./icons/info-square-fill.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    float: right;
 }
 
 @media only screen and (min-width:1600px){
@@ -113,6 +153,7 @@ html, body{
         height: 100%;
         float: right;
     }
+    .day{ height: 25%;}
     #commands{ height: 4%;}
     #days{ height: 96%;}
 }
@@ -128,4 +169,5 @@ html, body{
         height: 50%;
         float: right;
     }
+    .day{ height: 50%;}
 }

@@ -143,6 +143,7 @@
         let y=date.getFullYear();
         let day=document.createElement("div");
         day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
+        day.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show btn btn-primary btn-sm'></button>";
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
         document.getElementById("days").appendChild(day);
@@ -150,7 +151,13 @@
         day.addEventListener('dragover', allowDrop);
     }
 
-    function showInfo(data) {
+    function showInfo(obj) {
+        if(obj instanceof HTMLElement){ 
+            let datastring=JSON.stringify($(obj.parentNode).data());
+            var data=JSON.parse(datastring);
+        }else{
+            var data=obj;
+        }
         let poi = document.createElement("div");
         poi.classList.add("info");
         poi.innerHTML = "<h2>" + data.name + "<h2>";
@@ -163,26 +170,87 @@
             : data.info
                 ? data.info.descr
                 : "No description";
-
         poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
-        poi.innerHTML += "<button id='add' type='button' class='btn btn-primary btn-sm'>add to your travel</button>";
+        poi.innerHTML += "<button id='add' type='button' onclick=addToPlanner(this) class='btn btn-primary btn-sm'>add to your travel</button>";
+        $(poi).data(data);
         var info=document.getElementById('info');
         info.innerHTML="";
         info.appendChild(poi);
-        document.getElementById("add").addEventListener("click", function(){
-            let planner=document.createElement("div");
-            planner.classList.add("poi");
-            planner.setAttribute('draggable', true);
-            $(planner).data(data);
-            planner.innerHTML=data.name;
-            planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'></button>";
-            document.getElementById("days").firstChild.appendChild(planner); 
-            planner.addEventListener("dragstart", handleDragStart);
-            planner.addEventListener("dragleave", handleDragLeave);
-            planner.addEventListener("dragend", handleDragEnd)
-            planner.addEventListener('drop', handleDrop);
-            planner.addEventListener('dragover', allowDrop);
-        });
+    }
+
+    function addToPlanner(e){
+        let planner=document.createElement("div");
+        planner.classList.add("poi");
+        planner.setAttribute('draggable', true);
+        data=$(".info").data();
+        $(planner).data(data);
+        planner.innerHTML=data.name;
+        planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'></button>";
+        planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'></button>";
+        planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'></button>";
+        document.getElementById("days").firstChild.appendChild(planner); 
+        planner.addEventListener("dragstart", handleDragStart);
+        planner.addEventListener("dragleave", handleDragLeave);
+        planner.addEventListener("dragend", handleDragEnd)
+        planner.addEventListener('drop', handleDrop);
+        planner.addEventListener('dragover', allowDrop);
+    }
+
+    function showPOI(e){
+        if(e.value=='on'){
+            map.removeLayer('day');
+            map.removeSource('day');
+            e.value='off';
+            e.style.backgroundImage="url(./icons/eye-fill.svg)";
+        }
+        else{
+            var layers=document.getElementsByClassName("filter");
+            for(i=0; i<layers.length; i++){
+                if(layers[i].value=="on"){
+                    map.setLayoutProperty("OTM-pois-"+layers[i].id, "visibility", "none");
+                    layers[i].value="off";
+                }
+            }
+            var pois=e.parentNode.getElementsByClassName("poi");
+            var geoJson={
+                type: "FeatureCollection",
+                features: []
+            }
+            for(j=0; j<pois.length; j++){
+                let datastring=JSON.stringify($(pois[j]).data());
+                let data=JSON.parse(datastring);
+                let lon=data.point.lon;
+                let lat=data.point.lat;
+                geoJson.features.push({
+                    "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [data.point.lon, data.point.lat]
+                        },
+                        "properties": {
+                            "name": data.name
+                        }
+                });
+            }
+            map.addSource('day', {
+                type: 'geojson',
+                data: geoJson
+            })
+            map.addLayer({
+                id: "day",
+                type: "circle",
+                source: 'day',
+                layout: {
+                    "visibility" : "visible"
+                },
+                paint: {
+                    "circle-radius": 5,
+                    "circle-stroke-width": 0.6
+                },
+            });
+            e.value='on'
+            e.style.backgroundImage="url(./icons/eye-slash-fill.svg)"
+        }
     }
 
     function sendToServer(e){
@@ -238,15 +306,7 @@
                 target.parentNode.insertBefore(dragging, e.target);
             }
         }else if(e.target.classList.contains("day")){
-            var clone=dragging.cloneNode(true);
-            clone.style.opacity='';
-            $(clone).data($(dragging).data());
-            clone.addEventListener("dragstart", handleDragStart);
-            clone.addEventListener("dragleave", handleDragLeave);
-            clone.addEventListener("dragend", handleDragEnd)
-            clone.addEventListener('drop', handleDrop);
-            clone.addEventListener('dragover', allowDrop);
-            e.target.appendChild(clone);
+            e.target.appendChild(dragging);
         }
     }
 
@@ -280,3 +340,17 @@
         }
         else{return false;}
     }
+
+    function clonePOI(e){
+        var poi=e.parentNode;
+        var day=poi.parentNode;
+        var clone=poi.cloneNode(true);
+        $(clone).data($(poi).data());
+        clone.addEventListener("dragstart", handleDragStart);
+        clone.addEventListener("dragleave", handleDragLeave);
+        clone.addEventListener("dragend", handleDragEnd)
+        clone.addEventListener('drop', handleDrop);
+        clone.addEventListener('dragover', allowDrop);
+        day.appendChild(clone);
+    }
+    
