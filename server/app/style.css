@@ -5,7 +5,7 @@ html, body{
 
 #container{
     width: 100%;
-    height: 94%;
+    height: 93.4%;
 }
 
 #left {
@@ -13,6 +13,7 @@ html, body{
     width: 100%;
     height: 50%;
     float: left;
+    position: relative;
 }
 
 #center {
@@ -42,9 +43,12 @@ html, body{
 }
 
 #days{
-    height: 95%;
+    position: absolute;
+    height: 92%;
+    width: 100%;
     overflow: auto;
     background-color: rgb(253, 189, 237);
+    bottom:0;
 }
 .day{
     height: 25%;
@@ -58,8 +62,16 @@ html, body{
     font-size: 80%;
 }
 
+#commands{
+    height: 8%;
+    position: absolute;
+    background-color: brown;
+    text-align: center;
+}
+
 #send{
-    height: 4%;
+    height: 100%;
+    position: absolute;
 }
 
 .info{
@@ -101,6 +113,8 @@ html, body{
         height: 100%;
         float: right;
     }
+    #commands{ height: 4%;}
+    #days{ height: 96%;}
 }
 
 @media only screen and (min-width:800px) and (max-width:1599px) {
