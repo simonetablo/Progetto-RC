@@ -27,7 +27,6 @@
                 loop=new Date(newDate);
             }
             map.setCenter([lon, lat]);
-            //map.flyTo({center: [lon, lat], zoom: 9});
         },
         error: function() {
             alert('error')
@@ -39,8 +38,7 @@
     var sendbtn=document.getElementById("send");
     sendbtn.addEventListener("click", sendToServer);
 
-    var cont=document.getElementById("buttons");
-    var btn=cont.getElementsByTagName("button");
+    var btn=document.getElementById("buttons").getElementsByTagName("button");
     for(i=0; i<btn.length; i++){
         btn[i].addEventListener("click", showLayer)
     }
@@ -50,10 +48,12 @@
         if(this.value=="on"){
             map.setLayoutProperty("OTM-pois-"+name, "visibility", "none");
             this.value='off'
+            this.style.background="rgb(250, 250, 250)";
         }
         else if(this.value=="off"){
             map.setLayoutProperty("OTM-pois-"+name, "visibility", "visible");
             this.value='on'
+            this.style.background="rgb(210, 210, 210)";
         }
         else{
             this.value='on'
@@ -74,21 +74,24 @@
                 "source-layer": "pois",
             });
             if(name=="foods"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(255, 51, 0)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(158, 0, 34)")
             }
             if(name=="religion"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(255, 204, 0)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(214, 180, 29)")
             }
             if(name=="natural"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(102, 153, 0)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(11, 116, 28)")
             }
             if(name=="museums"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(51, 153, 255)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(0, 168, 197)")
             }
             if(name=="architecture"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(255, 51, 204)")
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(123, 14, 138)")
             }
-
+            if(name=="accomodations"){
+                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
+            }
+            this.style.background="rgb(210, 210, 210)";
             map.on("click", "OTM-pois-"+name, function(e) {
                 //let coordinates = e.features[0].geometry.coordinates.slice();
                 let id = e.features[0].properties.id;
@@ -122,7 +125,6 @@
             map.on("mouseenter", "OTM-pois-"+name, function (e) {
                 map.getCanvas().style.cursor = "pointer";
                 let coordinates = e.features[0].geometry.coordinates.slice();
-                let id = e.features[0].properties.id;
                 let poiname = e.features[0].properties.name;
                 popup
                     .setLngLat(coordinates)
@@ -142,8 +144,8 @@
         let m=date.getMonth()+1;
         let y=date.getFullYear();
         let day=document.createElement("div");
-        day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
-        day.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show btn btn-primary btn-sm'></button>";
+        day.innerHTML="<div class='date'>"+d+"/"+m+"/"+y+"</div>";
+        day.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'></button>";
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
         document.getElementById("days").appendChild(day);
@@ -171,8 +173,9 @@
                 ? data.info.descr
                 : "No description";
         poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
-        poi.innerHTML += "<button id='add' type='button' onclick=addToPlanner(this) class='btn btn-primary btn-sm'>add to your travel</button>";
+        poi.innerHTML += "<button id='add' type='button' onclick=addToPlanner(this) class='input_style_sm'>add to your travel</button>";
         $(poi).data(data);
+        poi.style.borderTopColor=wichKind(data.kinds);
         var info=document.getElementById('info');
         info.innerHTML="";
         info.appendChild(poi);
@@ -188,12 +191,22 @@
         planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'></button>";
         planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'></button>";
         planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'></button>";
+        planner.style.borderLeftColor=wichKind(data.kinds);
         document.getElementById("days").firstChild.appendChild(planner); 
         planner.addEventListener("dragstart", handleDragStart);
         planner.addEventListener("dragleave", handleDragLeave);
         planner.addEventListener("dragend", handleDragEnd)
         planner.addEventListener('drop', handleDrop);
         planner.addEventListener('dragover', allowDrop);
+    }
+
+    function wichKind(kind){
+        if(kind.includes("museums")) return("rgb(0, 168, 197)");
+        else if(kind.includes("foods")) return("rgb(158, 0, 34)");
+        else if(kind.includes("religion")) return("rgb(214, 180, 29)");
+        else if(kind.includes("natural")) return("rgb(11, 116, 28)");
+        else if(kind.includes("architecture")) return("rgb(123, 14, 138)");
+        else if(kind.includes("accomodations")) return("rgb(20, 18, 100)");
     }
 
     function showPOI(e){
@@ -317,10 +330,10 @@
             var bounding=target.getBoundingClientRect();
             var offset=bounding.y+(bounding.height/2);
             if(e.clientY-offset>0){
-                target.style['border-bottom']='solid 4px blue';
+                target.style['border-bottom']='solid 4px rgb(82, 82, 82)';
                 target.style['border-top']='';
             }else{
-                target.style['border-top']='solid 4px blue';
+                target.style['border-top']='solid 4px rgb(82, 82, 82)';
                 target.style['border-bottom']='';
             }
         }
