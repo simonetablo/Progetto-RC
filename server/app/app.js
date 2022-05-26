@@ -165,7 +165,7 @@
         for(i in forecast.daily){
             f_date = new Date((forecast.daily[i].dt)*1000)
             console.log(f_date)
-            if( f_date.getDate()  == data.getDate() && f_date.getMonth() == date.getMonth()){
+            if( f_date.getDate()  == data.getDate() && f_date.getMonth() == data.getMonth()){
                 tripIndex.push(i)
             }
         }
