@@ -1,6 +1,7 @@
 
    var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
    var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww"
+   var OpenWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
 
     var inizio_viaggio;
     var fine_viaggio;
@@ -21,11 +22,22 @@
             inizio_viaggio=Date.parse(data.inizio);
             fine_viaggio=Date.parse(data.fine);
             let loop=new Date(inizio_viaggio);
-            while(loop<=fine_viaggio){
-                dailyPlanner(loop);
-                let newDate=loop.setDate(loop.getDate()+1);
-                loop=new Date(newDate);
-            }
+            let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${OpenWeatherApiKey}`
+            $.ajax({
+                type:"GET",
+                url:url,
+                success:function(forecast){
+                        console.log(forecast)
+                        while(loop<=fine_viaggio){
+                            let i =0
+                            dailyPlanner(loop,forecast);
+                            let newDate=loop.setDate(loop.getDate()+1);
+                            loop=new Date(newDate);
+                        }
+                },error:function() {
+                    alert('error')
+                }
+            })
             map.setCenter([lon, lat]);
             //map.flyTo({center: [lon, lat], zoom: 9});
         },
@@ -137,13 +149,42 @@
         }
     };
     
-    function dailyPlanner(date){
+
+    function findTripIndex(data,forecast){
+        let tripIndex = []
+        for(i in forecast.daily){
+            f_date = new Date((forecast.daily[i].dt)*1000)
+            console.log(f_date)
+            if( f_date.getDate() == data.getDate()){
+                tripIndex.push(i)
+            }
+        }
+        console.log(tripIndex)
+        return tripIndex
+    }
+
+
+
+
+
+
+
+    function dailyPlanner(date,forct){
         let d=date.getDate();
         let m=date.getMonth()+1;
         let y=date.getFullYear();
         let day=document.createElement("div");
+        let tripIndex = findTripIndex(date,forct)
+        let forecast = forct.daily[tripIndex[0]]
         day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
         day.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show btn btn-primary btn-sm'></button>";
+        day.innerHTML+=`<div class=forecast><forecast>
+                            <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon" class="w-icon">
+                            <div class="temp">Day : ${forecast.temp.day}&#176;C</div>
+                            <div class="temp">Night : ${forecast.temp.night}&#176;C</div>
+                            <forecast></forecast>
+                        </forecast></div>
+                        `
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
         document.getElementById("days").appendChild(day);

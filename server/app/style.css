@@ -63,6 +63,14 @@ html, body{
     font-size: 80%;
 }
 
+.forecast{
+    height:100%;
+    position:absolute;
+    margin-right:70%;
+    
+}
+
+
 #commands{
     height: 8%;
     position: absolute;
@@ -96,6 +104,7 @@ html, body{
 }
 
 .poi{
+    margin-left: 30%;
     border:solid 1px;
     border-radius:5px;
     background-color: aquamarine;
