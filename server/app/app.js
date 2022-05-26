@@ -26,18 +26,28 @@
             $.ajax({
                 type:"GET",
                 url:url,
-                success:function(forecast){
-                        console.log(forecast)
-                        while(loop<=fine_viaggio){
-                            let i =0
-                            dailyPlanner(loop,forecast);
-                            let newDate=loop.setDate(loop.getDate()+1);
-                            loop=new Date(newDate);
+                success:function (forecast){
+                        let last_forecast = new Date((forecast.daily[7].dt)*1000)
+                        if(last_forecast.getDate() < loop.getDate() && last_forecast.getMonth() <=loop.getMonth()){
+                            while(loop<=fine_viaggio){
+                                dailyPlanner(loop);
+                                let newDate=loop.setDate(loop.getDate()+1);
+                                loop=new Date(newDate);
+                            }
                         }
-                },error:function() {
-                    alert('error')
+                        else{
+                            console.log(forecast)
+                            while(loop<=fine_viaggio){
+                                let i =0
+                                dailyPlannerW(loop,forecast);
+                                let newDate=loop.setDate(loop.getDate()+1);
+                                loop=new Date(newDate);
+                            }
+                    }
+                },error:function(error){
+                    console.log(error)
                 }
-            })
+        })
             map.setCenter([lon, lat]);
             //map.flyTo({center: [lon, lat], zoom: 9});
         },
@@ -155,7 +165,7 @@
         for(i in forecast.daily){
             f_date = new Date((forecast.daily[i].dt)*1000)
             console.log(f_date)
-            if( f_date.getDate() == data.getDate()){
+            if( f_date.getDate()  == data.getDate() && f_date.getMonth() == date.getMonth()){
                 tripIndex.push(i)
             }
         }
@@ -165,11 +175,23 @@
 
 
 
+    function dailyPlanner(date){
+        let d=date.getDate();
+        let m=date.getMonth()+1;
+        let y=date.getFullYear();
+        let day=document.createElement("div");
+        day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
+        day.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show btn btn-primary btn-sm'></button>";
+        day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
+        day.classList.add("day");
+        document.getElementById("days").appendChild(day);
+        day.addEventListener('drop', handleDrop);
+        day.addEventListener('dragover', allowDrop);
+    }
 
 
 
-
-    function dailyPlanner(date,forct){
+    function dailyPlannerW(date,forct){
         let d=date.getDate();
         let m=date.getMonth()+1;
         let y=date.getFullYear();
