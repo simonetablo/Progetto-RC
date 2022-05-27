@@ -27,23 +27,13 @@
                 type:"GET",
                 url:url,
                 success:function (forecast){
-                        let last_forecast = new Date((forecast.daily[7].dt)*1000)
-                        if(last_forecast.getDate() < loop.getDate() && last_forecast.getMonth() <=loop.getMonth()){
-                            while(loop<=fine_viaggio){
-                                dailyPlanner(loop);
-                                let newDate=loop.setDate(loop.getDate()+1);
-                                loop=new Date(newDate);
-                            }
-                        }
-                        else{
                             console.log(forecast)
                             while(loop<=fine_viaggio){
                                 let i =0
-                                dailyPlannerW(loop,forecast);
+                                dailyPlanner(loop,forecast);
                                 let newDate=loop.setDate(loop.getDate()+1);
                                 loop=new Date(newDate);
                             }
-                    }
                 },error:function(error){
                     console.log(error)
                 }
@@ -175,38 +165,25 @@
 
 
 
-    function dailyPlanner(date){
+    function dailyPlanner(date,forct){
         let d=date.getDate();
         let m=date.getMonth()+1;
         let y=date.getFullYear();
         let day=document.createElement("div");
         day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
         day.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show btn btn-primary btn-sm'></button>";
-        day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
-        day.classList.add("day");
-        document.getElementById("days").appendChild(day);
-        day.addEventListener('drop', handleDrop);
-        day.addEventListener('dragover', allowDrop);
-    }
-
-
-
-    function dailyPlannerW(date,forct){
-        let d=date.getDate();
-        let m=date.getMonth()+1;
-        let y=date.getFullYear();
-        let day=document.createElement("div");
-        let tripIndex = findTripIndex(date,forct)
-        let forecast = forct.daily[tripIndex[0]]
-        day.innerHTML="<date>"+d+"/"+m+"/"+y+"<date/>";
-        day.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show btn btn-primary btn-sm'></button>";
-        day.innerHTML+=`<div class=forecast><forecast>
-                            <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon" class="w-icon">
-                            <div class="temp">Day : ${forecast.temp.day}&#176;C</div>
-                            <div class="temp">Night : ${forecast.temp.night}&#176;C</div>
-                            <forecast></forecast>
-                        </forecast></div>
-                        `
+        let last_forecast = new Date((forct.daily[7].dt)*1000)
+        if((last_forecast.getDate() >= date.getDate() && last_forecast.getMonth() ==date.getMonth()) || ( last_forecast.getMonth() > date.getMonth())){
+            let tripIndex = findTripIndex(date,forct)
+            let forecast = forct.daily[tripIndex[0]]
+            day.innerHTML+=`<div class=forecast><forecast>
+                                <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon" class="w-icon">
+                                <div class="temp">Day : ${forecast.temp.day}&#176;C</div>
+                                <div class="temp">Night : ${forecast.temp.night}&#176;C</div>
+                                <forecast></forecast>
+                            </forecast></div>
+                            `
+        }
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
         document.getElementById("days").appendChild(day);
