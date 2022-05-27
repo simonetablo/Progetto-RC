@@ -1,6 +1,7 @@
 
    var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
-   var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww"
+   var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
+   var OpenWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb';
 
     var inizio_viaggio;
     var fine_viaggio;
@@ -12,7 +13,7 @@
         zoom: 8
     });
 
-   $.ajax({
+    $.ajax({
         type: "POST",
         url: "http://localhost:3000/formdata",
         success: function(data) {
@@ -21,11 +22,22 @@
             inizio_viaggio=Date.parse(data.inizio);
             fine_viaggio=Date.parse(data.fine);
             let loop=new Date(inizio_viaggio);
-            while(loop<=fine_viaggio){
-                dailyPlanner(loop);
-                let newDate=loop.setDate(loop.getDate()+1);
-                loop=new Date(newDate);
-            }
+            let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${OpenWeatherApiKey}`
+            $.ajax({
+                type:"GET",
+                url:url,
+                success:function (forecast){
+                            console.log(forecast)
+                            while(loop<=fine_viaggio){
+                                let i =0
+                                dailyPlanner(loop,forecast);
+                                let newDate=loop.setDate(loop.getDate()+1);
+                                loop=new Date(newDate);
+                            }
+                },error:function(error){
+                    console.log(error)
+                }
+        })
             map.setCenter([lon, lat]);
         },
         error: function() {
@@ -93,7 +105,6 @@
             }
             this.style.background="rgb(210, 210, 210)";
             map.on("click", "OTM-pois-"+name, function(e) {
-                //let coordinates = e.features[0].geometry.coordinates.slice();
                 let id = e.features[0].properties.id;
                 let poiname = e.features[0].properties.name;
                 var datatoserver={
@@ -125,6 +136,7 @@
             map.on("mouseenter", "OTM-pois-"+name, function (e) {
                 map.getCanvas().style.cursor = "pointer";
                 let coordinates = e.features[0].geometry.coordinates.slice();
+                let id = e.features[0].properties.id;
                 let poiname = e.features[0].properties.name;
                 popup
                     .setLngLat(coordinates)
@@ -138,19 +150,56 @@
             });   
         }
     };
+
+
+    function findTripIndex(data,forecast){
+        let tripIndex = []
+        for(i in forecast.daily){
+            f_date = new Date((forecast.daily[i].dt)*1000)
+            console.log(f_date)
+            if( f_date.getDate()  == data.getDate() && f_date.getMonth() == data.getMonth()){
+                tripIndex.push(i)
+            }
+        }
+        console.log(tripIndex)
+        return tripIndex
+    }
     
-    function dailyPlanner(date){
+
+
+    function dailyPlanner(date, forct){
         let d=date.getDate();
         let m=date.getMonth()+1;
         let y=date.getFullYear();
         let day=document.createElement("div");
         day.innerHTML="<div class='date'>"+d+"/"+m+"/"+y+"</div>";
         day.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'></button>";
+        let last_forecast = new Date((forct.daily[7].dt)*1000)
+        if((last_forecast.getDate() >= date.getDate() && last_forecast.getMonth() ==date.getMonth()) || ( last_forecast.getMonth() > date.getMonth())){
+            let tripIndex = findTripIndex(date,forct)
+            let forecast = forct.daily[tripIndex[0]]
+            day.firstChild.innerHTML+=`<div class="forecast" onclick=showForecastPopup(this) onmouseleave=hideForecastPopup(this)>
+                                        <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon" class="w-icon">
+                                        <span class="forecastPopup">Day : ${forecast.temp.day}&#176;C Night : ${forecast.temp.night}&#176;C</span>
+                                        </div>`
+        }
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
         document.getElementById("days").appendChild(day);
         day.addEventListener('drop', handleDrop);
         day.addEventListener('dragover', allowDrop);
+    }
+
+    function showForecastPopup(e){
+        let popup=e.getElementsByClassName("forecastPopup")[0];
+        if(popup.style.visibility=="visible"){popup.style.visibility="hidden";}
+        else{popup.style.visibility="visible";}
+        
+    }
+    
+    function hideForecastPopup(e){
+        let popup=e.getElementsByClassName("forecastPopup")[0];
+        popup.style.visibility="hidden";
     }
 
     function showInfo(obj) {
@@ -187,7 +236,7 @@
         planner.setAttribute('draggable', true);
         data=$(".info").data();
         $(planner).data(data);
-        planner.innerHTML=data.name;
+        planner.innerHTML="<div class='name'>"+data.name+"</div>";
         planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'></button>";
         planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'></button>";
         planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'></button>";
@@ -222,9 +271,11 @@
                 if(layers[i].value=="on"){
                     map.setLayoutProperty("OTM-pois-"+layers[i].id, "visibility", "none");
                     layers[i].value="off";
+                    layers[i].style.background="rgb(250, 250, 250)"
                 }
             }
-            var pois=e.parentNode.getElementsByClassName("poi");
+            let parent=e.parentNode;
+            var pois=parent.parentNode.getElementsByClassName("poi");
             var geoJson={
                 type: "FeatureCollection",
                 features: []
@@ -232,8 +283,6 @@
             for(j=0; j<pois.length; j++){
                 let datastring=JSON.stringify($(pois[j]).data());
                 let data=JSON.parse(datastring);
-                let lon=data.point.lon;
-                let lat=data.point.lat;
                 geoJson.features.push({
                     "type": "Feature",
                         "geometry": {
@@ -261,6 +310,7 @@
                     "circle-stroke-width": 0.6
                 },
             });
+            console.log(JSON.stringify(geoJson));
             e.value='on'
             e.style.backgroundImage="url(./icons/eye-slash-fill.svg)"
         }

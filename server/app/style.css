@@ -71,22 +71,47 @@ html, body{
 }
 
 .day{
+    position: relative;
     height: 50%;
     overflow: auto;
     border-radius:10px;
     margin: 7px;
     background: rgb(230, 230, 230);
     box-shadow: 3px 3px 7px;
+
 }
 .date{
     position: relative;
-    padding:3px;
-    padding-left: 7px;
+    padding:1px;
+    padding-left: 10px;
+    padding-right: 5px;
     font-size: 100%;
     font-weight: 700;
     width: 100%;
     background: rgb(150, 150, 150);
     letter-spacing: 1.5px;
+    z-index: 999;
+}
+.forecast{
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1/1;
+    transform: translate(210%,-100%);
+}
+.forecast>img{
+    height: 175%;
+    transform: translateY(-18%);
+}
+
+.forecastPopup{
+    visibility: hidden;
+    position: absolute;
+    background-color: rgb(201, 201, 201);
+    opacity: 0.9;
+    width: 150px;
+    padding: 4px;
+    border-radius: 10px;
+    z-index: 1000;
 }
 
 #commands{
@@ -185,6 +210,7 @@ html, body{
 }
 
 .poi{
+    position: relative;
     box-sizing: border-box;
     border-radius:5px;
     margin:2px;
@@ -195,12 +221,8 @@ html, body{
     border-left-style: solid;
     padding-left: 5px;
     background: rgb(250, 250, 250);
-}
-.poi>name{
-    position: relative;
-    width: 85%;
-    float:left;
-    overflow:hidden;
+    vertical-align: middle;
+    font-size: 120%;
 }
 .poi>button{
     aspect-ratio: 1/1;
@@ -210,6 +232,17 @@ html, body{
     background-position: center;
     float: right;
     margin-right: 2px;
+    vertical-align: middle;
+}
+.name{
+    position: absolute;
+    height: 0px;
+    width: 80%;
+    top:-1px;
+    overflow:clip;
+    overflow-clip-margin: 30px;
+    text-overflow: ellipsis;
+
 }
 
 .toSend{
@@ -230,8 +263,8 @@ html, body{
 }
 
 .show{
-    width: 24px;
-    height: 24px;
+    height: 100%;
+    aspect-ratio: 1/1;
     background-image: url(./icons/eye-fill.svg);
     background-size: 100%;
     background-repeat: no-repeat;
@@ -304,6 +337,7 @@ html, body{
         background-image: url(./icons/vecteezy_grid-globe-map_1198029.png);
         background-size: 36%;
         background-repeat: no-repeat;
-        background-position:bottom;
+        background-position:center;
     }
+    .info{ height:35.5vh;}
 }
