@@ -13,6 +13,7 @@ app.use(express.static('app'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
+var OpenWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
 
 var lat=0;
 var lon=0;
@@ -96,6 +97,20 @@ app.get('/add_event',getEventFromDb,function(req,res,next){
     },
     addEvent)
 
-
+app.get("/weather", function(req,res,next){
+  let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${OpenWeatherApiKey}`
+  request({
+    url:url,
+    method:"GET"
+  },
+  function(error,response,body){
+    if(error){
+      console.log(error)
+    }
+    else if(!error && response.statusCode==200){
+      res.send(JSON.parse(body))
+    }
+  })
+})
 
 app.listen(3000);
