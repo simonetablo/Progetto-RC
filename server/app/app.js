@@ -183,6 +183,30 @@
                                 <forecast></forecast>
                             </forecast></div>
                             `
+        }else{
+            if(date.getDate() > 7){
+                day.innerHTML+=`<div class=forecast><forecast>
+                                                        <div class =not_forecast>   
+                                                                Previsioni Meteo disponibili a partire dal giorno ${date.getDate() -7}/${date.getMonth()+1}/${date.getFullYear()}
+                                                            <div></div>
+                                                        </div>
+                                                        <forecast></forecast>
+                                                    </forecast></div>
+                                                    `
+            }else{
+                avaiable_forecast = 31 - (7-date.getDate())
+                day.innerHTML+=`<div class=forecast><forecast>
+                                    <div class =not_forecast>   
+                                            Previsioni Meteo disponibili a partire dal giorno ${avaiable_forecast}/${date.getMonth()}/${date.getFullYear()}
+                                        <div></div>
+                                    </div>
+
+                                    <forecast></forecast>
+                                </forecast></div>
+                                 `
+            }
+            
+
         }
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
