@@ -1,7 +1,7 @@
 
    var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
    var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww"
-   var OpenWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
+  
 
     var inizio_viaggio;
     var fine_viaggio;
@@ -22,7 +22,7 @@
             inizio_viaggio=Date.parse(data.inizio);
             fine_viaggio=Date.parse(data.fine);
             let loop=new Date(inizio_viaggio);
-            let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${OpenWeatherApiKey}`
+            let url = 'http://localhost:3000/weather'
             $.ajax({
                 type:"GET",
                 url:url,
