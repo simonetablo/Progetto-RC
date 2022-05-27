@@ -97,20 +97,23 @@ app.get('/add_event',getEventFromDb,function(req,res,next){
     },
     addEvent)
 
-app.get("/weather", function(req,res,next){
-  let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${OpenWeatherApiKey}`
-  request({
-    url:url,
-    method:"GET"
-  },
-  function(error,response,body){
-    if(error){
-      console.log(error)
-    }
-    else if(!error && response.statusCode==200){
-      res.send(JSON.parse(body))
-    }
-  })
-})
+    app.get("/weather", function(req,res,next){
+      let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${OpenWeatherApiKey}`
+      request({
+        url:url,
+        method:"GET"
+      },
+      function(error,response,body){
+        if(error){
+          console.log(error)
+        }
+        else if(!error && response.statusCode==200){
+          res.send(JSON.parse(body))
+        }
+      })
+    })
+  
+  
+
 
 app.listen(3000);
