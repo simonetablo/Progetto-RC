@@ -64,10 +64,10 @@ html, body{
 }
 
 .forecast{
-    height:80%;
+    height:20%;
     position:absolute;
     margin-right:85%;
-    font-size:70%
+    font-size:70%;
 }
 
 
