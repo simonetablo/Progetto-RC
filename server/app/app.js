@@ -181,6 +181,19 @@
                                         <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon" class="w-icon">
                                         <span class="forecastPopup">Day : ${forecast.temp.day}&#176;C Night : ${forecast.temp.night}&#176;C</span>
                                         </div>`
+        }else{
+            if(date.getDate() > 7){
+                day.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
+                        <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                        <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
+                    </div>`
+            }else{
+                avaiable_forecast = 31 - (7-date.getDate())
+                day.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
+                                            <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                                            <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
+                                        </div>`
+            }
         }
         day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
@@ -193,11 +206,21 @@
         let popup=e.getElementsByClassName("forecastPopup")[0];
         if(popup.style.visibility=="visible"){popup.style.visibility="hidden";}
         else{popup.style.visibility="visible";}
-        
     }
 
     function hideForecastPopup(e){
         let popup=e.getElementsByClassName("forecastPopup")[0];
+        popup.style.visibility="hidden";
+    }
+
+    function showNotForecastPopup(e){
+        let popup=e.getElementsByClassName("not_forecastPopup")[0];
+        if(popup.style.visibility=="visible"){popup.style.visibility="hidden";}
+        else{popup.style.visibility="visible";}
+    }
+
+    function hideNotForecastPopup(e){
+        let popup=e.getElementsByClassName("not_forecastPopup")[0];
         popup.style.visibility="hidden";
     }
 

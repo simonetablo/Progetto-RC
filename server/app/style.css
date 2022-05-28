@@ -114,6 +114,29 @@ html, body{
     z-index: 1000;
 }
 
+.not_forecast{
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1/1;
+    transform: translate(210%,-100%);
+}
+.not_forecast>img{
+    height: 100%;
+    transform: translateX(180%);
+}
+
+.not_forecastPopup{
+    visibility: hidden;
+    position: absolute;
+    background-color: rgb(201, 201, 201);
+    opacity: 0.9;
+    width: 255px;
+    padding: 4px;
+    border-radius: 10px;
+    z-index: 1000;
+    transform: translateX(21%);
+}
+
 #commands{
     height: 8%;
     position: absolute;
