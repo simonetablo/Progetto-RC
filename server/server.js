@@ -108,7 +108,7 @@ app.get('/add_event',getEventFromDb,function(req,res,next){
           console.log(error)
         }
         else if(!error && response.statusCode==200){
-          res.send(JSON.parse(body))
+          res.send(JSON.parse(body));
         }
       })
     })

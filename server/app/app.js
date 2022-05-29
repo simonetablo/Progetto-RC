@@ -49,6 +49,9 @@
     var sendbtn=document.getElementById("send");
     sendbtn.addEventListener("click", sendToServer);
 
+    var addBtn=document.getElementById("addDay");
+    addBtn.addEventListener("click", addButton)
+
     var btn=document.getElementById("buttons").getElementsByTagName("button");
     for(i=0; i<btn.length; i++){
         btn[i].addEventListener("click", showLayer)
@@ -84,24 +87,8 @@
                 },
                 "source-layer": "pois",
             });
-            if(name=="foods"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(158, 0, 34)")
-            }
-            if(name=="religion"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(214, 180, 29)")
-            }
-            if(name=="natural"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(11, 116, 28)")
-            }
-            if(name=="museums"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(0, 168, 197)")
-            }
-            if(name=="architecture"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(123, 14, 138)")
-            }
-            if(name=="accomodations"){
-                map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
-            }
+    
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', wichKind(name))
             this.style.background="rgb(210, 210, 210)";
             map.on("click", "OTM-pois-"+name, function(e) {
                 let id = e.features[0].properties.id;
@@ -163,15 +150,13 @@
         console.log(tripIndex)
         return tripIndex
     }
-    
-
 
     function dailyPlanner(date, forct){
         let d=date.getDate();
         let m=date.getMonth()+1;
         let y=date.getFullYear();
         let day=document.createElement("div");
-        day.innerHTML="<div class='date'>"+d+"/"+m+"/"+y+"</div>";
+        day.innerHTML="<div class='date'><d>"+d+"</d>/<m>"+m+"</m>/<y>"+y+"</y></div>";
         day.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'></button>";
         let last_forecast = new Date((forct.daily[7].dt)*1000)
         if((last_forecast.getDate() >= date.getDate() && last_forecast.getMonth() ==date.getMonth()) || ( last_forecast.getMonth() > date.getMonth())){
@@ -185,17 +170,16 @@
             if(date.getDate() > 7){
                 day.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
                         <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
-                        <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
+                        <span class="not_forecastPopup">Weather forecast not available for this date</span>
                     </div>`
             }else{
                 avaiable_forecast = 31 - (7-date.getDate())
                 day.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
                                             <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
-                                            <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
+                                            <span class="not_forecastPopup">Weather forecast not available for this date</span>
                                         </div>`
             }
         }
-        day.setAttribute("id",  day.getElementsByTagName("date").innerHTML);
         day.classList.add("day");
         document.getElementById("days").appendChild(day);
         day.addEventListener('drop', handleDrop);
@@ -243,7 +227,7 @@
             : data.info
                 ? data.info.descr
                 : "No description";
-        poi.innerHTML += "<p><a target='_blank' href='"+ data.otm + "'>Show more at OpenTripMap</a></p>";
+        poi.innerHTML += "<p><a target='_blank' href='"+ data.wikipedia + "'>Show more on Wikipedia</a></p>";
         poi.innerHTML += "<button id='add' type='button' onclick=addToPlanner(this) class='input_style_sm'>add to your travel</button>";
         $(poi).data(data);
         poi.style.borderTopColor=wichKind(data.kinds);
@@ -332,9 +316,28 @@
                     "circle-stroke-width": 0.6
                 },
             });
-            console.log(JSON.stringify(geoJson));
             e.value='on'
             e.style.backgroundImage="url(./icons/eye-slash-fill.svg)"
+
+            let popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false,
+            });
+        
+            map.on("mouseenter", "day", function(e) {
+                map.getCanvas().style.cursor = "pointer";
+                let coordinates = e.features[0].geometry.coordinates.slice();
+                let poiname = e.features[0].properties.name;
+                popup
+                    .setLngLat(coordinates)
+                    .setHTML("<strong>" + poiname + "</strong>")
+                    .addTo(map);
+            });
+        
+            map.on("mouseleave", "day", function () {
+                map.getCanvas().style.cursor = "";
+                popup.remove();
+            });
         }
     }
 
@@ -365,6 +368,79 @@
                 alert('error')
             }
         });
+    }
+
+    function addButton(e){
+        let days=document.getElementById("days");
+        let lastday=days.lastChild;
+        let lastdate=lastday.firstChild;
+        var day=parseInt(lastdate.getElementsByTagName("d")[0].innerHTML);
+        var month=parseInt(lastdate.getElementsByTagName("m")[0].innerHTML);
+        var year=parseInt(lastdate.getElementsByTagName("y")[0].innerHTML);
+        //alert(day+"/"+month+"/"+year);
+        var newDay=day;
+        var newMonth=month;
+        var newYear=year;
+        if(month==12 && day==31){
+            newYear+=1;
+            newMonth=1;
+            newDay=1;
+        }else if((month==4||month==6||month==9||month==11) && day==30){
+            newMonth+=1;
+            newDay=1;
+        }else if((month==1||month==3||month==5||month==7||month==8||month==10) && day==31){
+            newMonth+=1;
+            newDay=1;
+        }else if(month==2 && day==28){
+            newMonth+=1;
+            newDay=1;
+        }else{
+            newDay+=1;
+        }
+        date=Date.parse(newYear+"-"+newMonth+"-"+newDay);
+        var newDate=new Date(date);
+        let url = 'http://localhost:3000/weather'
+        $.ajax({
+            type:"GET",
+            url:url,
+            success:function (forecast){
+                console.log(forecast);
+                addNewDay(newDate, forecast, newDay, newMonth, newYear);
+            },error:function(error){
+                console.log(error)
+            }
+        })
+    }
+
+    function addNewDay(date, forct, newDay, newMonth, newYear){
+        let newDayCard=document.createElement("div");
+        newDayCard.innerHTML="<div class='date'><d>"+newDay+"</d>/<m>"+newMonth+"</m>/<y>"+newYear+"</y></div>";
+        newDayCard.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'></button>";
+        let last_forecast = new Date((forct.daily[7].dt)*1000)
+        if((last_forecast.getDate() >= newDay && last_forecast.getMonth() ==newMonth-1) || ( last_forecast.getMonth() > newMonth-1)){
+            let tripIndex = findTripIndex(date,forct)
+            let forecast = forct.daily[tripIndex[0]]
+            newDayCard.firstChild.innerHTML+=`<div class="forecast" onclick=showForecastPopup(this) onmouseleave=hideForecastPopup(this)>
+                                        <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon" class="w-icon">
+                                        <span class="forecastPopup">Day : ${forecast.temp.day}&#176;C Night : ${forecast.temp.night}&#176;C</span>
+                                        </div>`
+        }else{
+            if(newDay > 7){
+                newDayCard.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
+                        <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                        <span class="not_forecastPopup">Weather forecast not available for this date</span>
+                    </div>`
+            }else{
+                avaiable_forecast = 31 - (7-newDay)
+                newDayCard.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
+                                            <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                                            <span class="not_forecastPopup">Weather forecast not available for this date</span>
+                                        </div>`
+            }
+        }
+                
+    newDayCard.classList.add("day");
+    days.appendChild(newDayCard);
     }
 
     var dragging=null;
