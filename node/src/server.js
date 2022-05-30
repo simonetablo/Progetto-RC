@@ -11,6 +11,7 @@ const api_routes = require('./routes/api');
 const PORT = 4000
 
 const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
+var openWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
 
 function server_start(){
 
@@ -41,6 +42,128 @@ function server_start(){
         resave: false,
         saveUninitialized: false
     }))
+
+
+
+    app.get('/planner', (req, res) =>{
+      if(!req.session.isAuth){
+        res.end();
+        return;
+      }
+      username = req.session.username,
+      email = req.session.email
+      query_json = req.query;
+      id = query_json.id;
+      if(typeof id == "undefined"){
+
+        res.render("planner", {id : false});
+        return
+      }
+      request({
+          //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
+          url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id,  
+          method: 'GET',
+          //headers: {'content-type': 'application/json'},
+          //body: JSON.stringify({"keys": ["culture", "religion"]})
+      }, function(error, response, body){
+          if(error) {
+              console.log(error);
+          } else {
+              itinerary_json = JSON.parse(response.body);
+              data = itinerary_json.data;
+              if(typeof data == "undefined"){
+                res.end();                          /// itinerary doesn't exist
+                return;
+              }
+              ids = [];
+              for(const day of data){
+                  for(const place of day.plan){
+                      ids.push(place.id)
+                  }
+              }
+              names = [];
+              tags = [];
+              get_info = (array) => {
+                  if(array.length == 0){
+                      console.log(names);
+                      console.log(tags);
+                      render_obj = {
+                          id : true,
+                          itinerary : itinerary_json,
+                          names : names,
+                          tags : tags,
+                          username : username,
+                          email : email
+                      }
+                      res.render('planner', render_obj);
+                  }
+                  else{
+                      id = array.pop()
+                      request({
+                          url:"https://api.opentripmap.com/0.1/en/places/xid/"+id+"?apikey="+openTripMapKey,
+                          method: "GET",
+                        },
+                          function(error, response, body){
+                              console.log("ao?")
+                              console.log(response.body);
+                              place_json = JSON.parse(response.body)
+                              place_kinds = place_json.kinds;
+                              place_name = place_json.name;
+                              if(place_kinds.includes("museums")) tags.push("rgb(0, 168, 197)");
+                              else if(place_kinds.includes("foods")) tags.push("rgb(158, 0, 34)");
+                              else if(place_kinds.includes("religion")) tags.push("rgb(214, 180, 29)");
+                              else if(place_kinds.includes("natural")) tags.push("rgb(11, 116, 28)");
+                              else if(place_kinds.includes("architecture")) tags.push("rgb(123, 14, 138)");
+                              else if(place_kinds.includes("accomodations")) tags.push("rgb(20, 18, 100)");
+                              names.push(place_name)
+                              get_info(array);
+                          });
+                      }
+              };
+              get_info(ids);
+          }
+      });
+})
+
+
+
+
+    app.post('/addpois', function(req, res){
+        var data=JSON.parse(req.body.info);
+        console.log(data);
+        res.end();
+      });
+
+    app.get("/weather", function(req,res,next){
+        lat = 0;
+        lon = 0;
+        let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${openWeatherApiKey}`
+        request({
+          url:url,
+          method:"GET"
+        },
+        function(error,response,body){
+          if(error){
+            console.log(error)
+          }
+          else if(!error && response.statusCode==200){
+            res.send(JSON.parse(body))
+          }
+        })
+      })
+
+    app.get('/form', (req, res) => {
+        render_object = {
+            'authenticated' : req.session.isAuth,
+            'username' : req.session.username,
+            'email' : req.session.email
+        }
+        if(req.session.isAuth){
+            res.render('form', render_object);
+        }else{
+            res.render('home', render_object)
+        }
+    });
 
     app.get('/', (req, res) => {
         render_object = {
@@ -142,14 +265,19 @@ request(
                                                             if (doc.tags == []) return; \n\
                                                             var emit_sequence = function(base, disp) { \n\
                                                               if (disp.length > 1) {\n\
-                                                                emit(base.concat(disp[0]), 1);\n\
+                                                                emit(base.concat(disp[0]), {'title' : doc.title, 'author' :doc.author, 'tags': doc.tags});\n\
                                                                 emit_sequence(base.concat(disp[0]), disp.slice(1, disp.length));\n\
                                                                 emit_sequence(base, disp.slice(1, disp.length));\n\
                                                               } else if (disp.length == 1) {\n\
-                                                                emit(base.concat(disp[0]), 1);\n\
+                                                                emit(base.concat(disp[0]), {'title' : doc.title, 'author' :doc.author, 'tags': doc.tags});\n\
                                                               }\n\
                                                             }\n\
                                                             emit_sequence([], doc.tags);\n\
+                                                        }"
+                                                    },
+                                                    "tag_view2": {
+                                                        "map": "function(doc) { \n\
+                                                            emit(doc._id, {'title' : doc.title, 'author' :doc.author, 'tags': doc.tags});\n\
                                                         }"
                                                     }
                                                 }
@@ -162,6 +290,7 @@ request(
                                                 console.log(response.body); //tag_view created
                                                 
                                                 server_start();
+                                                
                                             }
                                         }
                                     );
