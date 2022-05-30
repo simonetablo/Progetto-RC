@@ -157,7 +157,7 @@
         let y=date.getFullYear();
         let day=document.createElement("div");
         day.innerHTML="<div class='date'><d>"+d+"</d>/<m>"+m+"</m>/<y>"+y+"</y></div>";
-        day.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'></button>";
+        day.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>";
         let last_forecast = new Date((forct.daily[7].dt)*1000)
         if((last_forecast.getDate() >= date.getDate() && last_forecast.getMonth() ==date.getMonth()) || ( last_forecast.getMonth() > date.getMonth())){
             let tripIndex = findTripIndex(date,forct)
@@ -169,13 +169,13 @@
         }else{
             if(date.getDate() > 7){
                 day.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
-                        <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                        <i class="fa-solid fa-circle-exclamation fa-lg"></i>
                         <span class="not_forecastPopup">Weather forecast not available for this date</span>
                     </div>`
             }else{
                 avaiable_forecast = 31 - (7-date.getDate())
                 day.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
-                                            <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                                            <i class="fa-solid fa-circle-exclamation fa-lg"></i>
                                             <span class="not_forecastPopup">Weather forecast not available for this date</span>
                                         </div>`
             }
@@ -243,9 +243,9 @@
         data=$(".info").data();
         $(planner).data(data);
         planner.innerHTML="<div class='name'>"+data.name+"</div>";
-        planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'></button>";
-        planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'></button>";
-        planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'></button>";
+        planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
         planner.style.borderLeftColor=wichKind(data.kinds);
         document.getElementById("days").firstChild.appendChild(planner); 
         planner.addEventListener("dragstart", handleDragStart);
@@ -269,9 +269,9 @@
             map.removeLayer('day');
             map.removeSource('day');
             e.value='off';
-            e.style.backgroundImage="url(./icons/eye-fill.svg)";
-        }
-        else{
+            e.firstChild.classList.remove("fa-eye-slash");
+            e.firstChild.classList.add("fa-eye")
+        }else{
             var layers=document.getElementsByClassName("filter");
             for(i=0; i<layers.length; i++){
                 if(layers[i].value=="on"){
@@ -317,8 +317,8 @@
                 },
             });
             e.value='on'
-            e.style.backgroundImage="url(./icons/eye-slash-fill.svg)"
-
+            e.firstChild.classList.remove("fa-eye");
+            e.firstChild.classList.add("fa-eye-slash")
             let popup = new mapboxgl.Popup({
                 closeButton: false,
                 closeOnClick: false,
@@ -377,7 +377,6 @@
         var day=parseInt(lastdate.getElementsByTagName("d")[0].innerHTML);
         var month=parseInt(lastdate.getElementsByTagName("m")[0].innerHTML);
         var year=parseInt(lastdate.getElementsByTagName("y")[0].innerHTML);
-        //alert(day+"/"+month+"/"+year);
         var newDay=day;
         var newMonth=month;
         var newYear=year;
@@ -415,7 +414,7 @@
     function addNewDay(date, forct, newDay, newMonth, newYear){
         let newDayCard=document.createElement("div");
         newDayCard.innerHTML="<div class='date'><d>"+newDay+"</d>/<m>"+newMonth+"</m>/<y>"+newYear+"</y></div>";
-        newDayCard.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'></button>";
+        newDayCard.firstChild.innerHTML+="<button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>";
         let last_forecast = new Date((forct.daily[7].dt)*1000)
         if((last_forecast.getDate() >= newDay && last_forecast.getMonth() ==newMonth-1) || ( last_forecast.getMonth() > newMonth-1)){
             let tripIndex = findTripIndex(date,forct)
@@ -427,13 +426,13 @@
         }else{
             if(newDay > 7){
                 newDayCard.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
-                        <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                        <i class="fa-solid fa-circle-exclamation fa-lg"></i>
                         <span class="not_forecastPopup">Weather forecast not available for this date</span>
                     </div>`
             }else{
                 avaiable_forecast = 31 - (7-newDay)
                 newDayCard.firstChild.innerHTML+=`<div class="not_forecast" onclick=showNotForecastPopup(this) onmouseleave=hideNotForecastPopup(this)>
-                                            <img src="./icons/cloud-slash.svg" alt="weather icon" class="w-icon">
+                                            <i class="fa-solid fa-circle-exclamation fa-lg"></i>
                                             <span class="not_forecastPopup">Weather forecast not available for this date</span>
                                         </div>`
             }

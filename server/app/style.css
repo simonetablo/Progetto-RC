@@ -118,11 +118,10 @@ html, body{
     position: absolute;
     height: 100%;
     aspect-ratio: 1/1;
-    transform: translate(210%,-100%);
+    transform: translate(420%, -95%);
 }
-.not_forecast>img{
-    height: 100%;
-    transform: translateX(200%);
+.not_forecast>i{
+    transform: translateY(100%)
 }
 
 .not_forecastPopup{
@@ -134,7 +133,7 @@ html, body{
     padding: 4px;
     border-radius: 10px;
     z-index: 1000;
-    transform: translateX(28%);
+    transform: translateX(5%);
 }
 
 #commands{
@@ -148,25 +147,29 @@ html, body{
     height:3.2vh;
     aspect-ratio: 1/1;
     position: absolute;
-    background-image: url(./icons/save.svg);
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
     margin-left:7px;
-    margin-top:1px
+    margin-top:1px;
+    overflow: hidden;
+}
+#send>i{
+    position:absolute;
+    transform: translateX(-49%);
+    font-size: 3vh;
 }
 
 #addDay{
     height:3.2vh;
     aspect-ratio: 1/1;
     position: absolute;
-    background-image: url(./icons/plus-square.svg);
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
     margin-left:7px;
     margin-top:1px;
-    transform: translateX(130%)
+    transform: translateX(130%);
+    overflow: hidden;
+}
+#addDay>i{
+    position:absolute;
+    transform: translateX(-49%);
+    font-size: 3vh;
 }
 
 #add{
@@ -245,6 +248,18 @@ html, body{
     display: block;
 }
 
+.date{
+    position: relative;
+    padding:1px;
+    padding-left: 10px;
+    padding-right: 5px;
+    font-size: 100%;
+    font-weight: 700;
+    width: 100%;
+    background: rgb(150, 150, 150);
+    letter-spacing: 1.5px;
+}
+
 .poi{
     position: relative;
     box-sizing: border-box;
@@ -257,28 +272,26 @@ html, body{
     border-left-style: solid;
     padding-left: 5px;
     background: rgb(250, 250, 250);
-    vertical-align: middle;
-    font-size: 120%;
 }
 .poi>button{
     aspect-ratio: 1/1;
-    height: 90%;
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
+    height: 95%;
     float: right;
     margin-right: 2px;
-    vertical-align: middle;
+}
+.poi>button>i{
+    position: absolute;
+    transform: translate(-50%, 100%);
+    font-size: 120%;
 }
 .name{
     position: absolute;
     height: 0px;
     width: 80%;
-    top:-1px;
     overflow:clip;
     overflow-clip-margin: 30px;
     text-overflow: ellipsis;
-
+    font-size: 100%;
 }
 
 .toSend{
@@ -286,29 +299,19 @@ html, body{
     border-radius:5px;
 }
 
-.remove{
-    background-image: url(./icons/trash-fill.svg);
-}
-
-.clone{
-    background-image: url(./icons/plus-lg.svg);
-}
-
-.infobtn{
-    background-image: url(./icons/info-circle-fill.svg);
-}
-
 .show{
-    height: 100%;
+    width: 1%;
     aspect-ratio: 1/1;
-    background-image: url(./icons/eye-fill.svg);
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-position: center;
     border-radius: 15px;
     float: right;
     background-color: rgb(150, 150, 150);
-    opacity: 0.7;
+    opacity: 0.8;
+    overflow: hidden;
+}
+.show>i{
+    position:absolute;
+    transform: translate(-49%, -50%);
+    font-size: 100%;
 }
 
 ::-webkit-scrollbar {
@@ -343,10 +346,6 @@ html, body{
         position: absolute;
         bottom: 16px;
         right:14px;
-    }
-    .poi>button{
-        height: 90%;
-        background-size: 85%;
     }
     #center{
         background-image: url(./icons/vecteezy_grid-globe-map_1198029.png);
