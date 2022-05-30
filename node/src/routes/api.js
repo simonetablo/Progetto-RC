@@ -83,7 +83,7 @@ router.post('/api/itineraries', (req, res) => {
                 data : data,
                 tags : tags
             }
-            console.log(itinerary);
+            //console.log(itinerary);
             request({
                 url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id, 
                 method: 'PUT',
@@ -114,7 +114,7 @@ router.post('/api/itineraries', (req, res) => {
                 method: "GET",
               },
               function(error, response, body){
-                  console.log("ao?")
+                  //console.log("ao?")
                   place_kinds = JSON.parse(response.body).kinds;
                   if(place_kinds.includes("architecture") && !tags.includes("architecture")) tags.push("architecture");
                   if(place_kinds.includes("cultural") && !tags.includes("cultural")) tags.push("cultural");
@@ -157,8 +157,8 @@ router.get('/planner/id', (req, res) =>{
             tags = [];
             get_info = (array) => {
                 if(array.length == 0){
-                    console.log(names);
-                    console.log(tags);
+                    //console.log(names);
+                    //console.log(tags);
                     render_obj = {
                         itinerary : itinerary_json,
                         names : names,
@@ -173,8 +173,8 @@ router.get('/planner/id', (req, res) =>{
                         method: "GET",
                       },
                         function(error, response, body){
-                            console.log("ao?")
-                            console.log(response.body);
+                            //console.log("ao?")
+                            //console.log(response.body);
                             place_json = JSON.parse(response.body)
                             place_kinds = place_json.kinds;
                             place_name = place_json.name;

@@ -85,8 +85,8 @@ function server_start(){
               tags = [];
               get_info = (array) => {
                   if(array.length == 0){
-                      console.log(names);
-                      console.log(tags);
+                      //console.log(names);
+                      //console.log(tags);
                       render_obj = {
                           id : true,
                           itinerary : itinerary_json,
@@ -104,8 +104,8 @@ function server_start(){
                           method: "GET",
                         },
                           function(error, response, body){
-                              console.log("ao?")
-                              console.log(response.body);
+                              //console.log("ao?")
+                              //console.log(response.body);
                               place_json = JSON.parse(response.body)
                               place_kinds = place_json.kinds;
                               place_name = place_json.name;
@@ -130,7 +130,7 @@ function server_start(){
 
     app.post('/addpois', function(req, res){
         var data=JSON.parse(req.body.info);
-        console.log(data);
+        //console.log(data);
         res.end();
       });
 
@@ -194,7 +194,7 @@ function server_start(){
           } else if (!error && response.statusCode==200){
             info = JSON.parse(body);
             ejs_json = { lat: info.lat, lon: info.lon, inizio_viaggio, fine_viaggio, username: "test_username"}
-            console.log(ejs_json)
+            //console.log(ejs_json)
             res.render('planner', ejs_json);
           }
         })
@@ -202,7 +202,7 @@ function server_start(){
 
     app.post('/poinfo', function(req, res){
         var data = JSON.parse(req.body.info);
-        console.log(data.name);
+        //console.log(data.id);
         request({
           url:"https://api.opentripmap.com/0.1/en/places/xid/"+data.id+"?apikey="+openTripMapKey,
           method: "GET",
@@ -211,6 +211,7 @@ function server_start(){
           if(error) {
             console.log(error);
           } else if (!error && response.statusCode==200){
+              //console.log(body)
             res.send(body);
           }
         })
@@ -232,7 +233,7 @@ request(
         if(error) {
             console.log(error); //error creating user_db
         } else {
-            console.log(response.body);  //user_db created successfully or already existing
+            //console.log(response.body);  //user_db created successfully or already existing
             request(
                 {
                     url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/sessions_db', 

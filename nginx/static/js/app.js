@@ -4,6 +4,11 @@ var base_url = window.location.origin;
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
 
+var LoadedPoi=document.getElementsByClassName("poi");
+for(i=0; i<LoadedPoi.length; i++){
+   
+}
+
 mapboxgl.accessToken = mapBoxAT;
 var map = new mapboxgl.Map({
     container: "map",
@@ -100,7 +105,7 @@ function showLayer(e){
                     info: dataString
                 },
                 success: function(data) {
-                    showInfo(data)
+                    showInfo_map(data)
                 },
                 error: function() {
                     alert('error')
@@ -217,7 +222,46 @@ function showPOI(e){
 //
 
 //PLACE
+function showInfo_map(obj){
+    showInfo_aux(obj);
+    console.log("lol")
+}
+
 function showInfo(obj) {
+    var lpoi=obj.parentNode
+    if(lpoi.getAttribute("value")){
+        let id= lpoi.getAttribute("value");  
+        var datatoserver={
+            id:id
+        }
+        var dataString=JSON.stringify(datatoserver);
+        $.ajax({
+            type: "POST",
+            url: base_url + "/poinfo",
+            dataType: "json",
+            data: {
+                info: dataString
+            },
+            success: function(data) {
+                console.log(data);
+                //LoadedPoi[i].setAttribute("data", data);
+                $(lpoi).data(data);
+                showInfo_aux(obj);
+                lpoi.removeAttribute("value");
+            },
+            error: function() {
+                alert('error')
+            }
+        });
+    }
+    else{
+        showInfo_aux(obj);
+        console.log("lol")
+    }
+    
+}
+
+function showInfo_aux(obj){
     if(obj instanceof HTMLElement){ 
         let datastring=JSON.stringify($(obj.parentNode).data());
         var data=JSON.parse(datastring);

@@ -65,8 +65,7 @@
                 <button id="send" type="button" class="input_style_sm"><i class="fa-solid fa-share"></i></button>
                 <button id="create" type="button" class="input_style_sm"><i class="fa-solid fa-circle-plus"></i></button>
                  
-                <div id="days"><%if(id){for(const day of itinerary.data){%>
-                    <div class="day bg-dark"><div class="date d-flex justify-content-between align-items-center">
+                <div id="days"><%if(id){for(const day of itinerary.data){%><div class="day bg-dark"><div class="date d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
                                 <i class="fa-solid fa-circle-exclamation mx-2"></i>
