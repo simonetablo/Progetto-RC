@@ -73,8 +73,8 @@
                                 <span class="not_forecastPopup" style="visibility: hidden;">Previsioni Meteo non disponibili per questa data</span>
                             </div>
                         </div>
-                        <button value="off" type="button" onclick="showPOI(this)" class="show input_style_sm mx-1"></button>
-                        </div><%for(const pois of day.plan){ tag = tags.pop(); name = names.pop();%><div class="poi" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick="this.parentElement.remove()" class="remove btn btn-light"></button><button onclick="clonePOI(this)" class="clone btn btn-light"></button><button onclick="showInfo(this)" class="infobtn btn btn-light"></button></div><%}%></div>
+                        <button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>
+                        </div><%for(const pois of day.plan){ tag = tags.pop(); name = names.pop();%><div class="poi" value="<%=pois.id%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>
                 <%}}%></div>
                 
             </div>
