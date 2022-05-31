@@ -17,8 +17,8 @@ services:
     ports:
       - "5984:5984"
     environment:
-      - COUCHDB_USER=${COUCHDB_USER}
-      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+      - COUCHDB_USER=user1234
+      - COUCHDB_PASSWORD=password1234
     volumes:
       - ./couchdb/data:/opt/couchdb/data
       - ./couchdb/etc/local.ini:/opt/couchdb/etc/local.ini
@@ -30,9 +30,9 @@ services:
     container_name: node_cont
     working_dir: /usr/node
     environment:
-      - COUCHDB_USER=${COUCHDB_USER}
-      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
-      - SESSION_SECRET_KEY=${SESSION_SECRET_KEY}
+      - COUCHDB_USER=user1234
+      - COUCHDB_PASSWORD=password1234
+      - SESSION_SECRET_KEY=secret
     volumes: 
       - ./node/src:/usr/node/src
     ports:

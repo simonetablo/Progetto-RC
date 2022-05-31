@@ -74,7 +74,8 @@
                 
                 <button id="send" type="button" class="input_style_sm"><i class="fa-solid fa-share"></i></button>
                 <button id="create" type="button" class="input_style_sm"><i class="fa-solid fa-circle-plus"></i></button>
-                 
+                <span id="searchBar"><input id="place" type="text" class="input_style_sm" name="Place"><button type="submit" id="search" onclick=search(this)><i class="fa-solid fa-magnifying-glass"></i></button></span>
+
                 <div id="days"><%if(id){for(const day of itinerary.data){%><div class="day bg-dark"><div class="date d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
@@ -82,6 +83,7 @@
                                 <span class="not_forecastPopup" style="visibility: hidden;">Previsioni Meteo non disponibili per questa data</span>
                             </div>
                         </div>
+                        <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
                         <button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>
                         </div><%for(const pois of day.plan){ tag = tags.pop(); name = names.pop();%><div class="poi" value="<%=pois.id%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>
                 <%}}%></div>

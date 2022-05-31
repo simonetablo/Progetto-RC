@@ -13,7 +13,7 @@ mapboxgl.accessToken = mapBoxAT;
 var map = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/mapbox/light-v10",
-    zoom: 8
+    zoom: -1,
 });
 map.addControl(new mapboxgl.NavigationControl());
 
@@ -117,7 +117,8 @@ function showLayer(e){
             },
             "source-layer": "pois",
         });
-        if(name=="foods"){
+        map.setPaintProperty("OTM-pois-"+name, 'circle-color', whichKind(name));
+        /*if(name=="foods"){
             map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(158, 0, 34)")
         }
         if(name=="religion"){
@@ -134,7 +135,7 @@ function showLayer(e){
         }
         if(name=="accomodations"){
             map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
-        }
+        }*/
         map.on("click", "OTM-pois-"+name, function(e) {
             let id = e.features[0].properties.id;
             let poiname = e.features[0].properties.name;
@@ -265,6 +266,24 @@ function showPOI(e){
         });
     }
 }
+
+function removeDay(e){
+    let parent=e.parentNode;
+    parent=parent.parentNode;
+    parent.remove();
+}
+
+function search(e){
+    let searchValue=document.getElementById("place").value;
+    $.get(base_url+"/search?name="+searchValue, function(data, status){
+        var latLon=data.features[0].center;
+        map.flyTo({
+            center: latLon,
+            zoom: 10,
+            speed: 2,
+        })
+    })
+}
 //
 
 //PLACE
@@ -329,10 +348,11 @@ function showInfo_aux(obj){
     poi.innerHTML += "<p><a target='_blank' href='"+ data.wikipedia + "'>Show more on Wikipedia</a></p>";
     poi.innerHTML += "<button id='add' type='button' onclick=addToPlanner(this) class='input_style_sm'>add to your travel</button>";
     $(poi).data(data);
-    poi.style.borderTopColor=wichKind(data.kinds);
     var info=document.getElementById('info');
     info.innerHTML="";
     info.appendChild(poi);
+    info.getElementsByTagName("h2")[0].style.color=whichKind(data.kinds)
+    console.log(data)
 }
 
 function addToPlanner(e){
@@ -345,7 +365,7 @@ function addToPlanner(e){
     planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
     planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
     planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
-    planner.style.borderLeftColor=wichKind(data.kinds);
+    planner.style.borderLeftColor=whichKind(data.kinds);
     console.log( document.getElementById("days").firstChild)
     document.getElementById("days").firstChild.appendChild(planner); 
     planner.addEventListener("dragstart", handleDragStart);
@@ -355,13 +375,13 @@ function addToPlanner(e){
     planner.addEventListener('dragover', allowDrop);
 }
 
-function wichKind(kind){
-    if(kind.includes("museums")) return("rgb(0, 168, 197)");
-    else if(kind.includes("foods")) return("rgb(158, 0, 34)");
-    else if(kind.includes("religion")) return("rgb(214, 180, 29)");
-    else if(kind.includes("natural")) return("rgb(11, 116, 28)");
-    else if(kind.includes("architecture")) return("rgb(123, 14, 138)");
-    else if(kind.includes("accomodations")) return("rgb(20, 18, 100)");
+function whichKind(kind){
+    if(kind.includes("museums")) return("#d63384");
+    else if(kind.includes("foods")) return("#33d6c9");
+    else if(kind.includes("religion")) return("#6610f2");
+    else if(kind.includes("natural")) return("#20c953");
+    else if(kind.includes("architecture")) return("#0d6efd");
+    else if(kind.includes("accomodations")) return("#fd7e14");
 }
 
 function clonePOI(e){

@@ -12,6 +12,7 @@ const PORT = 4000
 
 const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 var openWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
+var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
 
 function server_start(){
 
@@ -117,14 +118,30 @@ function server_start(){
                               else if(place_kinds.includes("accomodations")) tags.push("rgb(20, 18, 100)");
                               names.push(place_name)
                               get_info(array);
-                          });
-                      }
-              };
-              get_info(ids);
-          }
-      });
-})
-
+                        });
+                    }
+                };
+            get_info(ids);
+            }
+        });
+    })
+    app.get('/search', function(req, res){
+        var data=req.query.name;
+        console.log(data);
+        request({
+            url:"https://api.mapbox.com/geocoding/v5/mapbox.places/"+data+".json?access_token="+mapBoxAT,
+            method: "GET",
+          },
+          function(error,response,body){
+            if(error){
+              console.log(error)
+            }
+            else if(!error && response.statusCode==200){
+              res.send(JSON.parse(body))
+              console.log("send")
+            }
+        })
+    });
 
 
 
