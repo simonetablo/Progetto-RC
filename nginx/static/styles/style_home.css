@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700;800&display=swap');
+
+*{
+  font-family : 'Poppins', sans-serif
+}
+
 .content {
   position: relative;
   background-color: black;
@@ -19,7 +25,7 @@
   -ms-transform: translateX(-50%) translateY(-50%);
   -moz-transform: translateX(-50%) translateY(-50%);
   -webkit-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-43%);
+  transform: translateX(-50%) translateY(-44%);
 }
 
 .content .container {
@@ -49,7 +55,7 @@
   text-decoration: none;
   font-weight: 500;
 
-  color: #111;
+  color: rgb(59, 59, 59);
   letter-spacing: 2px;
   transition: 0.2s;
   text-align: center;
@@ -58,7 +64,7 @@
 
 .input_style{
   width: 100%;
-  max-width: 200px;
+  max-width: 250px;
   display: inline-block;
   font-size: 1em;
   background: #fff;
@@ -69,17 +75,15 @@
   font-weight: 500;
   margin-top: 10px;
   color: #111;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   transition: 0.2s;
   text-align: center;
   border-radius: 5px;
 }
 .input_style:hover{
-  letter-spacing: 6px;
+  letter-spacing: 3px;
 }
-.input_style_sm:hover{
-  letter-spacing: 6px;
-}
+
 .button:hover{
   cursor:pointer;
 }
@@ -90,15 +94,8 @@ img {
   max-width: 10px;
 }
 
-/* Media Query for devices withi coarse pointers and no hover functionality */
-
-/* This will use a fallback image instead of a video for devices that commonly do not support the HTML5 video element */
 
 @media (pointer: coarse) and (hover: none) {
-  .content {
-    background: url('https://source.unsplash.com/XT5OInaElMw/1600x900') black no-repeat center center scroll;
-  }
-
   .content video {
     display: none;
   }

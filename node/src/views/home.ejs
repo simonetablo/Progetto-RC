@@ -16,11 +16,11 @@
     
                     <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
     
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav px-5">
     
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
-                            <ul class="dropdown-menu bg-black">
+                            <ul class="dropdown-menu mt-2" style="background-color: rgb(50, 50, 50, 0.3);">
                                 <li>
                                     <div class="dropdown-item card bg-dark text-white">
                                         <div class="card-header">
@@ -28,8 +28,8 @@
                                             <p class="card-text"><%=email%></p>
                                         </div>
                                         <div class="card-body d-grid gap-3">
-                                            <button type="button" class="btn btn-primary btn-block">Settings</button>
-                                            <button type="button" id="logout_button" class="btn btn-primary btn-block">Log out</button>
+                                            <button type="button" class="btn btn-primary input_style_sm btn-block">Settings</button>
+                                            <button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
                                         </div>
                                     </div>
                                 </li>
@@ -58,9 +58,9 @@
             <div class="container h-100">
               <div class="d-flex h-100 text-center align-items-center">
                 <div class="w-100 text-white">
-                  <h1 class="display-3">Trip Planner</h1>
-                  <p class="lead mb-0">create, save and share itineraries</p>
-                  <a href="../form" class="mt-4 btn btn-primary text-uppercase">get started</a>
+                  <h1 class="display-1">Trip Planner</h1>
+                  <p class="lead mb-0"><code class="text-white">create</code>, <code class="text-white">save</code> <small>and</small> <code class="text-white">share</code> itineraries.</p>
+                  <a href="../form" class="mt-4 btn btn-primary input_style text-uppercase">start</a>
                 </div>
               </div>
             </div>
@@ -102,15 +102,16 @@
             <div class="container-fluid">
 
                 <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
-
-                <ul class="navbar-nav gap-2">
-                    <li class="nav-item">
-                        <button id="login_button_sm" class="input_style_sm">Log in</button>
-                    </li>
-                    <li class="nav-item">
-                        <button id="register_button_sm" class="input_style_sm">Sign up</button>
-                    </li>
-                </ul>
+                <div class="mx-5">
+                    <ul class="navbar-nav gap-2">
+                        <li class="nav-item">
+                            <button id="login_button_sm" class="input_style_sm btn btn-primary">Log in</button>
+                        </li>
+                        <li class="nav-item">
+                            <button id="register_button_sm" class="input_style_sm btn btn-primary">Sign up</button>
+                        </li>
+                    </ul>
+                </div>
 
             </div>
         </nav>
@@ -144,7 +145,7 @@
                                 <div class="invalid-feedback" id="login_password_f">Type a password.</div>
                             </div>
 
-                            <input class="input_style button" type="submit" value="login">                
+                            <input class="input_style button btn btn-primary" type="submit" value="login">                
                         </form>
 
                         <form action="" method="POST" id="register_form" class="needs-validation" novalidate style="display:none;">
@@ -165,18 +166,18 @@
                                 <div class="invalid-feedback" id="register_password_2_f">Password is not the same.</div>
                             </div>
 
-                            <input class="input_style button" type="submit" value="register">     
+                            <input class="input_style button input_style btn btn-primary" type="submit" value="register">     
 
                         </form>
-                        <p class="text-white">or</p>
-                        <a id="register_button" class="input_style button" >Register</a>
-                        <a id="login_button" class="input_style button"  style="display:none;">Login</a>
+                        <p class="text-white text-center mt-2">or</p>
+                        <a id="register_button" class="input_style button btn btn-primary mt-0" >Register</a>
+                        <a id="login_button" class="input_style button btn btn-primary"  style="display:none;">Login</a>
                     </div>
                 </div>
                 <div class="col-sm-6 d-flex justify-content-center">
-                    <div class="text-white">
-                        <h1 class="display-3">Trip Planner</h1>
-                        <p class="lead mb-0">create, save and share itineraries</p>
+                    <div class="text-white text-center">
+                        <h1 class="display-1">Trip Planner</h1>
+                        <p class="lead mb-0"><code class="text-white">create</code>, <code class="text-white">save</code> <small>and</small> <code class="text-white">share</code> itineraries.</p>
                     </div>
                 </div>
             </div>
@@ -196,7 +197,7 @@
             </div> 
             <div class="row align-items-center py-5">
                 <div class="col text-center text-white">
-                    <p>asdjksdaksadkl</p>
+                    <p><code class="text-white">asdjksdaksadkl</code></p>
                 </div>
             </div> 
         </div>

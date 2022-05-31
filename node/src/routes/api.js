@@ -12,7 +12,8 @@ router.get('/api/itineraries/', (req, res) => {
     tags = [];
     if(req.query.architecture) tags.push('"architecture"');
     if(req.query.cultural) tags.push('"cultural"');
-    if(req.query.historical) tags.push('"historical"');
+    if(req.query.foods) tags.push('"foods"');
+    if(req.query.hotel) tags.push('"hotel"');
     if(req.query.natural) tags.push('"natural"');
     if(req.query.religion) tags.push('"religion"');
 
@@ -118,7 +119,8 @@ router.post('/api/itineraries', (req, res) => {
                   place_kinds = JSON.parse(response.body).kinds;
                   if(place_kinds.includes("architecture") && !tags.includes("architecture")) tags.push("architecture");
                   if(place_kinds.includes("cultural") && !tags.includes("cultural")) tags.push("cultural");
-                  if(place_kinds.includes("historical") && !tags.includes("historical")) tags.push("historical");
+                  if(place_kinds.includes("foods") && !tags.includes("foods")) tags.push("foods");
+                  if(place_kinds.includes("hotel") && !tags.includes("hotel")) tags.push("hotel");
                   if(place_kinds.includes("natural") && !tags.includes("natural")) tags.push("natural");
                   if(place_kinds.includes("religion") && !tags.includes("religion")) tags.push("religion");
                 get_tags(array);

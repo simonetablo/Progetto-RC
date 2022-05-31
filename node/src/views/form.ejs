@@ -15,29 +15,34 @@
     <body class="bg-dark">
         
         <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
-            <div class="container-fluid">
-                <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"><%=username%></a>
-                        <ul class="dropdown-menu bg-black">
-                            <li>
-                                <div class="dropdown-item card bg-dark text-white">
-                                    <div class="card-header">
-                                        <h4 class="card-title"><%=username%></h4>
-                                        <p class="card-text"><%=email%></p>
-                                    </div>
-                                    <div class="card-body d-grid gap-3">
-                                        <button type="button" class="btn btn-primary btn-block">Settings</button>
-                                        <button type="button" class="btn btn-primary btn-block">Log out</button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+			<div class="container-fluid">
+
+				<a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
+
+				<ul class="navbar-nav px-5">
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
+						<ul class="dropdown-menu mt-2" style="background-color: rgb(50, 50, 50, 0.3);">
+							<li>
+								<div class="dropdown-item card bg-dark text-white">
+									<div class="card-header">
+										<h4 class="card-title"><%=username%></h4>
+										<p class="card-text"><%=email%></p>
+									</div>
+									<div class="card-body d-grid gap-3">
+										<button type="button" class="btn btn-primary input_style_sm btn-block">Settings</button>
+										<button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</li>
+
+				</ul>
+
+			</div>
+		</nav>
 
 
 
@@ -51,9 +56,12 @@
 			
     	        <div class=" text-white">
 				
-    	            <form action="../testing" method="GET" id="form">
+    	            <form action="" method="GET" id="form">
 					
     	                <div class="row my-5">
+						
+    	                </div>
+						<div class="row my-4">
 						
     	                </div>
     	                <div class="row align-items-center mx-2">
@@ -90,10 +98,16 @@
     	                                        <input type="checkbox"  name="cultural" hidden>
     	                                        <i class="fa-solid fa-book-open"></i>
     	                                    </button>
-    	                                    <button type="button"  class="tag" id="historical" style="margin-top: 0px;">
-    	                                        <input type="checkbox" name="historical" hidden>
-    	                                        <i class="fa-solid fa-monument"></i>
+
+											<button type="button"  class="tag" id="foods" style="margin-top: 0px;">
+    	                                        <input type="checkbox" name="foods" hidden>
+    	                                        <i class="fa-solid fa-utensils"></i>
     	                                    </button><br>
+
+    	                                    <button type="button"  class="tag" id="hotel" style="margin-top: 0px;">
+    	                                        <input type="checkbox" name="hotel" hidden>
+    	                                        <i class="fa-solid fa-bed"></i>
+    	                                    </button>
 										
     	                                    <button type="button"  class="tag" id="natural">
     	                                        <input type="checkbox"  name="natural" hidden>
@@ -104,7 +118,7 @@
     	                                        <input type="checkbox"  name="religion" hidden>
     	                                        <i class="fa-solid fa-hands-praying"></i>
     	                                    </button>
-    	                                    <button type="button" class="tag_all" id="all"><i class="fa-solid fa-shuffle"></i></i></button>
+    	                                    <!-- <button type="button" class="tag_all" id="all"><i class="fa-solid fa-shuffle"></i></i></button> -->
     	                                </fieldset>
     	                            </div>
     	                        </div>
@@ -125,7 +139,7 @@
     	                    <div class="d-flex col-sm align-items-center justify-content-center">
     	                        <div class="card card_menu text-center">
     	                            <div class="card-body">                             
-    	                                <input class="input_style button mt-0" type="submit" value="search">   
+    	                                <input class="input_style button mt-0 btn btn-primary" type="submit" value="search">   
     	                            </div>
     	                        </div>
     	                    </div>
@@ -137,7 +151,7 @@
     	                    <div class="d-flex col-sm align-items-center justify-content-center">
     	                        <div class="card card_menu text-center">
     	                            <div class="card-body">    
-										<a href="../planner"><button class="input_style mx-2 mb-2">new</button></a>                         
+										<a href="../planner"><button class="input_style mx-2 mb-2 btn btn-primary">new</button></a>                         
     	                                 
     	                            </div>
     	                        </div>
@@ -152,7 +166,7 @@
 		
     	</div>
 	
-    	<section class="bg-dark">
+    	<section class="d-flex flex-column bg-dark justify-content-center align-items-center m-3">
 		
 			<div class="d-flex align-items-center mb-5">
 				<div class="col text-center">
@@ -160,106 +174,120 @@
 				</div>
 			</div> 
 
-    	    <div class="d-flex flex-column align-items-center mx-3" id="itineraries"> 
-    	   	</div>       
-	   
+			<h5 class="text-white text-center" style="letter-spacing:2px; font-weight: 400;">itineraries</h5>
+
+			<div class="card mt-4 bg-dark card_list text-center container p-2 m-5" style="max-width: 700px;  box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+				<div class="card-body d-flex flex-column  align-items-center mx-3" id="itineraries">                             
+					<i class="fa-solid fa-ellipsis" style="color:#cad2d3"></i>
+				</div>
+			</div>
+
     	</section>
 
-    </body>
 
-    <script>
-	var base_url = window.location.origin;
 
-        $("#all").on('click', (event)=>{
-            target = event.target;
-            target.classList.toggle("active");
-            if(target.classList.contains("active")){
-                $(".tag").trigger('click')
-            }
-            else{
-                $(".tag").trigger('click')
-            }
-        })
-        $(".tag").on('click', (event)=>{
-            target = event.target;
-            if(!target.classList.contains("tag")){
-                target = target.parentNode;
-            }
-            $(".background_image").attr("src", "../media/form_images/"+target.id+"_image.png");
-
-            if(target.classList.length == 2){
-                target.classList.remove(target.classList[1]);
-                target.childNodes[1].checked = false;
-                console.log(target.childNodes[1].value);
-            }
-            else{
-            target.classList.add("tag_color_"+ target.id);
-            target.childNodes[1].checked = true;
-            console.log(target.childNodes[1]);
-            }
-        })
-
-        $(".tag").on('mouseleave', (event)=>{
-            target = event.target;
-            if(!target.classList.contains("tag")){
-                target = target.parentNode;
-            }
-            //$(".background_image").attr("src", "images/image.png");
-            $("#tag_label").css("opacity", "0");
-        })
-
-        $(".tag").on('mouseover', (event)=>{
-            target = event.target;
-            if(!target.classList.contains("tag")){
-                target = target.parentNode;
-            }
-            $(".background_image").attr("src", "../media/form_images/"+target.id+"_image.png");
-            $("#tag_label").html(target.id);
-            $("#tag_label").css("opacity", "100");
-        })
-
+		<script>
+			var base_url = window.location.origin;
 		
-		form = document.getElementById('form');
-		form.addEventListener('submit', function(event) {
-			$("#itineraries").html("");
-			event.preventDefault();
-            event.stopPropagation();
-			formData = new FormData(this);
-			const data = [...formData.entries()];
-  			const query_string = data.map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`).join('&');
-			get_url = base_url+ '/api/itineraries?'+ query_string
-			$.get(get_url, (res)=>{			
-				res.data.forEach((itinerary, i) =>{ 
-					title = itinerary.value.title;
-					author = itinerary.value.author;
-					tags = itinerary.value.tags;
-					html_tags = "";
-					for (const tag of tags) { 
-						if(tag=="architecture") html_tags+='<i class="fa-solid tag_color_architecture fa-archway"></i>';
-						else if(tag=="cultural") html_tags+='<i class="fa-solid fa-book-open tag_color_cultural"></i>'; 
-						else if(tag=="historical") html_tags+='<i class="fa-solid fa-monument tag_color_historical"></i>'; 
-						else if(tag=="natural") html_tags+='<i class="fa-solid fa-tree tag_color_natural"></i>'; 
-						else if(tag=="religion") html_tags+='<i class="fa-solid fa-hands-praying tag_color_religion"></i>'; 
+			$(window).on('load', function(){
+
+				$("#logout_button").click(function(){
+					$.post(base_url + "/logout",()=>{ 
+						window.location = base_url; 
+					});
+				});	
+		
+				$("#all").on('click', (event)=>{
+					target = event.target;
+					target.classList.toggle("active");
+					if(target.classList.contains("active")){
+						$(".tag").trigger('click')
 					}
-					$("#itineraries").append(`<div class="d-flex card_itinerary p-2 justify-content-between m-3">
-    	            <div class="d-flex text-start align-items-center mx-3">
-    	                <div>
-    	                    <h5 class="card-title small m-0 mb-2">${title}</h5>
-    	                    <p class="card-text small">by: ${author}</p>
-    	                </div>
-    	            </div>
-    	            <div class="text-end p-2 mx-3"  >
-							<a href="${base_url + '/planner?id=' + itinerary.id}"><button class="input_style_small mx-2 mb-2">View</button></a>
-							${html_tags}                                               
-    	            </div>
-    	        </div>`)
+					else{
+						$(".tag").trigger('click')
+					}
 				});
-			})
 
-			
-			
-
-		});
-    
-        </script>
+				$(".tag").on('click', (event)=>{
+					target = event.target;
+					if(!target.classList.contains("tag")){
+						target = target.parentNode;
+					}
+					$(".background_image").attr("src", "../media/form_images/"+target.id+"_image.png");
+		
+					if(target.classList.length == 2){
+						target.classList.remove(target.classList[1]);
+						target.childNodes[1].checked = false;
+						console.log(target.childNodes[1].value);
+					}
+					else{
+					target.classList.add("tag_color_"+ target.id);
+					target.childNodes[1].checked = true;
+					console.log(target.childNodes[1]);
+					}
+				});
+		
+				$(".tag").on('mouseleave', (event)=>{
+					target = event.target;
+					if(!target.classList.contains("tag")){
+						target = target.parentNode;
+					}
+					//$(".background_image").attr("src", "images/image.png");
+					$("#tag_label").css("opacity", "0");
+				})
+		
+				$(".tag").on('mouseover', (event)=>{
+					target = event.target;
+					if(!target.classList.contains("tag")){
+						target = target.parentNode;
+					}
+					$(".background_image").attr("src", "../media/form_images/"+target.id+"_image.png");
+					$("#tag_label").html(target.id);
+					$("#tag_label").css("opacity", "100");
+				});
+		
+				
+				form = document.getElementById('form');
+				form.addEventListener('submit', function(event) {
+					$("#itineraries").html('<i class="fa-solid fa-ellipsis" style="color:#cad2d3"></i>');
+					event.preventDefault();
+					event.stopPropagation();
+					formData = new FormData(this);
+					const data = [...formData.entries()];
+					  const query_string = data.map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`).join('&');
+					get_url = base_url+ '/api/itineraries?'+ query_string;
+					$.get(get_url, (res)=>{			
+						res.data.forEach((itinerary, i) =>{ 
+							title = itinerary.value.title;
+							author = itinerary.value.author;
+							tags = itinerary.value.tags;
+							html_tags = "";
+							for (const tag of tags) { 
+								if(tag=="architecture") html_tags+='<i class="fa-solid tag_color_architecture fa-archway" style="padding-left:3px"></i>';
+								else if(tag=="cultural") html_tags+='<i class="fa-solid fa-book-open tag_color_cultural" style="padding-left:3px"></i>'; 
+								else if(tag=="foods") html_tags+='<i class="fa-solid fa-utensils tag_color_foods" style="padding-left:3px"></i>';
+								else if(tag=="hotel") html_tags+='<i class="fa-solid fa-bed tag_color_hotel" style="padding-left:3px"></i>'; 
+								else if(tag=="natural") html_tags+='<i class="fa-solid fa-tree tag_color_natural" style="padding-left:3px"></i>'; 
+								else if(tag=="religion") html_tags+='<i class="fa-solid fa-hands-praying tag_color_religion" style="padding-left:3px"></i>'; 
+							}
+							$("#itineraries").append(`<div class="d-flex card_itinerary p-2 justify-content-between m-3">
+							<div class="d-flex text-start align-items-center mx-3">
+								<div>
+									<h5 class="card-title small m-0 mb-2">${title}</h5>
+									<p class="card-text small">by: ${author}</p>
+								</div>
+							</div>
+							<div class="text-end align-items-end d-flex flex-column p-2 mx-3"  >
+									<a href="${base_url + '/planner?id=' + itinerary.id}"><button class="input_style_small mx-2 mb-2">View</button></a>
+									<div>
+										${html_tags}   
+									</div>                                            
+							</div>
+						</div>`)
+						});
+					});
+				});
+			});		
+			</script>
+    </body>
 </html>

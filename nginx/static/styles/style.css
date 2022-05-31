@@ -34,21 +34,23 @@ html, body{
 }
 
 #right {
-    padding: 12px;
-    padding-right:20px;
+    padding: 20px;
+    padding-right:30px;
     width: 100%;
     height: 50%;
     float:left;
 }
 
 #map {
+   
     border-radius: 5px;
     display: block;
-    box-shadow: 1px;
+    
     width: 100%;
     height: 100%;
     position:relative;
     margin-left: 7px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
 #buttons{
@@ -226,8 +228,9 @@ html, body{
     box-sizing: border-box;
     border-top-width: 5px;
     border-top-style:solid;
-    background-color: #212529;
-    color:white;
+    background-color: #f6f6f4;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    color:#6b6b6b;
     overflow: auto;
 }
 .info>img{
@@ -273,6 +276,34 @@ html, body{
 
 }
 
+.tag_color_architecture{
+    color:#0d6efd
+  }
+  
+.tag_color_museums{
+  color:#d63384;
+}
+
+.tag_color_foods{
+  color:#d9534f;
+}
+
+.tag_color_accomodations{
+  color:#fd7e14;
+}
+
+.tag_color_natural{
+  color:#20c997;
+}
+
+.tag_color_religion{
+  color:#6610f2;
+}
+
+
+.tag_color_inactive{
+  color: #adb5bd;
+}
 .toSend{
     border:solid 1px;
     border-radius:5px;

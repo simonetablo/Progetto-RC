@@ -20,6 +20,42 @@ map.addControl(new mapboxgl.NavigationControl());
 var sendbtn=document.getElementById("send");
 sendbtn.addEventListener("click", sendToServer);
 
+//$(".tag").on('click', (event)=>{
+//    target = event.target;
+//    
+//    if(!target.classList.contains("tag")){
+//        target = target.parentNode;
+//    }
+//    console.log(target)
+//    if(target.classList.length == 2){
+//        target.classList.remove(target.classList[1]);
+//        console.log(target.childNodes[1].value);
+//    }
+//    else{
+//    target.classList.add("tag_color_"+ target.id);
+//    console.log(target.childNodes[1]);
+//    }
+//});
+//
+//$(".tag").on('mouseleave', (event)=>{
+//    target = event.target;
+//    if(!target.classList.contains("tag")){
+//        target = target.parentNode;
+//    }
+//    //$(".background_image").attr("src", "images/image.png");
+//    $("#tag_label").css("opacity", "0");
+//})
+//
+//$(".tag").on('mouseover', (event)=>{
+//    target = event.target;
+//    if(!target.classList.contains("tag")){
+//        target = target.parentNode;
+//    }
+//    $(".background_image").attr("src", "../media/form_images/"+target.id+"_image.png");
+//    $("#tag_label").html(target.id);
+//    $("#tag_label").css("opacity", "100");
+//});
+
 var btn=document.getElementById("buttons").getElementsByTagName("button");
 for(i=0; i<btn.length; i++){
     btn[i].addEventListener("click", showLayer)
@@ -41,16 +77,27 @@ for(i=0; i<pois.length; i++){
 }
 
 function showLayer(e){
+    target = e.target;
+    
+    if(!target.classList.contains("tag")){
+        target = target.parentNode;
+    }
+    console.log(target)
+    if(target.classList.length == 3){
+        target.classList.remove("tag_color_"+ target.id);
+    }
+    else{
+        target.classList.add("tag_color_"+ target.id);
+    }
+
     var name=this.id;
     if(this.value=="on"){
         map.setLayoutProperty("OTM-pois-"+name, "visibility", "none");
         this.value='off'
-        this.style.background="rgb(250, 250, 250)";
     }
     else if(this.value=="off"){
         map.setLayoutProperty("OTM-pois-"+name, "visibility", "visible");
         this.value='on'
-        this.style.background="rgb(210, 210, 210)";
     }
     else{
         this.value='on'
@@ -88,7 +135,6 @@ function showLayer(e){
         if(name=="accomodations"){
             map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
         }
-        this.style.background="rgb(210, 210, 210)";
         map.on("click", "OTM-pois-"+name, function(e) {
             let id = e.features[0].properties.id;
             let poiname = e.features[0].properties.name;
@@ -147,7 +193,7 @@ function showPOI(e){
         eye.classList.add("fa-eye")
     }
     else{
-        var layers=document.getElementsByClassName("filter");
+        var layers=document.getElementsByClassName("tag");
         for(i=0; i<layers.length; i++){
             if(layers[i].value=="on"){
                 map.setLayoutProperty("OTM-pois-"+layers[i].id, "visibility", "none");
