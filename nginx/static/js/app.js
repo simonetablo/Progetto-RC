@@ -16,9 +16,36 @@ var map = new mapboxgl.Map({
     zoom: -1,
 });
 map.addControl(new mapboxgl.NavigationControl());
+const sendbtn=document.getElementById("send");
+   
+    const modal = document.querySelector('#modal');
 
-var sendbtn=document.getElementById("send");
-sendbtn.addEventListener("click", sendToServer);
+    const closeBtn = document.querySelector('.close');
+
+    // Events
+    sendbtn.addEventListener("click",openPopUp)
+    closeBtn.addEventListener('click', closePopUp);
+    window.addEventListener('click', outsideClick);
+
+    addOnDb_btn=document.getElementById("dbSave")
+    addOnDb_btn.addEventListener("click", sendToServer);
+
+    // Open
+    function openPopUp() {
+    modal.style.display = 'block';
+  }
+  
+  // Close
+  function closePopUp() {
+    modal.style.display = 'none';
+  }
+  
+  // Close If Outside Click
+  function outsideClick(e) {
+    if (e.target == modal) {
+      modal.style.display = 'none';
+    }
+  }
 
 //$(".tag").on('click', (event)=>{
 //    target = event.target;
@@ -511,6 +538,7 @@ function getPOI(target){
 
 //COMMANDS
 function sendToServer(e){
+    let  title = document.getElementById("popup-title").value
     let day_elements=document.getElementsByClassName("day");
     let days=[];
     for(i=0; i<day_elements.length; i++){ 
@@ -523,7 +551,8 @@ function sendToServer(e){
         day_obj = {plan : plan}
         days.push(day_obj);
     }
-    itinerary_obj = {itinerary : days };
+    itinerary_obj = {title:"default_title" ,itinerary : days };
+    itinerary_obj.title=title
     $.post( base_url+"/api/itineraries", itinerary_obj);
 }
 

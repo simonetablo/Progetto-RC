@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css"/>
     <script src="https://kit.fontawesome.com/285899448d.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/style.css"/>
-    
+    <link rel="stylesheet" href="../styles/style_popUp.css"/>
 </head>
 <body>
     <nav id="navbar" class="navbar navbar-expand fixed-top bg-dark justify-content-center">
@@ -73,6 +73,31 @@
             <div id="left" >
                 
                 <button id="send" type="button" class="input_style_sm"><i class="fa-solid fa-share"></i></button>
+
+                <div  id="modal" class="modal">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <span class="close">&times;</span>
+                        <h2>Save your Itinerary</h2>
+                      </div>
+                      <div class="modal-body">
+                        <div class = "text-input">
+                            <input id = "popup-title" class="title" type="text" placeholder="Title of the itinerary" >
+                           
+                        </div>
+                
+                        <div class ="btn">
+                            <button id="dbSave" class="store-on-db-btn"  > Store on Trip Planner Database</button>
+                           
+                        </div>
+                
+                      </div>
+                      <div class="modal-footer">
+                        <h3>Trip Planner</h3>
+                      </div>
+                    </div>
+                  </div>
+
                 <button id="create" type="button" class="input_style_sm"><i class="fa-solid fa-circle-plus"></i></button>
                 <span id="searchBar"><input id="place" type="text" class="input_style_sm" name="Place"><button type="submit" id="search" onclick=search(this)><i class="fa-solid fa-magnifying-glass"></i></button></span>
 

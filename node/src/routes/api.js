@@ -74,8 +74,8 @@ router.post('/api/itineraries', (req, res) => {
             //
             tags = tags.sort();
             data = req.body.itinerary;
-            title = "test_title";
-            author = "test_author";
+            title = req.body.title;
+            author = req.session.username;
             //
             id = uuidv4();
             itinerary = {
