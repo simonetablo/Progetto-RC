@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css"/>
     <script src="https://kit.fontawesome.com/285899448d.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/style.css"/>
-    <link rel="stylesheet" href="../styles/style_popUp.css"/>
-</head>
+    
 <body>
     <nav id="navbar" class="navbar navbar-expand fixed-top bg-dark justify-content-center">
         <div class="container-fluid">
@@ -77,15 +76,15 @@
                     <div class="modal-content">
                       <div class="modal-header">
                         <span class="close">&times;</span>
-                        <h2>Save your Itinerary</h2>
+                        <h2 class="txt_msg">Save your Itinerary</h2>
                       </div>
                       <div class="modal-body">
                         <form id="send_form" action="" class="needs-validation" novalidate>
                         <div class="text-input" >
-                            <input class="form-control input_style_sm" type="text" id="popup-title" name="title" placeholder="Title" style="max-width:20%;"  required  />
+                            <input class="form-control input_style_sm" type="text" id="popup-title" name="title" placeholder="Title" style="max-width:100%;"  required  />
                             <div class="invalid-feedback" id="popup-title_f">Type a title.</div>
                         </div>
-                        <div class ="btn" id="pop_btn"><button id="dbSave" class="store-on-db-btn"> Store on Trip Planner Database</button><div class="spinner-border text-primary"></div><h1>ok</h1>    
+                        <div class ="btn" id="pop_btn"><button id="dbSave" class="store-on-db-btn"> Save</button><div class="spinner-border text-primary"></div><h1>ok</h1>    
                         </div>
                         </form>
                       </div>

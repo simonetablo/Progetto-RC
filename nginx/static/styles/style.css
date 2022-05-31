@@ -1,6 +1,15 @@
-html, body{
+html,
+
+:root{
+    height: 100%;
+	width: 100%;
+}
+
+
+body{
     width: 100%;
     height: 100%;
+    
 }
 
 #navbar{
@@ -332,17 +341,64 @@ html, body{
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
-#modal-content{
-    max-width: 100px;
-    height: 40%;
-}
-#modal-body{
 
-}
-.dbSave{
-    position:absolute;
-    left:200px;
-}
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.7);
+  }
+  .txt_msg{
+      margin-left: auto;
+      margin-right: auto;
+  }
+  .modal-header {
+   
+	padding: 15px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+  }
+  .modal-content {
+	margin: 10% auto;
+	width: 20%;
+	box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
+	animation-name: modalopen;
+	animation-duration: var(--modal-duration);
+  }
+  .close {
+	color: #ccc;
+	float: right;
+	font-size: 30px;
+	color: #fff;
+  }
+  
+  .close:hover,
+  .close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+  }
+  .text-input{
+	text-align:center;
+  }
+  #popup-title:focus,.popup-title:hover{
+      background-color: #bababa;
+  }
+  #dbSave{
+      border-radius : 5px;
+      border-style:hidden;
+      background-color: #bbbbbb;
+      font-size: medium;
+  }
+  #dbSave:focus,#dbSave:hover{
+      background-color: #878787;
+  }
+  
 
 @media only screen and (min-width:1600px){
     #left, #center, #right{
