@@ -26,7 +26,7 @@ router.post('/login/', async (req, res) => {
                         //res.send('failed, wrong password'); //username exists but wrong password
                         res.json({status:'error', 
                                 username:'',
-                                password: "wrong password"}); //username is not registered yet );
+                                password: "Wrong password"}); //username is not registered yet );
                     }
                 }catch{
                     res.status(500).send('error, bcrypt');
@@ -34,7 +34,7 @@ router.post('/login/', async (req, res) => {
             }
             else{
                 res.json({status:"error",
-                        username:'no user with that username is registered',
+                        username:'This username is not registered',
                          password: ""}); //username is not registered yet 
             }
         }
@@ -50,7 +50,7 @@ router.post('/logout/', (req, res) => {
         })
     }
     else{
-        res.send("you aren't logged in");  //no session to destroy
+        res.send("You aren't logged in");  //no session to destroy
     }
 });
 
@@ -79,7 +79,7 @@ router.post('/register/', async (req, res) => {
                 }
                 else{
                     res.json({status:"error",
-                        username:'no user with that username is registered',
+                        username:'This username already exists',
                         email:"",
                         password: ""});;  //user with same username already exists
                 }

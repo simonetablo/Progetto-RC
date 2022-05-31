@@ -48,7 +48,7 @@ function server_start(){
 
     app.get('/planner', (req, res) =>{
       if(!req.session.isAuth){
-        res.end();
+        res.redirect("/");
         return;
       }
       username = req.session.username,
@@ -178,7 +178,7 @@ function server_start(){
         if(req.session.isAuth){
             res.render('form', render_object);
         }else{
-            res.render('home', render_object)
+            res.redirect("/");
         }
     });
 

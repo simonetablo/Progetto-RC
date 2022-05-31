@@ -163,7 +163,7 @@
                             </div>
                             <div>
                                 <input class="form-control input_style" type="password" id="register_password_2" name="confirm_password" placeholder="verify password" required>
-                                <div class="invalid-feedback" id="register_password_2_f">Password is not the same.</div>
+                                <div class="invalid-feedback" id="register_password_2_f">Passwords are not the same.</div>
                             </div>
 
                             <input class="input_style button input_style btn btn-primary" type="submit" value="register">     
@@ -246,10 +246,10 @@
                 if (this.checkValidity() === false) {
                     //login_username
                     login_username.classList.remove("is-invalid");
-                    login_username_f.innerHTML = "username can't be empty";
+                    login_username_f.innerHTML = "Type a username";
                     //login_password
                     login_password.classList.remove("is-invalid");
-                    login_password_f.innerHTML = "password can't be empty";
+                    login_password_f.innerHTML = "Type a password";
                     event.preventDefault();
                     event.stopPropagation();
                     this.classList.add('was-validated');
@@ -297,16 +297,16 @@
                 if (this.checkValidity() === false) {
                     //login_username
                     register_username.classList.remove("is-invalid");
-                    register_username_f.innerHTML = "username can't be empty";
+                    register_username_f.innerHTML = "Type a username";
                     //login_email
                     register_email.classList.remove("is-invalid");
-                    register_email_f.innerHTML = "type a valid email";
+                    register_email_f.innerHTML = "Type a valid email";
                     //login_password
                     register_password_1.classList.remove("is-invalid");
-                    register_password_1_f.innerHTML = "password can't be empty";
+                    register_password_1_f.innerHTML = "Type a password";
                     //login_password
                     register_password_2.classList.remove("is-invalid");
-                    register_password_2_f.innerHTML = "repeat the password";
+                    register_password_2_f.innerHTML = "Confirm password";
                     event.preventDefault();
                     event.stopPropagation();
                     this.classList.add('was-validated');
@@ -317,7 +317,7 @@
                     form_data = new FormData(this);
                     if(form_data.get("password") != form_data.get("confirm_password")){
                         //register_password_2
-                        register_password_2_f.innerHTML = "password is not the same";
+                        register_password_2_f.innerHTML = "Passwords are not the same";
                         register_password_2.classList.add("is-invalid");
                     }
                     else{

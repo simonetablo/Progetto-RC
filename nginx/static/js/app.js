@@ -33,11 +33,10 @@ const sendbtn=document.getElementById("send");
     // Open
     function openPopUp() {
     
-    btn_div = document.getElementById("pop_btn");
     //
-    send_button = btn_div.childNodes[0];
-    spinner = btn_div.childNodes[1];
-    ok_message = btn_div.childNodes[2];
+    send_button = document.getElementById("dbSave");
+    spinner = document.getElementById("spinner");
+    ok_message = document.getElementById("ok");
 
     send_button.style.visibility = "visible";
     spinner.style.visibility = "hidden";
@@ -59,41 +58,11 @@ const sendbtn=document.getElementById("send");
     }
   }
 
-//$(".tag").on('click', (event)=>{
-//    target = event.target;
-//    
-//    if(!target.classList.contains("tag")){
-//        target = target.parentNode;
-//    }
-//    console.log(target)
-//    if(target.classList.length == 2){
-//        target.classList.remove(target.classList[1]);
-//        console.log(target.childNodes[1].value);
-//    }
-//    else{
-//    target.classList.add("tag_color_"+ target.id);
-//    console.log(target.childNodes[1]);
-//    }
-//});
-//
-//$(".tag").on('mouseleave', (event)=>{
-//    target = event.target;
-//    if(!target.classList.contains("tag")){
-//        target = target.parentNode;
-//    }
-//    //$(".background_image").attr("src", "images/image.png");
-//    $("#tag_label").css("opacity", "0");
-//})
-//
-//$(".tag").on('mouseover', (event)=>{
-//    target = event.target;
-//    if(!target.classList.contains("tag")){
-//        target = target.parentNode;
-//    }
-//    $(".background_image").attr("src", "../media/form_images/"+target.id+"_image.png");
-//    $("#tag_label").html(target.id);
-//    $("#tag_label").css("opacity", "100");
-//});
+$("#logout_button").click(function(){
+    $.post(base_url + "/logout",()=>{ 
+        window.location = base_url; 
+    });
+});	
 
 var btn=document.getElementById("buttons").getElementsByTagName("button");
 for(i=0; i<btn.length; i++){
@@ -585,7 +554,7 @@ $("#create").on('click', () => {
         </div>
     </div>
     <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
-    <button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>
+    <button value='off' type='button' onclick=showPOI(this) class='showBtn input_style_sm'><i class='fa-solid fa-eye'></i></button>
     </div>`
     day.classList.add("day");
     day.addEventListener('drop', handleDrop);
@@ -595,11 +564,10 @@ $("#create").on('click', () => {
 
 const send_form = document.getElementById('send_form');
 send_form.addEventListener('submit', function(event) {
-                btn_div = document.getElementById("pop_btn");
                 //
-                send_button = btn_div.childNodes[0];
-                spinner = btn_div.childNodes[1];
-                ok_message = btn_div.childNodes[2];
+                send_button = document.getElementById("dbSave");
+                spinner = document.getElementById("spinner");
+                ok_message = document.getElementById("ok");
                 //
                 const title = document.getElementById("popup-title");
                 const title_f = document.getElementById("popup-title_f");

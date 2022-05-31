@@ -5,8 +5,9 @@
     <title>Progetto RC/LTW</title>
     <BASE href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../libraries/bootstrap.min.css"/>
     <script type="text/javascript" src="../libraries/jquery.min.js"></script>
+    <link href="../libraries/bootstrap.min.css" rel="stylesheet">
+    <script src="../libraries/bootstrap.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js"></script>
     <script type="text/javascript" src="https://opentripmap.io/js/directory.en.js"></script>
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css"/>
@@ -14,16 +15,17 @@
     <link rel="stylesheet" href="../styles/style.css"/>
     
 <body>
-    <nav id="navbar" class="navbar navbar-expand fixed-top bg-dark justify-content-center">
+
+    <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
         <div class="container-fluid">
-    
+
             <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
-    
-            <ul class="navbar-nav">
-    
+
+            <ul class="navbar-nav px-5">
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
-                    <ul class="dropdown-menu bg-black">
+                    <ul class="dropdown-menu mt-2" style="background-color: rgb(50, 50, 50, 0.3);">
                         <li>
                             <div class="dropdown-item card bg-dark text-white">
                                 <div class="card-header">
@@ -31,16 +33,16 @@
                                     <p class="card-text"><%=email%></p>
                                 </div>
                                 <div class="card-body d-grid gap-3">
-                                    <button type="button" class="btn btn-primary btn-block">Settings</button>
-                                    <button type="button" id="logout_button" class="btn btn-primary btn-block">Log out</button>
+                                    <button type="button" class="btn btn-primary input_style_sm btn-block">Settings</button>
+                                    <button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </li>
-    
+
             </ul>
-    
+
         </div>
     </nav>
     <div id="container">
@@ -74,8 +76,8 @@
                 <button id="send" type="button" class="input_style_sm"><i class="fa-solid fa-share"></i></button>
                 <div  id="modal" class="modal">
                     <div class="modal-content">
+                    <span class="close"><i class="fa-solid fa-xmark fa-xs"></i></span>
                       <div class="modal-header">
-                        <span class="close">&times;</span>
                         <h2 class="txt_msg">Save your Itinerary</h2>
                       </div>
                       <div class="modal-body">
@@ -84,7 +86,7 @@
                             <input class="form-control input_style_sm" type="text" id="popup-title" name="title" placeholder="Title" style="max-width:100%;"  required  />
                             <div class="invalid-feedback" id="popup-title_f">Type a title.</div>
                         </div>
-                        <div class ="btn" id="pop_btn"><button id="dbSave" class="store-on-db-btn"> Save</button><div class="spinner-border text-primary"></div><h1>ok</h1>    
+                        <div class="btn" id="pop_btn"><button id="dbSave" class="store-on-db-btn input_style_sm"><i class="fa-solid fa-floppy-disk fa-xl"></i></button><div id="spinner" class="spinner-border text-primary"></div><h4 id="ok">ok</h4>    
                         </div>
                         </form>
                       </div>
@@ -101,13 +103,12 @@
                             </div>
                         </div>
                         <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
-                        <button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>
+                        <button value='off' type='button' onclick=showPOI(this) class='showBtn input_style_sm'><i class='fa-solid fa-eye'></i></button>
                         </div><%for(const pois of day.plan){ tag = tags.pop(); name = names.pop();%><div class="poi" value="<%=pois.id%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>
                 <%}}%></div>
                 
             </div>
     </div>
-    <script src="../libraries/bootstrap.min.js"></script>
     <script src="../js/app.js"></script>
 </body>
 </html>

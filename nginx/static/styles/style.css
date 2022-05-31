@@ -9,13 +9,8 @@ html,
 body{
     width: 100%;
     height: 100%;
-    
 }
 
-#navbar{
-    min-height: 6%;
-    max-height: 6%;
-}
 #container{
     position: absolute;
     background-color: #cad2d3;
@@ -288,7 +283,7 @@ body{
 }
 
 
-.show{
+.showBtn{
     width: 1%;
     aspect-ratio: 1/1;
     border-radius: 15px;
@@ -297,7 +292,7 @@ body{
     opacity: 0.8;
     overflow: hidden;
 }
-.show>i{
+.showBtn>i{
     position:absolute;
     transform: translate(-49%, -50%);
     font-size: 100%;
@@ -353,33 +348,34 @@ body{
 	overflow: auto;
 	background-color: rgba(0, 0, 0, 0.7);
   }
-  .txt_msg{
-      margin-left: auto;
-      margin-right: auto;
-  }
+
   .modal-header {
-   
-	padding: 15px;
+    text-align: center;
+	padding: 12px;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
+    white-space: nowrap;
+    display: inline-block;
   }
   .modal-content {
-	margin: 10% auto;
+	margin: 20vh auto;
 	width: 20%;
+    height: 30%;
+    min-width: 300px;
+    min-height: 250px;
 	box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
 	animation-name: modalopen;
 	animation-duration: var(--modal-duration);
   }
   .close {
-	color: #ccc;
+	color: rgb(26, 26, 26);
 	float: right;
 	font-size: 30px;
-	color: #fff;
   }
   
   .close:hover,
   .close:focus {
-	color: #000;
+	color: rgb(87, 87, 87);
 	text-decoration: none;
 	cursor: pointer;
   }
@@ -393,12 +389,63 @@ body{
       border-radius : 5px;
       border-style:hidden;
       background-color: #bbbbbb;
-      font-size: medium;
+      position: absolute;
+      margin-left: auto;
+      margin-right: auto;
+      left: 0;
+      right: 0;
+      bottom: -20px;
+      text-align: center;
+      width: 40px;
+      aspect-ratio: 1/1;
+  }
+  #dbSave>i{
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    bottom: 50%;
   }
   #dbSave:focus,#dbSave:hover{
       background-color: #878787;
   }
-  
+  #spinner{
+      position: absolute;
+      position: absolute;
+      margin-left: auto;
+      margin-right: auto;
+      left: 0;
+      right: 0;
+      text-align: center;
+      bottom: -20px;
+    }
+  #pop_btn{
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+  #ok{
+    transform: translateY(30px);
+  }
+  .close{
+      height: 25px;
+  }
+  #closeForm{
+      position: absolute;
+      right: 5px;
+      height: 30px;
+      text-align: center;
+      vertical-align: center;
+  }
+  .close>i{
+      position: absolute;
+      top: 12px;
+      right:8px;
+  }
 
 @media only screen and (min-width:1600px){
     #left, #center, #right{
