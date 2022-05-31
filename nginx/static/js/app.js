@@ -32,7 +32,19 @@ const sendbtn=document.getElementById("send");
 
     // Open
     function openPopUp() {
+    
+    btn_div = document.getElementById("pop_btn");
+    //
+    send_button = btn_div.childNodes[0];
+    spinner = btn_div.childNodes[1];
+    ok_message = btn_div.childNodes[2];
+
+    send_button.style.visibility = "visible";
+    spinner.style.visibility = "hidden";
+    ok_message.style.visibility = "hidden";
+
     modal.style.display = 'block';
+    //
   }
   
   // Close
@@ -109,7 +121,6 @@ function showLayer(e){
     if(!target.classList.contains("tag")){
         target = target.parentNode;
     }
-    console.log(target)
     if(target.classList.length == 3){
         target.classList.remove("tag_color_"+ target.id);
     }
@@ -316,7 +327,6 @@ function search(e){
 //PLACE
 function showInfo_map(obj){
     showInfo_aux(obj);
-    console.log("lol")
 }
 
 function showInfo(obj) {
@@ -335,7 +345,6 @@ function showInfo(obj) {
                 info: dataString
             },
             success: function(data) {
-                console.log(data);
                 //LoadedPoi[i].setAttribute("data", data);
                 $(lpoi).data(data);
                 showInfo_aux(obj);
@@ -348,7 +357,6 @@ function showInfo(obj) {
     }
     else{
         showInfo_aux(obj);
-        console.log("lol")
     }
     
 }
@@ -379,7 +387,6 @@ function showInfo_aux(obj){
     info.innerHTML="";
     info.appendChild(poi);
     info.getElementsByTagName("h2")[0].style.color=whichKind(data.kinds)
-    console.log(data)
 }
 
 function addToPlanner(e){
@@ -393,7 +400,6 @@ function addToPlanner(e){
     planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
     planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
     planner.style.borderLeftColor=whichKind(data.kinds);
-    console.log( document.getElementById("days").firstChild)
     document.getElementById("days").firstChild.appendChild(planner); 
     planner.addEventListener("dragstart", handleDragStart);
     planner.addEventListener("dragleave", handleDragLeave);
@@ -539,6 +545,8 @@ function getPOI(target){
 //COMMANDS
 function sendToServer(e){
     let  title = document.getElementById("popup-title").value
+    if(title == "") return;
+    if($(".day").length == 0) return;
     let day_elements=document.getElementsByClassName("day");
     let days=[];
     for(i=0; i<day_elements.length; i++){ 
@@ -553,7 +561,11 @@ function sendToServer(e){
     }
     itinerary_obj = {title:"default_title" ,itinerary : days };
     itinerary_obj.title=title
-    $.post( base_url+"/api/itineraries", itinerary_obj);
+    $.post( base_url+"/api/itineraries", itinerary_obj, ()=>{
+        send_button.style.visibility = "hidden";
+        spinner.style.visibility = "hidden";
+        ok_message.style.visibility = "visible";
+    });
 }
 
 $("#create").on('click', () => {
@@ -573,3 +585,35 @@ $("#create").on('click', () => {
     day.addEventListener('dragover', allowDrop);
     $("#days").append(day);
 });
+
+const send_form = document.getElementById('send_form');
+send_form.addEventListener('submit', function(event) {
+                btn_div = document.getElementById("pop_btn");
+                //
+                send_button = btn_div.childNodes[0];
+                spinner = btn_div.childNodes[1];
+                ok_message = btn_div.childNodes[2];
+                //
+                const title = document.getElementById("popup-title");
+                const title_f = document.getElementById("popup-title_f");
+                if (this.checkValidity() === false) {
+                    title.classList.remove("is-invalid");
+                    title_f.innerHTML = "title can't be empty";
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.classList.add('was-validated');
+                }
+                else{
+                    this.classList.remove('was-validated');
+                    event.preventDefault();
+                    if($(".poi").length == 0){
+                         title.classList.add("is-invalid");
+                         title_f.innerHTML = "itinerary can't be empty";
+                    }
+                    else{ 
+                        send_button.style.visibility = "hidden";
+                        spinner.style.visibility = "visible";
+                        ok_message.style.visibility = "hidden";
+                    }
+                }
+            })

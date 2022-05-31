@@ -56,12 +56,9 @@ router.get('/api/itineraries/', (req, res) => {
 }
 });
 
-//9e05514ac532e17115f7bf067a001a16
-
-
-
-
 router.post('/api/itineraries', (req, res) => {
+    console.log("ao")
+    console.log(req.body);
     tags = [];
     ids = [];
     for(const day of req.body.itinerary){
