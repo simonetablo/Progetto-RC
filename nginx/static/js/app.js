@@ -546,21 +546,28 @@ function getPOI(target){
 function sendToServer(e){
     let  title = document.getElementById("popup-title").value
     if(title == "") return;
-    if($(".day").length == 0) return;
+    if($(".poi").length == 0) return;
     let day_elements=document.getElementsByClassName("day");
     let days=[];
     for(i=0; i<day_elements.length; i++){ 
         let values=day_elements[i].getElementsByClassName("poi");
         let plan=[];
         for(j=0; j<values.length; j++){
-            poi_obj = { id: $(values[j]).data().xid}
+            console.log(values[j].getAttribute("value"));
+            if(values[j].getAttribute("value")==null){
+                poi_obj = { id: $(values[j]).data().xid}
+                plan.push(poi_obj);
+            }else{
+            poi_obj = { id: values[j].getAttribute("value")}
             plan.push(poi_obj);
+            }   
         }
         day_obj = {plan : plan}
         days.push(day_obj);
     }
     itinerary_obj = {title:"default_title" ,itinerary : days };
     itinerary_obj.title=title
+    console.log(itinerary_obj);
     $.post( base_url+"/api/itineraries", itinerary_obj, ()=>{
         send_button.style.visibility = "hidden";
         spinner.style.visibility = "hidden";
@@ -577,10 +584,10 @@ $("#create").on('click', () => {
             <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
         </div>
     </div>
+    <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
     <button value='off' type='button' onclick=showPOI(this) class='show input_style_sm'><i class='fa-solid fa-eye'></i></button>
     </div>`
-    day.classList.add("day")
-    day.classList.add("bg-dark")
+    day.classList.add("day");
     day.addEventListener('drop', handleDrop);
     day.addEventListener('dragover', allowDrop);
     $("#days").append(day);

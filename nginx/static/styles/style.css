@@ -10,12 +10,12 @@ html, body{
 #container{
     position: absolute;
     background-color: #cad2d3;
-    
     background-position: top;
     height: 94.5vh;
     min-height: 25rem;
     width: 100%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     bottom: 0;
 }
 
@@ -24,37 +24,35 @@ html, body{
     height: 50%;
     float: left;
     position: relative;
+    padding: 7px;
+    padding-top: 0;
 }
 
 #center {
     width: 100%;
     float: left;
     position: relative;
-    padding-bottom:20px;
 }
 
 #right {
-    padding: 20px;
-    padding-right:30px;
+    padding: 7px;
+    padding-top:10px;
     width: 100%;
     height: 50%;
     float:left;
 }
 
 #map {
-   
     border-radius: 5px;
     display: block;
-    
     width: 100%;
     height: 100%;
     position:relative;
-    margin-left: 7px;
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
 #buttons{
-    margin-top: 17px;
+
     text-align: center;
     height: 11vh;
 }
@@ -67,33 +65,27 @@ html, body{
     margin: 3px;
     font-size: 2vh;
     overflow: hidden;
-}
-
-#searchBar{
-    position: relative;
-}
-#search{
-    background-color: transparent;
-    border-color: transparent;
-    transform: translateX(-100%);
+    box-shadow: 2px 2px 5px rgb(82, 82, 82);
 }
 
 #days{
     position: absolute;
-    height: 92%;
-    width: 100%;
-    overflow: auto;
-    bottom:0;
+    height: 85%;
+    width: 99%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .day{
     position: relative;
     height: 50%;
+    width: 99%;
     border-radius:10px;
-    margin: 7px;
-    
-
-
+    margin-top: 7px;
+    box-shadow: 2px 2px 5px rgb(82, 82, 82);
+    overflow-y: auto;
+    background: #f6f6f4;
+    overflow-x: hidden;
 }
 .date{
     position: relative;
@@ -107,7 +99,6 @@ html, body{
     width: 100%;
     background: rgb(150, 150, 150);
     letter-spacing: 1.5px;
-    z-index: 999;
 }
 .forecast{
     position: absolute;
@@ -155,28 +146,36 @@ html, body{
 }
 
 #commands{
-    height: 8%;
-    position: absolute;
-    text-align: center;
-    margin: 2px;
+    position: relative;
+    margin: 7px;
 }
 
-/*#send{
-    height:3.6vh;
-    aspect-ratio: 1/1;
-    position: absolute;
-    background-image: url(./icons/save.svg);
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-left:7px;
-    margin-top:1px
+#send{
+    position: relative;
+    margin-right: 7px;
+    float:left;
 }
-*/
+#create{
+    position: relative;
+    margin-right: 7px;
+    float:left;
+}
+#searchBar{
+    max-width: 280px;
+}
+#search{
+    background-color: transparent;
+    border-color: transparent;
+
+}
+#place{
+    max-width: 230px;
+}
 
 #add{
     position: relative;
     float:right;
+    background: rgb(150, 150, 150);
 }
 
 .input_style_sm{
@@ -216,7 +215,7 @@ html, body{
     box-sizing: border-box;
     border-radius:5px;
     margin:2px;
-    height: 14%;
+    height: 16%;
     line-height: 29px;
     font-weight: 500;
     border-left-width: 6px;
@@ -333,6 +332,17 @@ html, body{
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
+#modal-content{
+    max-width: 100px;
+    height: 40%;
+}
+#modal-body{
+
+}
+.dbSave{
+    position:absolute;
+    left:200px;
+}
 
 @media only screen and (min-width:1600px){
     #left, #center, #right{
@@ -342,17 +352,19 @@ html, body{
     }
     .day{ height: 25%;}
     #commands{ height: 4%;}
-    #days{ height: 96%;}
+    #days{ height: 94%;}
     #container{
         height: 94%;
         overflow: hidden;
     }
-    .info{ height:78vh;}
+    .info{ height:79.9vh;}
     #add{
         position: absolute;
-        bottom: 32px;
+        bottom: 20px;
         right:14px;
     }
+    #buttons{margin-top: 17px;}
+    .poi{height: 14%;}
     .poi>button{
         height: 90%;
         background-size: 85%;
@@ -362,6 +374,7 @@ html, body{
         background-size: 70%;
         background-repeat: no-repeat;
         background-position: center;
+        padding-bottom:20px;
     }
 
 }
@@ -377,7 +390,14 @@ html, body{
         height: 50%;
         float: right;
     }
-    .day{ height: 50%;}
+    #days{ 
+        width: 98%;
+    }
+    .day{ 
+        height: 50%;
+        width: 100%;
+        margin-right: 7px;
+    }
     #container{overflow: hidden;}
     #center{
         background-image: url(./icons/vecteezy_grid-globe-map_1198029.png);
@@ -385,5 +405,8 @@ html, body{
         background-repeat: no-repeat;
         background-position:center;
     }
-    .info{ height:32vh;}
+    .info{ 
+        height:35vh;
+        margin-left: 8px;
+    }
 }

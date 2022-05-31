@@ -110,12 +110,12 @@ function server_start(){
                               place_json = JSON.parse(response.body)
                               place_kinds = place_json.kinds;
                               place_name = place_json.name;
-                              if(place_kinds.includes("museums")) tags.push("rgb(0, 168, 197)");
-                              else if(place_kinds.includes("foods")) tags.push("rgb(158, 0, 34)");
-                              else if(place_kinds.includes("religion")) tags.push("rgb(214, 180, 29)");
-                              else if(place_kinds.includes("natural")) tags.push("rgb(11, 116, 28)");
-                              else if(place_kinds.includes("architecture")) tags.push("rgb(123, 14, 138)");
-                              else if(place_kinds.includes("accomodations")) tags.push("rgb(20, 18, 100)");
+                              if(place_kinds.includes("museums")) tags.push("#d63384");
+                              else if(place_kinds.includes("foods")) tags.push("#33d6c9");
+                              else if(place_kinds.includes("religion")) tags.push("#6610f2");
+                              else if(place_kinds.includes("natural")) tags.push("#20c953");
+                              else if(place_kinds.includes("architecture")) tags.push("#0d6efd");
+                              else if(place_kinds.includes("accomodations")) tags.push("#fd7e14");
                               names.push(place_name)
                               get_info(array);
                         });

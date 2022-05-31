@@ -39,8 +39,7 @@
 	animation-duration: var(--modal-duration);
   }
   
-  .modal-header h2,
-  .modal-footer h3 {
+  .modal-header h2{
 	margin: 0;
   }
   
@@ -57,15 +56,6 @@
 	background: rgb(176, 176, 176);
 	
 	
-  }
-  
-  .modal-footer {
-	background: var(--modal-color);
-	padding: 10px;
-	color: #fff;
-	text-align: center;
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
   }
   
   .close {
@@ -115,11 +105,3 @@
 	background-color:#525252;
   }
 
-
-  .btn{
-	text-align: center;
-  }
-
-  .text-input{
-	text-align:center;
-  }
