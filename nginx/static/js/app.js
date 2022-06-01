@@ -259,7 +259,6 @@ function showPOI(e){
                 "circle-stroke-width": 0.6
             },
         });
-        console.log(JSON.stringify(geoJson));
         
         let eye= e.getElementsByClassName("fa-eye")[0]
         eye.classList.remove("fa-eye")
