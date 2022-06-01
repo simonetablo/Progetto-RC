@@ -45,7 +45,6 @@ function server_start(){
     }))
 
 
-
     app.get('/planner', (req, res) =>{
       if(!req.session.isAuth){
         res.redirect("/");
@@ -82,16 +81,16 @@ function server_start(){
                       ids.push(place.id)
                   }
               }
-              names = [];
-              tags = [];
+              data = [];
+              tags=[];
               get_info = (array) => {
                   if(array.length == 0){
-                      //console.log(names);
-                      //console.log(tags);
+                    console.log(data)
+                    console.log(tags)
                       render_obj = {
                           id : true,
                           itinerary : itinerary_json,
-                          names : names,
+                          data : data,
                           tags : tags,
                           username : username,
                           email : email
@@ -105,18 +104,15 @@ function server_start(){
                           method: "GET",
                         },
                           function(error, response, body){
-                              //console.log("ao?")
-                              //console.log(response.body);
                               place_json = JSON.parse(response.body)
                               place_kinds = place_json.kinds;
-                              place_name = place_json.name;
                               if(place_kinds.includes("museums")) tags.push("#d63384");
                               else if(place_kinds.includes("foods")) tags.push("#33d6c9");
                               else if(place_kinds.includes("religion")) tags.push("#6610f2");
                               else if(place_kinds.includes("natural")) tags.push("#20c953");
                               else if(place_kinds.includes("architecture")) tags.push("#0d6efd");
                               else if(place_kinds.includes("accomodations")) tags.push("#fd7e14");
-                              names.push(place_name)
+                              data.push(place_json)
                               get_info(array);
                         });
                     }
@@ -218,6 +214,7 @@ function server_start(){
     });
 
     app.post('/poinfo', function(req, res){
+      console.log("ok")
         var data = JSON.parse(req.body.info);
         //console.log(data.id);
         request({

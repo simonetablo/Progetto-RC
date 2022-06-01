@@ -104,7 +104,7 @@
                         </div>
                         <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
                         <button value='off' type='button' onclick=showPOI(this) class='showBtn input_style_sm'><i class='fa-solid fa-eye'></i></button>
-                        </div><%for(const pois of day.plan){ tag = tags.pop(); name = names.pop();%><div class="poi" value="<%=pois.id%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>
+                        </div><%for(const pois of day.plan){ tag = tags.pop(); info = data.pop(); name=info.name ; info_s=JSON.stringify(info)%><div class="poi" value="<%=info_s%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>
                 <%}}%></div>
                 
             </div>

@@ -146,7 +146,8 @@ body{
     padding: 4px;
     border-radius: 10px;
     z-index: 1000;
-    transform: translateX(21%);
+    transform: translateY(-15%);
+    z-index: 1000;
 }
 
 #commands{
