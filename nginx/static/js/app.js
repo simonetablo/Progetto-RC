@@ -11,10 +11,8 @@ window.addEventListener('load', (event)=>{
         let value=lpoi.getAttribute("value")
         if(value){
             let info=JSON.parse(value)
-            console.log(info)
             $(lpoi).data(info)
             lpoi.removeAttribute("value");
-            console.log($(lpoi).data().name)
         }
     }
 })
@@ -26,48 +24,40 @@ var map = new mapboxgl.Map({
     style: "mapbox://styles/mapbox/light-v10",
     zoom: -1,
 });
+
 map.addControl(new mapboxgl.NavigationControl());
-const sendbtn=document.getElementById("send");
-   
-    const modal = document.querySelector('#modal');
 
-    const closeBtn = document.querySelector('.close');
-
-    // Events
-    sendbtn.addEventListener("click",openPopUp)
-    closeBtn.addEventListener('click', closePopUp);
-    window.addEventListener('click', outsideClick);
-
-    addOnDb_btn=document.getElementById("dbSave")
-    addOnDb_btn.addEventListener("click", sendToServer);
-
-    // Open
-    function openPopUp() {
-    
-    //
+const sendbtn=document.getElementById("send");   
+const modal = document.querySelector('#modal');
+const closeBtn = document.querySelector('.close');
+// Events
+sendbtn.addEventListener("click",openPopUp)
+closeBtn.addEventListener('click', closePopUp);
+window.addEventListener('click', outsideClick);
+addOnDb_btn=document.getElementById("dbSave")
+addOnDb_btn.addEventListener("click", sendToServer);
+// Open
+function openPopUp() {
     send_button = document.getElementById("dbSave");
     spinner = document.getElementById("spinner");
     ok_message = document.getElementById("ok");
-
     send_button.style.visibility = "visible";
     spinner.style.visibility = "hidden";
     ok_message.style.visibility = "hidden";
-
     modal.style.display = 'block';
-    //
-  }
-  
+}
+
   // Close
-  function closePopUp() {
+function closePopUp() {
     modal.style.display = 'none';
-  }
+}
   
   // Close If Outside Click
-  function outsideClick(e) {
+function outsideClick(e) {
     if (e.target == modal) {
-      modal.style.display = 'none';
+        modal.style.display = 'none';
     }
-  }
+}
 
 $("#logout_button").click(function(){
     $.post(base_url + "/logout",()=>{ 
@@ -119,13 +109,21 @@ function showLayer(e){
     }
     else{
         this.value='on'
+        map.addSource("OTM-pois-"+name, {
+            type: "vector",
+            minzoom: 8,
+            maxzoom: 14,
+            scheme: "xyz",
+            tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
+        })
         map.addLayer({
             id: "OTM-pois-"+name,
             type: "circle",
-            source: {
+            source: "OTM-pois-"+name/*{
                 type: "vector",
                 tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
-            },
+            }*/,
+            minzoom: 8,
             layout: {
                 "visibility" : "visible"
             },
@@ -136,24 +134,6 @@ function showLayer(e){
             "source-layer": "pois",
         });
         map.setPaintProperty("OTM-pois-"+name, 'circle-color', whichKind(name));
-        /*if(name=="foods"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(158, 0, 34)")
-        }
-        if(name=="religion"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(214, 180, 29)")
-        }
-        if(name=="natural"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(11, 116, 28)")
-        }
-        if(name=="museums"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(0, 168, 197)")
-        }
-        if(name=="architecture"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(123, 14, 138)")
-        }
-        if(name=="accomodations"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
-        }*/
         map.on("click", "OTM-pois-"+name, function(e) {
             let id = e.features[0].properties.id;
             let poiname = e.features[0].properties.name;
@@ -197,7 +177,7 @@ function showLayer(e){
         map.on("mouseleave", "OTM-pois-"+name, function () {
             map.getCanvas().style.cursor = "";
             popup.remove();
-        });   
+        });
     }
 };
 
@@ -223,20 +203,20 @@ function showPOI(e){
                 btn.classList.remove("tag_color_"+btn.id);
             }
         }
-        let parent=e.parentNode;
-        var pois=parent.parentNode.getElementsByClassName("poi");
+        var pois=e.closest(".day").getElementsByClassName("poi");
         var geoJson={
             type: "FeatureCollection",
             features: []
         }
         for(j=0; j<pois.length; j++){
             let datastring=JSON.stringify($(pois[j]).data());
-            let data=JSON.parse(datastring);
+            var data=JSON.parse(datastring);
+            var latLon=[data.point.lon, data.point.lat]
             geoJson.features.push({
                 "type": "Feature",
                     "geometry": {
                         "type": "Point",
-                        "coordinates": [data.point.lon, data.point.lat]
+                        "coordinates": latLon
                     },
                     "properties": {
                         "name": data.name
@@ -263,11 +243,17 @@ function showPOI(e){
         let eye= e.getElementsByClassName("fa-eye")[0]
         eye.classList.remove("fa-eye")
         eye.classList.add("fa-eye-slash")
+
+        map.flyTo({
+            center: latLon,
+            zoom: 10,
+            speed: 2,
+        })
         
-            let popup = new mapboxgl.Popup({
-                closeButton: false,
-                closeOnClick: false,
-            });
+        let popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false,
+        });
 
         map.on("mouseenter", "day", function(e) {
             map.getCanvas().style.cursor = "pointer";
@@ -346,12 +332,24 @@ function addToPlanner(e){
     planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
     planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
     planner.style.borderLeftColor=whichKind(data.kinds);
-    document.getElementById("days").firstChild.appendChild(planner); 
+    let firstDay=document.getElementById("days").firstChild;
+    firstDay.appendChild(planner);
     planner.addEventListener("dragstart", handleDragStart);
     planner.addEventListener("dragleave", handleDragLeave);
     planner.addEventListener("dragend", handleDragEnd)
     planner.addEventListener('drop', handleDrop);
     planner.addEventListener('dragover', allowDrop);
+    if(firstDay.getElementsByClassName("poi").length==1){
+        let date=firstDay.getElementsByClassName("date_elem")[0]
+            if(date.value!=""){
+            let coord={
+                lat : data.point.lat,
+                lon : data.point.lon
+            }
+            let coordToServer=JSON.stringify(coord);
+            getForecast(coordToServer, firstDay);
+        }
+    }
 }
 
 function whichKind(kind){
@@ -377,14 +375,39 @@ function clonePOI(e){
 }
 
 //FORECAST
-function getForecast(date_element){
+function forecast_aux(date_element){
+    let tmp=date_element.parentNode;
+    let firstPoi=tmp.parentNode.nextSibling;
+    if(firstPoi!=null){
+        let lat=$(firstPoi).data().point.lat;
+        let lon=$(firstPoi).data().point.lon;
+        let day=firstPoi.closest(".day");
+        let coord={
+            lat : lat,
+            lon : lon
+        }
+        let coordToServer=JSON.stringify(coord);
+        getForecast(coordToServer, day);
+    }else{
+        let day=date_element.closest(".day")
+        day.getElementsByClassName("not_forecastPopup")[0].innerHTML="Enter a destination to know the weather forecast";
+    }
+
+}
+
+function getForecast(coord, day){
+    let date_element=day.getElementsByClassName("my-1")[0];
     var currentTime = new Date();
     date = new Date(date_element.value);
     difference = Math.ceil((date-currentTime)/ (1000 * 3600 * 24));
     forecast_element = date_element.nextElementSibling;
     $.ajax({
-        type:"GET",
+        type:"POST",
         url:base_url+'/weather',
+        dataType:"json",
+        data: { 
+            info: coord 
+        },
         success:function (forct){
                     if(difference >= 0 && difference <= 7){   
                         let forecast = forct.daily[difference]
@@ -453,6 +476,19 @@ function handleDrop(e){
         }
     }else if(e.target.classList.contains("day")){
         e.target.appendChild(dragging);
+        let day=e.target;
+        let pois=day.getElementsByClassName("poi");
+        if(pois.length==1){
+            let date=day.getElementsByClassName("date_elem")[0]
+            if(date.value!=""){
+                let coord={
+                    lat : $(pois[0]).data().point.lat,
+                    lon : $(pois[0]).data().point.lon
+                }
+                let coordToServer=JSON.stringify(coord);
+                getForecast(coordToServer, day);
+            }
+        }
     }
 }
 
@@ -525,9 +561,9 @@ $("#create").on('click', () => {
     let day=document.createElement("div");
     day.innerHTML = `<div class="date d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-        <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
+        <input type="date" class="input_style_sm my-1 date_elem" oninput="forecast_aux(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
             <i class="fa-solid fa-circle-exclamation mx-2"></i>
-            <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
+            <span class="not_forecastPopup">Enter a date to know the weather forecast</span>
         </div>
     </div>
     <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
@@ -541,11 +577,9 @@ $("#create").on('click', () => {
 
 const send_form = document.getElementById('send_form');
 send_form.addEventListener('submit', function(event) {
-                //
                 send_button = document.getElementById("dbSave");
                 spinner = document.getElementById("spinner");
                 ok_message = document.getElementById("ok");
-                //
                 const title = document.getElementById("popup-title");
                 const title_f = document.getElementById("popup-title_f");
                 if (this.checkValidity() === false) {

@@ -55,6 +55,10 @@ body{
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
+.mapboxgl-ctrl-logo {
+    display: none !important;
+}
+
 #buttons{
 
     text-align: center;
@@ -85,7 +89,7 @@ body{
     height: 50%;
     width: 99%;
     border-radius:10px;
-    margin-top: 7px;
+    margin-bottom: 7px;
     box-shadow: 2px 2px 5px rgb(82, 82, 82);
     overflow-y: auto;
     background: #f6f6f4;
@@ -152,7 +156,8 @@ body{
 
 #commands{
     position: relative;
-    margin: 7px;
+    margin-bottom: 7px;
+    margin-top: 3px;
 }
 
 #send{
@@ -167,14 +172,16 @@ body{
 }
 #searchBar{
     max-width: 280px;
+    white-space: nowrap;
 }
 #search{
     background-color: transparent;
     border-color: transparent;
-
+    display:inline-block;
 }
 #place{
     max-width: 230px;
+    display:inline-block;
 }
 
 #add{
@@ -274,7 +281,6 @@ body{
   color:#6610f2;
 }
 
-
 .tag_color_inactive{
   color: #adb5bd;
 }
@@ -282,7 +288,6 @@ body{
     border:solid 1px;
     border-radius:5px;
 }
-
 
 .showBtn{
     width: 1%;
@@ -312,7 +317,7 @@ body{
     position:absolute;
     transform: translate(0, -50%);
     font-size: 100%;
-    right: 8%
+    right: 50px;
 }
 
 .w-icon{
@@ -455,7 +460,10 @@ body{
         float: right;
     }
     .day{ height: 25%;}
-    #commands{ height: 4%;}
+    #commands{ 
+        margin-top: 14px;
+        height: 4%;
+    }
     #days{ height: 94%;}
     #container{
         height: 94%;
@@ -512,5 +520,11 @@ body{
     .info{ 
         height:35vh;
         margin-left: 8px;
+    }
+}
+
+@media only screen and (max-width:390px){
+    #place{
+        margin-top: 5px;
     }
 }

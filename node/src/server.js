@@ -147,9 +147,10 @@ function server_start(){
         res.end();
       });
 
-    app.get("/weather", function(req,res,next){
-        lat = 0;
-        lon = 0;
+    app.post("/weather", function(req,res,next){
+      var data = JSON.parse(req.body.info);
+        let lat = data.lat;
+        let lon = data.lon;
         let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=metric&appid=${openWeatherApiKey}`
         request({
           url:url,
@@ -214,7 +215,6 @@ function server_start(){
     });
 
     app.post('/poinfo', function(req, res){
-      console.log("ok")
         var data = JSON.parse(req.body.info);
         //console.log(data.id);
         request({
