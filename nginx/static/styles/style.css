@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700;800&display=swap');
+
+*{
+  font-family : 'Poppins', sans-serif
+}
+
+
 html,
 
 :root{
@@ -451,6 +458,34 @@ body{
       position: absolute;
       top: 12px;
       right:8px;
+  }
+
+  .dropdown-menu{
+    background-color: rgb(50, 50, 50, 0.3);
+  }
+  
+  .dropdown-item > .card-header{
+    max-width: 170px;
+  }
+  
+  .dropdown-menu{
+    background-color: rgb(50, 50, 50, 0.3);
+  }
+  
+  .dropdown-item > .card-header{
+    max-width: 170px;
+  }
+    
+  .card-title{
+    font-size:80%; 
+    overflow-x: scroll;
+    overflow-y: hidden; 
+  }
+  
+  
+  .card-text{
+    font-size:80%; 
+    overflow-x: scroll;
   }
 
 @media only screen and (min-width:1600px){

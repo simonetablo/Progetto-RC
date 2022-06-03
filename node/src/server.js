@@ -23,9 +23,7 @@ function server_start(){
 
     app.set("views", path.join(__dirname, "views"));
     app.set('view engine', 'ejs');
-    //app.use(express.static(file da serivre))
-    
-    //app.set('views', 'myviews');
+
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }));
 
@@ -60,11 +58,8 @@ function server_start(){
         return
       }
       request({
-          //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
           url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id,  
           method: 'GET',
-          //headers: {'content-type': 'application/json'},
-          //body: JSON.stringify({"keys": ["culture", "religion"]})
       }, function(error, response, body){
           if(error) {
               console.log(error);
@@ -143,7 +138,6 @@ function server_start(){
 
     app.post('/addpois', function(req, res){
         var data=JSON.parse(req.body.info);
-        //console.log(data);
         res.end();
       });
 
@@ -185,12 +179,6 @@ function server_start(){
             'username' : req.session.username,
             'email' : req.session.email
         }
-        //if(req.session.isAuth){
-        //    //res.send('content: you are logged in as '+ req.session.username);   //user is authenticated, show protected content
-        //    res.render('index', {username : req.session.username});
-        //}else{
-        //    res.send('you are not authenticated, protected content');  //user is not authenticated, cant show protected content
-        //}
         res.render('home', render_object);
     });
 
@@ -208,7 +196,6 @@ function server_start(){
           } else if (!error && response.statusCode==200){
             info = JSON.parse(body);
             ejs_json = { lat: info.lat, lon: info.lon, inizio_viaggio, fine_viaggio, username: "test_username"}
-            //console.log(ejs_json)
             res.render('planner', ejs_json);
           }
         })
@@ -216,7 +203,6 @@ function server_start(){
 
     app.post('/poinfo', function(req, res){
         var data = JSON.parse(req.body.info);
-        //console.log(data.id);
         request({
           url:"https://api.opentripmap.com/0.1/en/places/xid/"+data.id+"?apikey="+openTripMapKey,
           method: "GET",
@@ -225,7 +211,6 @@ function server_start(){
           if(error) {
             console.log(error);
           } else if (!error && response.statusCode==200){
-              //console.log(body)
             res.send(body);
           }
         })
@@ -247,7 +232,7 @@ request(
         if(error) {
             console.log(error); //error creating user_db
         } else {
-            //console.log(response.body);  //user_db created successfully or already existing
+            //user_db created successfully or already existing
             request(
                 {
                     url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/sessions_db', 
@@ -257,7 +242,7 @@ request(
                     if(error) {
                         console.log(error); //error creating sessions_db
                     } else {
-                        console.log(response.body); //sessions_db created successfully or already existing
+                        //sessions_db created successfully or already existing
                         request(
                             {
                                 url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db', 
@@ -267,7 +252,7 @@ request(
                                 if(error) {
                                     console.log(error); //error creating sessions_db
                                 } else {
-                                    console.log(response.body); //sessions_db created successfully or already existing
+                                    //sessions_db created successfully or already existing
                                     //create view
                                     request(
                                         {
@@ -302,7 +287,7 @@ request(
                                             if(error) {
                                                 console.log(error); //error creating tag_view
                                             } else {
-                                                console.log(response.body); //tag_view created
+                                                //tag_view created
                                                 
                                                 server_start();
                                                 

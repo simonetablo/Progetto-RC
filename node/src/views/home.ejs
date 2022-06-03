@@ -1,108 +1,59 @@
+<!-- La homepage di trip planner.-->
+<!-- La pagina è generata dinamicamente utilizzando ejs.-->
+<!-- in particolare il server genera due pagine html diverse in base all'autenticazione dell'utente.-->
+<!-- inoltre, se l'utente ha eseguito l'accesso, vengono riportati username e email nel menu della barra di navigazione-->
+<!-- La validazione delle form di registrazione e accesso sono gestite dallo script home.js -->
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Home</title>
+        <title>Trip Planner | Home</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <link href="../libraries/bootstrap.min.css" rel="stylesheet">
+        <script src="../libraries/bootstrap.min.js"></script>
+        <script src="../libraries/jquery.min.js"></script>
+        <script src="https://kit.fontawesome.com/285899448d.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="../styles/style_home.css">
-    </head>
-    <body> 
         <%if(authenticated){%>
-            <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
-                <div class="container-fluid">
-    
-                    <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
-    
-                    <ul class="navbar-nav px-5">
-    
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
-                            <ul class="dropdown-menu mt-2" style="background-color: rgb(50, 50, 50, 0.3);">
-                                <li>
-                                    <div class="dropdown-item card bg-dark text-white">
-                                        <div class="card-header">
-                                            <h4 class="card-title"><%=username%></h4>
-                                            <p class="card-text"><%=email%></p>
-                                        </div>
-                                        <div class="card-body d-grid gap-3">
-                                            <button type="button" class="btn btn-primary input_style_sm btn-block">Settings</button>
-                                            <button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-    
-                    </ul>
-    
-                </div>
-            </nav>
-    
-    
-    
-    
-        <div class="content">
-    
-            
-            <div class="overlay"></div>
-          
-            
-            <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
-              <source src="../media/video.mp4" type="video/mp4">
-            </video>
-          
-            
-            <div class="container h-100">
-              <div class="d-flex h-100 text-center align-items-center">
-                <div class="w-100 text-white">
-                  <h1 class="display-1">Trip Planner</h1>
-                  <p class="lead mb-0"><code class="text-white">create</code>, <code class="text-white">save</code> <small>and</small> <code class="text-white">share</code> itineraries.</p>
-                  <a href="../form" class="mt-4 btn btn-primary input_style text-uppercase">start</a>
-                </div>
-              </div>
-            </div>
-    
-            
-        </div>
-          
-          
-          <section class="bg-dark">
-              
-            <div class="container ">
-                <div class="row align-items-center">
-                    <div class="col text-center">
-                        <img src="../media/scroll_down.png">
-                    </div>
-                </div> 
-                <div class="row align-items-center py-5">
-                    <div class="col text-center text-white">
-                        <p>Progetto realizzato per i corsi di Linguaggi e Tecnologie per il Web e Reti di Calcolatori.</p>
-                        <p>-  Alessandro Ricci  -  Claudio Chini  -  Simone Tablo' -</p>
-                    </div>
-                </div> 
-            </div>
-    
-          </section>
-        </body>
-          <script>
-            const url1 = window.location.href
+        <script>
+            const base_url = window.location.href
             
             $(window).on('load', function() {
                 $("#logout_button").click(function(){
-                    $.post(url1 + "logout",()=>{ document.location.reload(true);})
+                    $.post(base_url + "logout",()=>{ document.location.reload(true);})
                 })
             });
-          </script>
-
-          <% }else{ %>
+        </script>
+        <%}else{%>
+        <script src="../js/home.js"></script>
+        <%}%>
+    </head>
+    <body>
         
-        <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
+        <nav class="navbar navbar-expand fixed-top bg-dark">
             <div class="container-fluid">
-
                 <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
+                <%if(authenticated){%>
+                <ul class="navbar-nav px-5">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
+                        <ul class="dropdown-menu mt-2">
+                            <li>
+                                <div class="dropdown-item card bg-dark text-white">
+                                    <div class="card-header">
+                                        <h4 class="card-title"><%=username%></h4>
+                                        <p class="card-text"><%=email%></p>
+                                    </div>
+                                    <div class="card-body d-grid gap-3">
+                                        <button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <%}else{%>
                 <div class="mx-5">
                     <ul class="navbar-nav gap-2">
                         <li class="nav-item">
@@ -113,244 +64,100 @@
                         </li>
                     </ul>
                 </div>
-
+                <%}%>
             </div>
         </nav>
-
-
-
-
-    <div class="content">
-
         
-        <div class="overlay"></div>
-      
-        
-        <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
-          <source src="../media/video.mp4" type="video/mp4">
-        </video>
-      
-        
-        <div class="container h-100 justify-content-center ">
-            <div class="h-100 row align-items-center">
-                <div class="col-sm-6 d-flex justify-content-center">
-                    <div>
+        <div class="content">
 
-                        <form action="" method="POST" id="login_form" class="needs-validation" novalidate>
-                            <div id="username_validation">
-                                <input class="form-control input_style" type="text" id="login_username" name="username" placeholder="username" required />
-                                <div class="invalid-feedback" id="login_username_f">Type a username.</div>
-                            </div>
-                            <div id="password_validation">
-                                <input class="form-control input_style" type="password" id="login_password" name="password" placeholder="password" required>
-                                <div class="invalid-feedback" id="login_password_f">Type a password.</div>
-                            </div>
-
-                            <input class="input_style button btn btn-primary" type="submit" value="login">                
-                        </form>
-
-                        <form action="" method="POST" id="register_form" class="needs-validation" novalidate style="display:none;">
-                            <div>
-                                <input class="form-control input_style" type="text" id="register_username" name="username" placeholder="username" required />
-                                <div class="invalid-feedback" id="register_username_f">Type a username.</div>
-                            </div>
-                            <div >
-                                <input class="form-control input_style" type="email" id="register_email" name="email" placeholder="email" required>
-                                <div class="invalid-feedback" id="register_email_f">Type a valid email.</div>
-                            </div>
-                            <div >
-                                <input class="form-control input_style" type="password" id="register_password_1" name="password" placeholder="password" required>
-                                <div class="invalid-feedback" id="register_password_1_f">Type a password.</div>
-                            </div>
-                            <div>
-                                <input class="form-control input_style" type="password" id="register_password_2" name="confirm_password" placeholder="verify password" required>
-                                <div class="invalid-feedback" id="register_password_2_f">Passwords are not the same.</div>
-                            </div>
-
-                            <input class="input_style button input_style btn btn-primary" type="submit" value="register">     
-
-                        </form>
-                        <p class="text-white text-center mt-2">or</p>
-                        <a id="register_button" class="input_style button btn btn-primary mt-0" >Register</a>
-                        <a id="login_button" class="input_style button btn btn-primary"  style="display:none;">Login</a>
-                    </div>
-                </div>
-                <div class="col-sm-6 d-flex justify-content-center">
-                    <div class="text-white text-center">
-                        <h1 class="display-1">Trip Planner</h1>
-                        <p class="lead mb-0"><code class="text-white">create</code>, <code class="text-white">save</code> <small>and</small> <code class="text-white">share</code> itineraries.</p>
-                    </div>
+            <div class="overlay"></div>
+          
+            <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+              <source src="../media/video.mp4" type="video/mp4">
+            </video>
+                    
+            <%if(authenticated){%>
+            <div class="container h-100">
+                <div class="d-flex h-100 text-center align-items-center">
+                  <div class="w-100 text-white">
+                      <h1 class="display-1">Trip Planner</h1>
+                      <p class="lead mb-0"><code class="text-white">create</code>, <code class="text-white">save</code> <small>and</small> <code class="text-white">share</code> itineraries.</p>
+                      <a href="../form" class="mt-4 btn btn-primary input_style text-uppercase">start</a>
+                  </div>
                 </div>
             </div>
-        </div>
-
-        
-    </div>
-      
-      
-      <section class="bg-dark">
-          
-        <div class="container ">
-            <div class="row align-items-center">
-                <div class="col text-center">
-                    <img src="../media/scroll_down.png">
+            <%}else{%>
+            <div class="container h-100 justify-content-center ">
+                <div class="h-100 row align-items-center">
+                    <div class="col-sm-6 d-flex justify-content-center">
+                        <div>
+    
+                            <form action="" method="POST" id="login_form" class="needs-validation" novalidate>
+                                <div id="username_validation">
+                                    <input class="form-control input_style" type="text" id="login_username" name="username" placeholder="username" required />
+                                    <div class="invalid-feedback" id="login_username_f">Type a username.</div>
+                                </div>
+                                <div id="password_validation">
+                                    <input class="form-control input_style" type="password" id="login_password" name="password" placeholder="password" required>
+                                    <div class="invalid-feedback" id="login_password_f">Type a password.</div>
+                                </div>
+    
+                                <input class="input_style button btn btn-primary" type="submit" value="login">                
+                            </form>
+    
+                            <form action="" method="POST" id="register_form" class="needs-validation" novalidate style="display:none;">
+                                <div>
+                                    <input class="form-control input_style" type="text" id="register_username" name="username" placeholder="username" required />
+                                    <div class="invalid-feedback" id="register_username_f">Type a username.</div>
+                                </div>
+                                <div >
+                                    <input class="form-control input_style" type="email" id="register_email" name="email" placeholder="email" required>
+                                    <div class="invalid-feedback" id="register_email_f">Type a valid email.</div>
+                                </div>
+                                <div >
+                                    <input class="form-control input_style" type="password" id="register_password_1" name="password" placeholder="password" required>
+                                    <div class="invalid-feedback" id="register_password_1_f">Type a password.</div>
+                                </div>
+                                <div>
+                                    <input class="form-control input_style" type="password" id="register_password_2" name="confirm_password" placeholder="verify password" required>
+                                    <div class="invalid-feedback" id="register_password_2_f">Passwords are not the same.</div>
+                                </div>
+    
+                                <input class="input_style button input_style btn btn-primary" type="submit" value="register">     
+                            </form>
+    
+                            <p class="text-white text-center mt-2">or</p>
+                            <a id="register_button" class="input_style button btn btn-primary mt-0" >Register</a>
+                            <a id="login_button" class="input_style button btn btn-primary"  style="display:none;">Login</a>
+    
+                        </div>
+                    </div>
+                    <div class="col-sm-6 d-flex justify-content-center">
+                        <div class="text-white text-center">
+                            <h1 class="display-1">Trip Planner</h1>
+                            <p class="lead mb-0"><code class="text-white">create</code>, <code class="text-white">save</code> <small>and</small> <code class="text-white">share</code> itineraries.</p>
+                        </div>
+                    </div>
                 </div>
             </div> 
-            <div class="row align-items-center py-5">
-                <div class="col text-center text-white">
-                    <p>Progetto realizzato per i corsi di Linguaggi e Tecnologie per il Web e Reti di Calcolatori.</p>
-                    <p>-  Alessandro Ricci  -  Claudio Chini  -  Simone Tablo' -</p>
-                </div>
-            </div> 
+            <%}%> 
         </div>
 
-      </section>
+        <section class="bg-dark">
+            <div class="container ">
+                <div class="row align-items-center">
+                    <div class="col text-center">
+                        <i class="fa-solid fa-angle-down" style="color:white"></i>
+                    </div>
+                </div> 
+                <div class="row align-items-center py-5">
+                    <div class="col text-center text-white">
+                        <p>Progetto realizzato per i corsi di Linguaggi e Tecnologie per il Web e Reti di Calcolatori.</p>
+                        <p>-  Alessandro Ricci  -  Claudio Chini  -  Simone Tablo' -</p>
+                    </div>
+                </div> 
+            </div>
+        </section>
 
     </body>
-
-    <script>
-        const url = window.location.href
-        
-    
-        $(window).on('load', function() {
-
-            $("#register_button_sm").click(function(){
-                $("#login_form").hide();
-                $("#register_button").hide();
-                $("#login_button").show();
-                $("#register_form").show();
-            })
-            $("#login_button_sm").click(function(){
-                $("#register_form").hide();
-                $("#login_button").hide();
-                $("#register_button").show();
-                $("#login_form").show();
-            })
-            $("#register_button").click(function(){
-                $("#login_form").hide();
-                $("#register_button").hide();
-                $("#login_button").show();
-                $("#register_form").show();
-            })
-            $("#login_button").click(function(){
-                $("#register_form").hide();
-                $("#login_button").hide();
-                $("#register_button").show();
-                $("#login_form").show();
-            })
-
-            const login_form = document.getElementById('login_form');
-            login_form.addEventListener('submit', function(event) {
-                const login_username = document.getElementById('login_username');
-                const login_password = document.getElementById('login_password');
-                const login_username_f = document.getElementById('login_username_f');
-                const login_password_f = document.getElementById('login_password_f');
-                if (this.checkValidity() === false) {
-                    //login_username
-                    login_username.classList.remove("is-invalid");
-                    login_username_f.innerHTML = "Type a username";
-                    //login_password
-                    login_password.classList.remove("is-invalid");
-                    login_password_f.innerHTML = "Type a password";
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.classList.add('was-validated');
-                }
-                else{
-                    this.classList.remove('was-validated');
-                    event.preventDefault();
-                    event.stopPropagation();
-                    form_data = new FormData(this);
-                    const form_data_json = {
-                        "username" : form_data.get('username'),
-                        "password" : form_data.get('password')
-                    }
-                    $.post(url + "login", form_data_json, (data)=>{    
-                        if(data.status == "ok"){
-                            document.location.reload(true);
-                        }
-                        else{   
-                        //login_username
-                        login_username_f.innerHTML = data.username;
-                        login_username.classList.add("is-invalid");
-                        //login_password
-                        login_password_f.innerHTML = data.password;
-                        login_password.classList.add("is-invalid");
-                        }
-                    }); 
-                }
-            })
-            
-            const register_form = document.getElementById('register_form');
-            
-            register_form.addEventListener('submit', function(event) {
-                //register username
-                const register_username = document.getElementById('register_username');
-                const register_username_f = document.getElementById('register_username_f');
-                //register email
-                const register_email = document.getElementById('register_email');
-                const register_email_f = document.getElementById('register_email_f');
-                //register password 1
-                const register_password_1 = document.getElementById('register_password_1');
-                const register_password_1_f = document.getElementById('register_password_1_f');
-                //register password 2
-                const register_password_2 = document.getElementById('register_password_2');
-                const register_password_2_f = document.getElementById('register_password_2_f');
-                if (this.checkValidity() === false) {
-                    //login_username
-                    register_username.classList.remove("is-invalid");
-                    register_username_f.innerHTML = "Type a username";
-                    //login_email
-                    register_email.classList.remove("is-invalid");
-                    register_email_f.innerHTML = "Type a valid email";
-                    //login_password
-                    register_password_1.classList.remove("is-invalid");
-                    register_password_1_f.innerHTML = "Type a password";
-                    //login_password
-                    register_password_2.classList.remove("is-invalid");
-                    register_password_2_f.innerHTML = "Confirm password";
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.classList.add('was-validated');
-                }
-                else{
-                    this.classList.remove('was-validated');
-                    event.preventDefault();
-                    form_data = new FormData(this);
-                    if(form_data.get("password") != form_data.get("confirm_password")){
-                        //register_password_2
-                        register_password_2_f.innerHTML = "Passwords are not the same";
-                        register_password_2.classList.add("is-invalid");
-                    }
-                    else{
-                        const form_data_json = {
-                            "username" : form_data.get('username'),
-                            "email" : form_data.get('email'),
-                            "password" : form_data.get('password')
-                        }
-                        $.post(url + "register", form_data_json, (data)=>{ 
-                            if(data.status == "ok"){
-                                document.location.reload(true);
-                            }   
-                            else{
-                            //register_username
-                            register_username_f.innerHTML = data.username;
-                            register_username.classList.add("is-invalid");
-                            //register_email
-                            register_email_f.innerHTML = data.email;
-                            register_email.classList.add("is-invalid");
-                            //register_password_1
-                            register_password_1_f.innerHTML = data.password;
-                            register_password_1.classList.add("is-invalid");
-                            //register_password_2
-                            register_password_2_f.innerHTML = data.password;
-                            register_password_2.classList.add("is-invalid");
-                            }
-                        }); 
-                    }
-                }
-            })  
-        });
-        </script>
-    <%}%>
 </html>

@@ -20,13 +20,13 @@ router.post('/login/', async (req, res) => {
                     if(await bcrypt.compare(req.body.password, json_response.password)){
                         req.session.isAuth = true;
                         req.session.username = req.body.username;
-                        req.session.email = req.body.email;
+                        req.session.email = json_response.email;
                         res.json({status:"ok"});  //username and password are correct, login
                     }else{
-                        //res.send('failed, wrong password'); //username exists but wrong password
+                        //username exists but wrong password
                         res.json({status:'error', 
                                 username:'',
-                                password: "Wrong password"}); //username is not registered yet );
+                                password: "Wrong password"}); 
                     }
                 }catch{
                     res.status(500).send('error, bcrypt');

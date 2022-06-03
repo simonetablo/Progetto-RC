@@ -1,3 +1,10 @@
+/*
+Questo è il foglio di stile della homepage.
+La visualizzazione in background del video è realizzata attraverso l'attributo z-index che permette di definire layer
+Tra il layer del video e quello del contenuto è stato inserito il layer "overlay" che applica un filtro al video per rendere più fruibile il contenuto
+In visualizzazione smartphone o tablet il video di sfondo viene rimosso per risparmiare dati
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700;800&display=swap');
 
 *{
@@ -88,12 +95,29 @@
   cursor:pointer;
 }
 
+.dropdown-menu{
+  background-color: rgb(50, 50, 50, 0.3);
+}
+
+.dropdown-item > .card-header{
+  max-width: 170px;
+}
+
+.card-title{
+  font-size:80%; 
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.card-text{
+  font-size:80%; 
+  overflow-x: scroll;
+}
 
 img {
   width: 10px;
   max-width: 10px;
 }
-
 
 @media (pointer: coarse) and (hover: none) {
   .content video {

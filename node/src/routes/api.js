@@ -19,11 +19,8 @@ router.get('/api/itineraries/', (req, res) => {
 
     if(tags.length == 0){
         request({
-            //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
             url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_design/it_ddoc/_view/tag_view2',  
             method: 'GET',
-            //headers: {'content-type': 'application/json'},
-            //body: JSON.stringify({"keys": ["culture", "religion"]})
         }, function(error, response, body){
             if(error) {
                 console.log(error);
@@ -38,11 +35,8 @@ router.get('/api/itineraries/', (req, res) => {
     }
     else{
     request({
-        //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
         url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_design/it_ddoc/_view/tag_view?key=['+tags+']',  
         method: 'GET',
-        //headers: {'content-type': 'application/json'},
-        //body: JSON.stringify({"keys": ["culture", "religion"]})
     }, function(error, response, body){
         if(error) {
             console.log(error);
@@ -57,8 +51,6 @@ router.get('/api/itineraries/', (req, res) => {
 });
 
 router.post('/api/itineraries', (req, res) => {
-    console.log("ao")
-    console.log(req.body);
     tags = [];
     ids = [];
     for(const day of req.body.itinerary){
@@ -81,7 +73,6 @@ router.post('/api/itineraries', (req, res) => {
                 data : data,
                 tags : tags
             }
-            //console.log(itinerary);
             request({
                 url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id, 
                 method: 'PUT',
@@ -95,11 +86,11 @@ router.post('/api/itineraries', (req, res) => {
                     res.status(500).send('error, itinerary database request');  //internal request error
                 } else {
                     if(response.statusCode === 201){
-                        //res.send('itinerary registered');  //username is valid, the user was successfully registered
+                        //username is valid, the user was successfully registered
                         res.status(200).send();
                     }
                     else{
-                        //res.send('itinerary with this id already exists');  //user with same username already exists
+                        //user with same username already exists
                         res.status(500).send()
                     }
                 }
@@ -112,7 +103,6 @@ router.post('/api/itineraries', (req, res) => {
                 method: "GET",
               },
               function(error, response, body){
-                  //console.log("ao?")
                   place_kinds = JSON.parse(response.body).kinds;
                   if(place_kinds.includes("architecture") && !tags.includes("architecture")) tags.push("architecture");
                   if(place_kinds.includes("cultural") && !tags.includes("cultural")) tags.push("cultural");
@@ -135,11 +125,8 @@ router.get('/planner/id', (req, res) =>{
     query_json = req.query;
     id = query_json.id;
     request({
-        //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
         url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id,  
         method: 'GET',
-        //headers: {'content-type': 'application/json'},
-        //body: JSON.stringify({"keys": ["culture", "religion"]})
     }, function(error, response, body){
         if(error) {
             console.log(error);
@@ -156,8 +143,6 @@ router.get('/planner/id', (req, res) =>{
             tags = [];
             get_info = (array) => {
                 if(array.length == 0){
-                    //console.log(names);
-                    //console.log(tags);
                     render_obj = {
                         itinerary : itinerary_json,
                         names : names,
@@ -172,8 +157,6 @@ router.get('/planner/id', (req, res) =>{
                         method: "GET",
                       },
                         function(error, response, body){
-                            //console.log("ao?")
-                            //console.log(response.body);
                             place_json = JSON.parse(response.body)
                             place_kinds = place_json.kinds;
                             place_name = place_json.name;

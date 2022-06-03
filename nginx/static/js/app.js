@@ -153,7 +153,7 @@ function showLayer(e){
                     showInfo(data)
                 },
                 error: function() {
-                    alert('error')
+                    console.log('error')
                 }
             });
         });
@@ -322,32 +322,38 @@ function showInfo(obj){
 }
 
 function addToPlanner(e){
-    let planner=document.createElement("div");
-    planner.classList.add("poi");
-    planner.setAttribute('draggable', true);
-    data=$(".info").data();
-    $(planner).data(data);
-    planner.innerHTML="<div class='name'>"+data.name+"</div>";
-    planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
-    planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
-    planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
-    planner.style.borderLeftColor=whichKind(data.kinds);
-    let firstDay=document.getElementById("days").firstChild;
-    firstDay.appendChild(planner);
-    planner.addEventListener("dragstart", handleDragStart);
-    planner.addEventListener("dragleave", handleDragLeave);
-    planner.addEventListener("dragend", handleDragEnd)
-    planner.addEventListener('drop', handleDrop);
-    planner.addEventListener('dragover', allowDrop);
-    if(firstDay.getElementsByClassName("poi").length==1){
-        let date=firstDay.getElementsByClassName("date_elem")[0]
-            if(date.value!=""){
-            let coord={
-                lat : data.point.lat,
-                lon : data.point.lon
+    let day = document.getElementsByClassName("day");
+    if(day.length == 0){
+        alert("you need to create a day card first");
+    }
+    else{
+        let planner=document.createElement("div");
+        planner.classList.add("poi");
+        planner.setAttribute('draggable', true);
+        data=$(".info").data();
+        $(planner).data(data);
+        planner.innerHTML="<div class='name'>"+data.name+"</div>";
+        planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
+        planner.style.borderLeftColor=whichKind(data.kinds);
+        let firstDay=document.getElementById("days").firstChild;
+        firstDay.appendChild(planner);
+        planner.addEventListener("dragstart", handleDragStart);
+        planner.addEventListener("dragleave", handleDragLeave);
+        planner.addEventListener("dragend", handleDragEnd)
+        planner.addEventListener('drop', handleDrop);
+        planner.addEventListener('dragover', allowDrop);
+        if(firstDay.getElementsByClassName("poi").length==1){
+            let date=firstDay.getElementsByClassName("date_elem")[0]
+                if(date.value!=""){
+                let coord={
+                    lat : data.point.lat,
+                    lon : data.point.lon
+                }
+                let coordToServer=JSON.stringify(coord);
+                getForecast(coordToServer, firstDay);
             }
-            let coordToServer=JSON.stringify(coord);
-            getForecast(coordToServer, firstDay);
         }
     }
 }
@@ -535,7 +541,6 @@ function sendToServer(e){
         let values=day_elements[i].getElementsByClassName("poi");
         let plan=[];
         for(j=0; j<values.length; j++){
-            console.log(values[j].getAttribute("value"));
             if(values[j].getAttribute("value")==null){
                 poi_obj = { id: $(values[j]).data().xid}
                 plan.push(poi_obj);
@@ -549,7 +554,6 @@ function sendToServer(e){
     }
     itinerary_obj = {title:"default_title" ,itinerary : days };
     itinerary_obj.title=title
-    console.log(itinerary_obj);
     $.post( base_url+"/api/itineraries", itinerary_obj, ()=>{
         send_button.style.visibility = "hidden";
         spinner.style.visibility = "hidden";
