@@ -4,6 +4,9 @@ var base_url = window.location.origin;
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
 
+var tripID=null;
+var tripAuthor=null;
+
 window.addEventListener('load', (event)=>{
     var lPois=document.getElementsByClassName("poi");
     for(i=0; i<lPois.length; i++){
@@ -18,15 +21,15 @@ window.addEventListener('load', (event)=>{
 })
 
 function checkmsg(){
-    var username="name"
     $.ajax({
         type: "POST",
         url: base_url + "/checkmsg",
         dataType: "json",
         data: {
-            name: username
+            queue: username
         }
     });
+    console.log("checking queue: "+username);
 }
 
 mapboxgl.accessToken = mapBoxAT;
@@ -620,15 +623,18 @@ send_form.addEventListener('submit', function(event) {
             })
 
 function like(e){
-    var username="name"
-    var tripname="tripname"
+    const params=new URLSearchParams(window.location.search)
+    tripID=params.get('id');
+    tripAuthor=params.get('author');
+    console.log(tripID);
+    console.log(tripAuthor);
     $.ajax({
         type: "POST",
         url: base_url + "/like",
         dataType: "json",
         data: {
-            name: username,
-            trip: tripname
+            queue: tripAuthor,
+            trip: tripID
         }
     });
 }

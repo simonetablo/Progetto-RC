@@ -218,9 +218,9 @@ function server_start(){
       });
 
     app.post('/like', function(req, res){
-        var name=req.body.name;
+        var queue1=req.body.queue;
         var trip=req.body.trip;
-        var url="amqp://172.23.0.2:5672";
+        var url="amqp://172.21.0.2:5672";
         amqp.connect(url, function(err, conn) {
           if (err) {
               throw err;
@@ -230,40 +230,42 @@ function server_start(){
                   throw err1;
               }
             
-              channel.assertQueue(name, {
+              channel.assertQueue(queue1, {
                   durable: false
               });
-              channel.sendToQueue(name, Buffer.from(trip));
+              channel.sendToQueue(queue1, Buffer.from(trip));
             
-              console.log(" [x] Sent %s", trip);
+              console.log(" [x] Sent "+trip+" to queue "+queue1);
           });
-        });     
+        });
+        res.send("like ok")    
     });
 
     app.post('/checkmsg', function(req, res){
-      var name=req.body.name
-      amqp.connect('amqp://172.23.0.2:5672', function(error0, connection) {
-    if (error0) {
-        throw error0;
-    }
-    connection.createChannel(function(error1, channel) {
-        if (error1) {
-            throw error1;
-        }
-
-        channel.assertQueue(name, {
-            durable: false
+      var queue=req.body.queue
+      amqp.connect('amqp://172.21.0.2:5672', function(error0, connection) {
+            if (error0) {
+                throw error0;
+            }
+            connection.createChannel(function(error1, channel) {
+                if (error1) {
+                    throw error1;
+                }
+            
+                channel.assertQueue(queue, {
+                    durable: false
+                });
+            
+                console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+            
+                channel.consume(queue, function(msg) {
+                    console.log(" [x] Received "+msg.content.toString()+" from queue "+queue);
+                }, {
+                    noAck: true
+                });
+            });
         });
-
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", name);
-
-        channel.consume(name, function(msg) {
-            console.log(" [x] Received %s", msg.content.toString());
-        }, {
-            noAck: true
-        });
-    });
-});
+        res.send("check ok");
     })
 
     app.use(auth_routes);
