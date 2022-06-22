@@ -4,6 +4,7 @@ const Expression = require('couchdb-expression')(session);
 const request = require("request");
 const cors = require("cors");
 const path = require('path')
+const amqp = require('amqplib/callback_api')
 
 const auth_routes = require('./routes/auth');
 const api_routes = require('./routes/api');
@@ -215,6 +216,55 @@ function server_start(){
           }
         })
       });
+
+    app.post('/like', function(req, res){
+        var name=req.body.name;
+        var trip=req.body.trip;
+        var url="amqp://172.23.0.2:5672";
+        amqp.connect(url, function(err, conn) {
+          if (err) {
+              throw err;
+          }
+          conn.createChannel(function(err1, channel) {
+              if (err1) {
+                  throw err1;
+              }
+            
+              channel.assertQueue(name, {
+                  durable: false
+              });
+              channel.sendToQueue(name, Buffer.from(trip));
+            
+              console.log(" [x] Sent %s", trip);
+          });
+        });     
+    });
+
+    app.post('/checkmsg', function(req, res){
+      var name=req.body.name
+      amqp.connect('amqp://172.23.0.2:5672', function(error0, connection) {
+    if (error0) {
+        throw error0;
+    }
+    connection.createChannel(function(error1, channel) {
+        if (error1) {
+            throw error1;
+        }
+
+        channel.assertQueue(name, {
+            durable: false
+        });
+
+        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", name);
+
+        channel.consume(name, function(msg) {
+            console.log(" [x] Received %s", msg.content.toString());
+        }, {
+            noAck: true
+        });
+    });
+});
+    })
 
     app.use(auth_routes);
     app.use(api_routes);

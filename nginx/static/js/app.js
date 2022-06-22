@@ -17,6 +17,17 @@ window.addEventListener('load', (event)=>{
     }
 })
 
+function checkmsg(){
+    var username="name"
+    $.ajax({
+        type: "POST",
+        url: base_url + "/checkmsg",
+        dataType: "json",
+        data: {
+            name: username
+        }
+    });
+}
 
 mapboxgl.accessToken = mapBoxAT;
 var map = new mapboxgl.Map({
@@ -607,3 +618,17 @@ send_form.addEventListener('submit', function(event) {
                     }
                 }
             })
+
+function like(e){
+    var username="name"
+    var tripname="tripname"
+    $.ajax({
+        type: "POST",
+        url: base_url + "/like",
+        dataType: "json",
+        data: {
+            name: username,
+            trip: tripname
+        }
+    });
+}

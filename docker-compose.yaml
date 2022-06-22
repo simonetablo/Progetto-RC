@@ -11,6 +11,14 @@ services:
       - "8080:80"
     networks:
       - proxy-network
+  
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - rabbitmq-network
 
   database:
     image: couchdb
@@ -40,9 +48,12 @@ services:
     networks:
       - proxy-network
       - database-network
+      - rabbitmq-network
   
 networks:
   proxy-network:
     driver: bridge
   database-network:
+    driver: bridge
+  rabbitmq-network:
     driver: bridge
