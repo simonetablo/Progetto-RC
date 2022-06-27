@@ -77,7 +77,7 @@ $(window).on('load', function () {
 					</div>
 				</div>
 				<div class="text-end align-items-end d-flex flex-column p-2 mx-3"  >
-						<a href="${base_url + '/planner?id=' + itinerary.id+'&author=' + author}"><button class="input_style_small mx-2 mb-2">View</button></a>
+						<a href="${base_url + '/planner?id=' + itinerary.id+'&name='+title+'&author=' + author}"><button class="input_style_small mx-2 mb-2">View</button></a>
 						<div>
 							${html_tags}   
 						</div>                                            

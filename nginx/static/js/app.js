@@ -4,8 +4,11 @@ var base_url = window.location.origin;
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
 
-var tripID=null;
-var tripAuthor=null;
+const params=new URLSearchParams(window.location.search);
+var tripID=params.get("id");
+var tripAuthor=params.get("author");
+var tripName=params.get("trip");
+var user=username.toLowerCase();
 
 window.addEventListener('load', (event)=>{
     var lPois=document.getElementsByClassName("poi");
@@ -18,19 +21,10 @@ window.addEventListener('load', (event)=>{
             lpoi.removeAttribute("value");
         }
     }
+    if(params.get('id')!=null && tripAuthor!=user){
+        document.getElementById("like").style.visibility="visible";
+    }
 })
-
-function checkmsg(){
-    $.ajax({
-        type: "POST",
-        url: base_url + "/checkmsg",
-        dataType: "json",
-        data: {
-            queue: username
-        }
-    });
-    console.log("checking queue: "+username);
-}
 
 mapboxgl.accessToken = mapBoxAT;
 var map = new mapboxgl.Map({
@@ -44,12 +38,14 @@ map.addControl(new mapboxgl.NavigationControl());
 const sendbtn=document.getElementById("send");   
 const modal = document.querySelector('#modal');
 const closeBtn = document.querySelector('.close');
+const bell=document.getElementById("bell")
 // Events
 sendbtn.addEventListener("click",openPopUp)
 closeBtn.addEventListener('click', closePopUp);
 window.addEventListener('click', outsideClick);
 addOnDb_btn=document.getElementById("dbSave")
 addOnDb_btn.addEventListener("click", sendToServer);
+bell.addEventListener("click", rmvBadge)
 // Open
 function openPopUp() {
     send_button = document.getElementById("dbSave");
@@ -133,10 +129,7 @@ function showLayer(e){
         map.addLayer({
             id: "OTM-pois-"+name,
             type: "circle",
-            source: "OTM-pois-"+name/*{
-                type: "vector",
-                tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
-            }*/,
+            source: "OTM-pois-"+name,
             minzoom: 8,
             layout: {
                 "visibility" : "visible"
@@ -622,19 +615,53 @@ send_form.addEventListener('submit', function(event) {
                 }
             })
 
+//ASYNC
+const socket=io();
+
+socket.on('message', message =>{
+    console.log(message);
+    socket.emit('consumer', user)
+})
+socket.on('notification', msg=>{
+    var num=document.getElementsByClassName("badge")[0];
+    var numInt=parseInt(num.innerHTML);
+    num.innerHTML=numInt+1;
+    if(num.style.visibility="hidden"){
+        num.style.visibility="visible";
+    }
+    if(numInt==9){
+        num.style.fontSize="11px"
+        num.style.paddingTop="3.9px"
+    }
+    let JsonMsg=JSON.parse(msg);
+    var not=document.getElementById("notifications");
+    not.innerHTML+='<n class="card-text">'+JsonMsg.fromUser+' liked '+JsonMsg.tripName+'</n><br>';
+})
+
+function rmvBadge(){
+    var badge=document.getElementsByClassName("badge")[0];
+    badge.innerHTML=0;
+    badge.style.visibility="hidden"
+}
+
 function like(e){
-    const params=new URLSearchParams(window.location.search)
-    tripID=params.get('id');
-    tripAuthor=params.get('author');
-    console.log(tripID);
-    console.log(tripAuthor);
-    $.ajax({
-        type: "POST",
-        url: base_url + "/like",
-        dataType: "json",
-        data: {
+    if(user!=tripAuthor){
+        var likeMsg={
             queue: tripAuthor,
-            trip: tripID
+            tripID: tripID,
+            tripName: tripName,
+            from: user
         }
-    });
+        var liked=e.getElementsByTagName("i")[0];
+        if(liked.classList.contains("fa-solid")){
+            e.innerHTML='<i class="fa-regular fa-heart"></i>';
+            socket.emit('unLike', likeMsg);
+            console.log("unlike");
+        }
+        else{
+            e.innerHTML='<i class="fa-solid fa-heart"></i>';
+            socket.emit('like', likeMsg);
+            console.log("like");
+        }
+    }
 }

@@ -3,11 +3,14 @@ const session = require("express-session");
 const Expression = require('couchdb-expression')(session);
 const request = require("request");
 const cors = require("cors");
-const path = require('path')
-const amqp = require('amqplib/callback_api')
+const path = require('path');
+const amqp = require('amqplib/callback_api');
+const http=require('http');
+const socketio=require('socket.io');
 
 const auth_routes = require('./routes/auth');
 const api_routes = require('./routes/api');
+const { connect } = require("http2");
 
 const PORT = 4000
 
@@ -15,9 +18,15 @@ const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399
 var openWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
 var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
 
+var urlAmqp="amqp://progetto-rc_rabbitmq_1:5672";
+
 function server_start(){
 
     const app = express();
+    const server=http.createServer(app);
+    const io=socketio(server);
+    io.listen(server);
+
     app.use(cors({
         origin: "*"
     }));
@@ -42,6 +51,73 @@ function server_start(){
         resave: false,
         saveUninitialized: false
     }))
+
+    io.on('connection', (socket)=>{
+
+        amqp.connect(urlAmqp, function(error0, connection) {
+            if (error0) {
+                throw error0;
+            }
+            console.log("new WS connection...");
+
+            socket.emit('message', 'webSocket connection estabilished')
+
+            socket.on('consumer', message=>{
+                console.log(message+" is ready to receive");
+                rcvQueue=message;
+                connection.createChannel(function(error1, rcvCh) {
+                    if (error1) {
+                        throw error1;
+                    }
+                        rcvCh.assertQueue(rcvQueue, {
+                            durable: false
+                        });
+                    
+                        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", rcvQueue);
+                    
+                        rcvCh.consume(rcvQueue, function(msg) {
+                            let string=msg.content.toString()
+                            console.log(" [x] Received "+string+" from queue "+rcvQueue);
+                            socket.emit('notification', string);
+                        }, {
+                            noAck: true
+                        });
+                    });
+            })
+
+            socket.on('like', msg=>{
+                console.log(msg);
+
+                var sendQueue=msg.queue;
+                
+                let msgToSend={tripID : msg.tripID, tripName : msg.tripName, fromUser : msg.from}
+                var msgString=JSON.stringify(msgToSend);
+                connection.createChannel(function(err1, likeCh) {
+                    if (err1) {
+                        throw err1;
+                    }
+                
+                    likeCh.assertQueue(sendQueue, {
+                        durable: false
+                    });
+                    likeCh.sendToQueue(sendQueue, Buffer.from(msgString), {persistent: true});
+            
+                    console.log(" [x] Sent "+msgString.toString()+" to queue "+sendQueue);
+                    setTimeout(function() {
+                        likeCh.close();
+                    }, 1000);
+
+                });
+            })
+            socket.on('unLike', msg=>{
+                console.log("Unliked")
+            })
+            socket.on('disconnect', function(){
+                console.log('user disconnected');
+                connection.close();
+            })
+        });
+    })
 
 
     app.get('/planner', (req, res) =>{
@@ -81,8 +157,8 @@ function server_start(){
               tags=[];
               get_info = (array) => {
                   if(array.length == 0){
-                    console.log(data)
-                    console.log(tags)
+                    //console.log(data)
+                    //console.log(tags)
                       render_obj = {
                           id : true,
                           itinerary : itinerary_json,
@@ -217,63 +293,12 @@ function server_start(){
         })
       });
 
-    app.post('/like', function(req, res){
-        var queue1=req.body.queue;
-        var trip=req.body.trip;
-        var url="amqp://172.21.0.2:5672";
-        amqp.connect(url, function(err, conn) {
-          if (err) {
-              throw err;
-          }
-          conn.createChannel(function(err1, channel) {
-              if (err1) {
-                  throw err1;
-              }
-            
-              channel.assertQueue(queue1, {
-                  durable: false
-              });
-              channel.sendToQueue(queue1, Buffer.from(trip));
-            
-              console.log(" [x] Sent "+trip+" to queue "+queue1);
-          });
-        });
-        res.send("like ok")    
-    });
-
-    app.post('/checkmsg', function(req, res){
-      var queue=req.body.queue
-      amqp.connect('amqp://172.21.0.2:5672', function(error0, connection) {
-            if (error0) {
-                throw error0;
-            }
-            connection.createChannel(function(error1, channel) {
-                if (error1) {
-                    throw error1;
-                }
-            
-                channel.assertQueue(queue, {
-                    durable: false
-                });
-            
-                console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-            
-                channel.consume(queue, function(msg) {
-                    console.log(" [x] Received "+msg.content.toString()+" from queue "+queue);
-                }, {
-                    noAck: true
-                });
-            });
-        });
-        res.send("check ok");
-    })
 
     app.use(auth_routes);
     app.use(api_routes);
 
-    app.listen(PORT, () => {console.log("listening for request")});
+    server.listen(PORT, () => {console.log("listening for request")});
 }
-
 
 request(
     {

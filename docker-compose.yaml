@@ -9,11 +9,15 @@ services:
       - ./nginx/static:/usr/nginx/static
     ports:
       - "8080:80"
+    depends_on:
+      - node
     networks:
       - proxy-network
   
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3.10.5-management
+    logging:
+      driver: none
     ports:
       - 5672:5672
       - 15672:15672
@@ -45,6 +49,9 @@ services:
       - ./node/src:/usr/node/src
     ports:
       - "4000:4000"
+    depends_on:
+      - rabbitmq
+      - database
     networks:
       - proxy-network
       - database-network
