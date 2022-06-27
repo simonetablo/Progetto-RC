@@ -1,0 +1,238 @@
+/*
+foglio di stile per form.ejs
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800&display=swap');
+
+*{
+  font-family : 'Poppins', sans-serif
+}
+
+html, body{
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  position: relative;
+  background-color: black;
+  height: 56vh;
+  min-height: 34rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.background_image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: 0;
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-43%);
+}
+
+.content .container {
+  position: relative;
+  z-index: 2;
+}
+
+.content .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.input_style_sm{
+  width: 100%;
+  display: inline-block;
+  font-size: 1em;
+  background: #fff;
+  border: 0px;
+  padding: 4px 12px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+
+  color: #111;
+  letter-spacing: 2px;
+  transition: 0.2s;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.input_style{
+  width: 100%;
+  max-width: 250px;
+  display: inline-block;
+  font-size: 1em;
+  background: #fff;
+  border: 0px;
+  padding: 10px 30px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 10px;
+  color: #111;
+  letter-spacing: 1px;
+  transition: 0.2s;
+  text-align: center;
+  border-radius: 5px;
+}
+.input_style_small{
+  width: 100%;
+  max-width: 100px;
+  display: inline-block;
+  font-size: 10px;
+  background: #fff;
+  border: 0px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+  color: #111;
+  letter-spacing: 2px;
+  transition: 0.2s;
+  text-align: center;
+  border-radius: 5px;
+  opacity: 100;
+}
+.input_style:hover{
+  letter-spacing: 4px;
+}
+
+.button:hover{
+  cursor:pointer;
+}
+
+.tag{
+  min-width: 80px;
+  display: inline-block;
+  background: #fff;
+  border:2px;
+  border-color: white;
+  border-radius: 5px;
+  border-style: solid;
+  padding: 10px 20px;
+  margin-top: 10px;
+  color: grey;
+  text-align: center;
+}
+
+.tag_all{
+  min-width: 80px;
+  display: inline-block;
+  background: #fff;
+  border:2px;
+  border-color: white;
+  border-radius: 5px;
+  border-style: solid;
+  padding: 10px 20px;
+  margin-top: 10px;
+  color: grey;
+  text-align: center;
+}
+
+.tag:hover{
+  border-color: #adb5bd;
+}
+
+.tag_color_architecture{
+  color:#0d6efd
+}
+
+.tag_color_cultural{
+  color:#d63384;
+}
+
+.tag_color_foods{
+  color:#d9534f;
+}
+
+.tag_color_hotel{
+  color:#fd7e14;
+}
+
+.tag_color_natural{
+  color:#20c997;
+}
+
+.tag_color_religion{
+  color:#6610f2;
+}
+
+
+.tag_color_inactive{
+  color: #adb5bd;
+}
+
+.card_menu{
+  min-width: 300px;
+  max-width: 300px;
+  border:0px;
+  background-color: rgba(245, 245, 245, 0); 
+}
+
+.card_itinerary{
+  width: 100%;
+  min-width: 400px;
+  max-width: 700px;
+  border-radius: 10px;
+  background-color: #cad2d3;
+}
+
+.dropdown-menu{
+  background-color: rgb(50, 50, 50, 0.3);
+}
+
+.dropdown-item > .card-header{
+  max-width: 170px;
+}
+
+.card-title{
+  font-size:80%; 
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.card-text{
+  font-size:80%; 
+  overflow-x: scroll;
+}
+
+@media (pointer: coarse) and (hover: none) {
+  .content {
+    background: url('https://source.unsplash.com/XT5OInaElMw/1600x900') black no-repeat center center scroll;
+  }
+
+  .content video {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .content {
+    height: 90vh;
+    min-height: 57rem;
+  }
+}
+
+
+/* 
+Extra small <576px
+Small ≥576px
+Medium ≥768px
+Large ≥992px
+Extra Large ≥1200px
+XXL ≥1400px
+*/

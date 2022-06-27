@@ -1,0 +1,166 @@
+<!-- Da questa pagina è possibile accedere all'editor di itinerari (planner.ejs) creandone di nuovi o modificando itinerari condivisi da altri utenti -->
+<!-- E' possibile filtrare gli itinerari per tipologia di punti di interesse -->
+<!-- La ricerca di itinerari e i filtri sono gestiti dallo script form.js -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Home</title>
+		<BASE href="/">
+	    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../libraries/bootstrap.min.css" rel="stylesheet">
+        <script src="../libraries/bootstrap.min.js"></script>
+        <script src="../libraries/jquery.min.js"></script>
+        <script src="https://kit.fontawesome.com/285899448d.js" crossorigin="anonymous"></script>
+		<script src="../js/form.js"></script>
+
+        <link rel="stylesheet" href="../styles/style_form.css">
+    </head>
+    <body class="bg-dark">
+        
+        <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
+			<div class="container-fluid">
+				<a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
+				<ul class="navbar-nav px-5">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
+                        <ul class="dropdown-menu mt-2">
+                            <li>
+                                <div class="dropdown-item card bg-dark text-white">
+                                    <div class="card-header">
+                                        <h4 class="card-title"><%=username%></h4>
+                                        <p class="card-text"><%=email%></p>
+                                    </div>
+                                    <div class="card-body d-grid gap-3">
+                                        <button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+			</div>
+		</nav>
+
+
+    	<div class="content">
+
+    	    <div class="overlay"></div>
+		
+    	    <img class="background_image" src="../media/form_images/image.png">
+		
+    	    <div class="container d-flex justify-content-center h-100">
+    	        <div class=" text-white">
+    	            <form action="" method="GET" id="form">
+    	                <div class="row my-5"></div>
+						<div class="row my-4"></div>
+    	                <div class="row align-items-center mx-2">
+						
+    	                    <div class="col-xl d-flex justify-content-center align-items-center">
+    	                        <div class="my-3 text-center px-3">
+    	                            <div>
+    	                                <h4 class="my-0 opacity-0">Search or Create Itineraries</h4>
+    	                            </div>
+    	                        </div> 
+    	                    </div>
+
+    	                    <div class="col-xl d-flex justify-content-center align-items-center">
+    	                        <div class="card card_menu my-3 text-center">
+    	                            <div class="card-body">
+    	                                <input class="input_style my-0" type="text" id="location" name="location" placeholder="location">
+    	                                <input class="input_style" type="text" id="days" name="days" placeholder="days">
+    	                            </div>
+    	                        </div>
+    	                    </div>
+											
+    	                    <div class=" col-xl d-flex justify-content-center align-items-center">
+    	                        <div class="card card_menu bg-opacity-10  my-3 text-center" >
+    	                            <div class="card-body">
+    	                                <fieldset>
+    	                                    <button type="button"  class="tag" id="architecture" style="margin-top: 0px;">
+    	                                        <input type="checkbox" name="architecture" hidden>
+    	                                        <i class="fa-solid fa-archway"></i>
+    	                                    </button>
+    	                                    <button type="button"  class="tag" id="cultural" style="margin-top: 0px;">
+    	                                        <input type="checkbox"  name="cultural" hidden>
+    	                                        <i class="fa-solid fa-book-open"></i>
+    	                                    </button>
+
+											<button type="button"  class="tag" id="foods" style="margin-top: 0px;">
+    	                                        <input type="checkbox" name="foods" hidden>
+    	                                        <i class="fa-solid fa-utensils"></i>
+    	                                    </button><br>
+
+    	                                    <button type="button"  class="tag" id="hotel" style="margin-top: 0px;">
+    	                                        <input type="checkbox" name="hotel" hidden>
+    	                                        <i class="fa-solid fa-bed"></i>
+    	                                    </button>
+										
+    	                                    <button type="button"  class="tag" id="natural">
+    	                                        <input type="checkbox"  name="natural" hidden>
+    	                                        <i class="fa-solid fa-tree"></i>
+    	                                    </button>
+										
+    	                                    <button type="button" class="tag" id="religion">
+    	                                        <input type="checkbox"  name="religion" hidden>
+    	                                        <i class="fa-solid fa-hands-praying"></i>
+    	                                    </button>
+    	                                </fieldset>
+    	                            </div>
+    	                        </div>
+    	                    </div>
+
+    	                    <div class="col-xl d-flex justify-content-center align-items-center">
+    	                        <div class="my-3 text-center">
+    	                            <div class="card-body">
+    	                                <h4 class="m-0 text-uppercase" id="tag_label" style="opacity: 0;">architecture</h4>
+    	                            </div>
+    	                        </div> 
+    	                    </div>	
+    	                </div>
+
+    	            	<div class="row">
+    	            	    <div class="d-flex col-sm align-items-center justify-content-center">
+    	            	        <div class="card card_menu text-center">
+    	            	            <div class="card-body">                             
+    	            	                <input class="input_style button mt-0 btn btn-primary" type="submit" value="search">   
+    	            	            </div>
+    	            	        </div>
+    	            	    </div>
+    	            	</div>
+    	            </form>
+
+    	            <div class="row">
+    	                <div class="d-flex col-sm align-items-center justify-content-center">
+    	                    <div class="card card_menu text-center">
+    	                        <div class="card-body">    
+									<a href="../planner"><button class="input_style mx-2 mb-2 btn btn-primary">new</button></a>                         
+    	                             
+    	                        </div>
+    	                    </div>
+    	                </div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+	
+    	<section class="d-flex flex-column bg-dark justify-content-center align-items-center m-3">
+		
+			<div class="d-flex align-items-center mb-5">
+				<div class="col text-center">
+					<i class="fa-solid fa fa-angle-down" style="color:white"></i>
+				</div>
+			</div> 
+
+			<h5 class="text-white text-center" style="letter-spacing:2px; font-weight: 400;">itineraries</h5>
+
+			<div class="card mt-4 bg-dark card_list text-center container p-2 m-5" style="max-width: 700px;  box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+				<div class="card-body d-flex flex-column  align-items-center mx-3" id="itineraries">                             
+					<i class="fa-solid fa-ellipsis" style="color:#cad2d3"></i>
+				</div>
+			</div>
+
+    	</section>
+    </body>
+</html>

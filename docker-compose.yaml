@@ -1,0 +1,66 @@
+services:
+
+  nginx:
+    image: nginx
+    container_name: nginx_cont
+    working_dir: /usr/nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/static:/usr/nginx/static
+    ports:
+      - "8080:80"
+    depends_on:
+      - node
+    networks:
+      - proxy-network
+  
+  rabbitmq:
+    image: rabbitmq:3.10.5-management
+    logging:
+      driver: none
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - rabbitmq-network
+
+  database:
+    image: couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=user1234
+      - COUCHDB_PASSWORD=password1234
+    volumes:
+      - ./couchdb/data:/opt/couchdb/data
+      - ./couchdb/etc/local.ini:/opt/couchdb/etc/local.ini
+    networks:
+      - database-network
+
+  node:
+    build: ./node
+    container_name: node_cont
+    working_dir: /usr/node
+    environment:
+      - COUCHDB_USER=user1234
+      - COUCHDB_PASSWORD=password1234
+      - SESSION_SECRET_KEY=secret
+    volumes: 
+      - ./node/src:/usr/node/src
+    ports:
+      - "4000:4000"
+    depends_on:
+      - rabbitmq
+      - database
+    networks:
+      - proxy-network
+      - database-network
+      - rabbitmq-network
+  
+networks:
+  proxy-network:
+    driver: bridge
+  database-network:
+    driver: bridge
+  rabbitmq-network:
+    driver: bridge
