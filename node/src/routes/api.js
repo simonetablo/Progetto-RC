@@ -1,108 +1,99 @@
 const express = require('express');
 const request = require("request");
 const { v4: uuidv4 } = require('uuid');
+const postgres = require('../postgres');
 
 
 const router = express.Router();
 const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
+const positionstack_key= "6358130f0b66fd2e8cd62f36b84913e1"
 
 //API
 router.get('/api/itineraries/', (req, res) => {
-    query_string = req.query;
+    json_to_send = {data: []};
+    //query_string = req.query;
+    //console.log(query_string);
     tags = [];
-    if(req.query.architecture) tags.push('"architecture"');
-    if(req.query.cultural) tags.push('"cultural"');
-    if(req.query.foods) tags.push('"foods"');
-    if(req.query.hotel) tags.push('"hotel"');
-    if(req.query.natural) tags.push('"natural"');
-    if(req.query.religion) tags.push('"religion"');
-
-    if(tags.length == 0){
-        request({
-            //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
-            url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_design/it_ddoc/_view/tag_view2',  
-            method: 'GET',
-            //headers: {'content-type': 'application/json'},
-            //body: JSON.stringify({"keys": ["culture", "religion"]})
-        }, function(error, response, body){
-            if(error) {
-                console.log(error);
-            } else {
-                json_data = JSON.parse(response.body)
-                json_response = {data: json_data.rows};
-                res.json(json_response);
-                return
-                
-            }
-        });
-    }
-    else{
-    request({
-        //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
-        url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_design/it_ddoc/_view/tag_view?key=['+tags+']',  
-        method: 'GET',
-        //headers: {'content-type': 'application/json'},
-        //body: JSON.stringify({"keys": ["culture", "religion"]})
-    }, function(error, response, body){
-        if(error) {
-            console.log(error);
-        } else {
-            json_data = JSON.parse(response.body)
-            json_response = {data: json_data.rows};
-            res.json(json_response);
+    if(req.query.architecture) tags.push("'architecture'");
+    if(req.query.cultural) tags.push("'cultural'");
+    if(req.query.foods) tags.push("'foods'");
+    if(req.query.hotel) tags.push("'hotel'");
+    if(req.query.natural) tags.push("'natural'");
+    if(req.query.religion) tags.push("'religion'");
+    location = req.query.location;
+    days = req.query.days;
+    set_data = (array) => {
+        if(array.length == 0){
+            //console.log(json_to_send);
+            //console.log()
+            res.json(json_to_send);
+        }
+        else{
+            row = array.shift();
+            //console.log(row)
+            id = row.id
+            postgres.get_itinerary_tags(id, (err, response)=>{
+                //console.log(response);
+                response_tags = response.rows;
+                //console.log(response_tags)
+                tags = [];
+                for (const element of response_tags){
+                    tags.push(element.tag);
+                }
+                //console.log(tags);
+                itinerary = {
+                    id: row.id,
+                    title: row.title,
+                    author: row.author,
+                    tags : tags
+                }
+                json_to_send.data.push(itinerary);
+                set_data(array);
+            })
             
         }
-    });
-}
+    }
+
+postgres.query_itinerary(tags, location, days, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.status(500).send('error');
+        }
+        else{
+            rows = result.rows;
+            set_data(rows);
+            //result.rows
+            //res.status(200).send("ayo");
+
+        }
+    })
 });
 
 router.post('/api/itineraries', (req, res) => {
-    console.log("ao")
-    console.log(req.body);
-    tags = [];
     ids = [];
     for(const day of req.body.itinerary){
         for(const place of day.plan){
             ids.push(place.id)
         }
     }
-    get_tags = (array) => {
+    tags = [];
+    locs = [];
+    get_data = (array) => {
         if(array.length == 0){
-            //
-            tags = tags.sort();
-            data = req.body.itinerary;
-            title = req.body.title;
-            author = req.session.username;
-            //
             id = uuidv4();
             itinerary = {
-                title : title,
-                author : author,
-                data : data,
-                tags : tags
+                title : req.body.title,
+                author : req.session.username,
+                data : req.body.itinerary,
+                tags : tags.sort()
             }
-            //console.log(itinerary);
-            request({
-                url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id, 
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify(itinerary)
-            }, function(error, response, body){
+            postgres.insert_itinerary(itinerary, id, tags, locs , (error) => {
                 if(error) {
                     console.log(error);
                     res.status(500).send('error, itinerary database request');  //internal request error
                 } else {
-                    if(response.statusCode === 201){
-                        //res.send('itinerary registered');  //username is valid, the user was successfully registered
-                        res.status(200).send();
-                    }
-                    else{
-                        //res.send('itinerary with this id already exists');  //user with same username already exists
-                        res.status(500).send()
-                    }
-                }
+                    res.status(200).send();
+                }   
             });
         }
         else{
@@ -110,88 +101,55 @@ router.post('/api/itineraries', (req, res) => {
             request({
                 url:"https://api.opentripmap.com/0.1/en/places/xid/"+id+"?apikey="+openTripMapKey,
                 method: "GET",
-              },
-              function(error, response, body){
-                  //console.log("ao?")
-                  place_kinds = JSON.parse(response.body).kinds;
-                  if(place_kinds.includes("architecture") && !tags.includes("architecture")) tags.push("architecture");
-                  if(place_kinds.includes("cultural") && !tags.includes("cultural")) tags.push("cultural");
-                  if(place_kinds.includes("foods") && !tags.includes("foods")) tags.push("foods");
-                  if(place_kinds.includes("hotel") && !tags.includes("hotel")) tags.push("hotel");
-                  if(place_kinds.includes("natural") && !tags.includes("natural")) tags.push("natural");
-                  if(place_kinds.includes("religion") && !tags.includes("religion")) tags.push("religion");
-                get_tags(array);
+                },
+                function(error, response, body){
+                    response_json = JSON.parse(response.body);
+
+                    place_kinds = response_json.kinds;
+                    if(place_kinds.includes("architecture") && !tags.includes("architecture")) tags.push('architecture');
+                    if(place_kinds.includes("cultural") && !tags.includes("cultural")) tags.push('cultural');
+                    if(place_kinds.includes("foods") && !tags.includes("foods")) tags.push('foods');
+                    if(place_kinds.includes("hotel") && !tags.includes("hotel")) tags.push('hotel');
+                    if(place_kinds.includes("natural") && !tags.includes("natural")) tags.push('natural');
+                    if(place_kinds.includes("religion") && !tags.includes("religion")) tags.push('religion');
+
+                    const lon = response_json.point.lon;
+                    const lat = response_json.point.lat;
+                    request({
+                      url:"http://api.positionstack.com/v1/reverse?access_key="+positionstack_key+"&query="+lat+","+lon+"&limit=1",
+                      method: "GET",
+                    },
+                    function(error, response, body){
+                        response_json = JSON.parse(response.body);
+
+                        let area = response_json.data[0].administrative_area;
+                        if(area != null) area = area.toLowerCase();
+                        let region = response_json.data[0].region.toLowerCase();
+                        if(region != null) region = region.toLowerCase();
+                        let country = response_json.data[0].country.toLowerCase();
+                        if(country != null) country = country.toLowerCase();
+                        tuple = [area, region, country];
+
+                        tuple_string = '';
+                        for(const element of tuple){
+                            //console.log(typeof element)
+                            if(element == null){
+                                tuple_string += 'NULL,'
+                            }
+                            else{
+                                tuple_string += "'"+element+"',"
+                            }
+                        }
+                        tuple_string = tuple_string.slice(0, -1);
+
+                        locs.push(tuple_string);
+
+                        get_data(array);
+                    })
             });
         }
     };
-    get_tags(ids);
+    get_data(ids);
 });
-
-
-
-
-
-router.get('/planner/id', (req, res) =>{
-    query_json = req.query;
-    id = query_json.id;
-    request({
-        //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
-        url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id,  
-        method: 'GET',
-        //headers: {'content-type': 'application/json'},
-        //body: JSON.stringify({"keys": ["culture", "religion"]})
-    }, function(error, response, body){
-        if(error) {
-            console.log(error);
-        } else {
-            itinerary_json = JSON.parse(response.body);
-            data = itinerary_json.data;
-            ids = [];
-            for(const day of data){
-                for(const place of day.plan){
-                    ids.push(place.id)
-                }
-            }
-            names = [];
-            tags = [];
-            get_info = (array) => {
-                if(array.length == 0){
-                    //console.log(names);
-                    //console.log(tags);
-                    render_obj = {
-                        itinerary : itinerary_json,
-                        names : names,
-                        tags : tags
-                    }
-                    res.render('planner_nuovo', render_obj);
-                }
-                else{
-                    id = array.pop()
-                    request({
-                        url:"https://api.opentripmap.com/0.1/en/places/xid/"+id+"?apikey="+openTripMapKey,
-                        method: "GET",
-                      },
-                        function(error, response, body){
-                            //console.log("ao?")
-                            //console.log(response.body);
-                            place_json = JSON.parse(response.body)
-                            place_kinds = place_json.kinds;
-                            place_name = place_json.name;
-                            if(place_kinds.includes("museums")) tags.push("rgb(0, 168, 197)");
-                            else if(place_kinds.includes("foods")) tags.push("rgb(158, 0, 34)");
-                            else if(place_kinds.includes("religion")) tags.push("rgb(214, 180, 29)");
-                            else if(place_kinds.includes("natural")) tags.push("rgb(11, 116, 28)");
-                            else if(place_kinds.includes("architecture")) tags.push("rgb(123, 14, 138)");
-                            else if(place_kinds.includes("accomodations")) tags.push("rgb(20, 18, 100)");
-                            names.push(place_name)
-                            get_info(array);
-                        });
-                    }
-            };
-            get_info(ids);
-        }
-    });
-
-})
 
 module.exports = router;

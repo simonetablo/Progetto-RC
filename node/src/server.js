@@ -8,6 +8,11 @@ const path = require('path')
 const auth_routes = require('./routes/auth');
 const api_routes = require('./routes/api');
 
+const couchdb_setup = require('./couchdb_setup');
+const postgres_setup = require('./postgres_setup');
+const postgres = require('./postgres');
+
+
 const PORT = 4000
 
 const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
@@ -59,24 +64,20 @@ function server_start(){
         res.render("planner", {id : false});
         return
       }
-      request({
-          //url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_all_docs',
-          url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/' + id,  
-          method: 'GET',
-          //headers: {'content-type': 'application/json'},
-          //body: JSON.stringify({"keys": ["culture", "religion"]})
-      }, function(error, response, body){
+      postgres.get_itinerary_data(id, function(error, response){
           if(error) {
               console.log(error);
           } else {
-              itinerary_json = JSON.parse(response.body);
-              data = itinerary_json.data;
-              if(typeof data == "undefined"){
+              //console.log(response)
+              //itinerary_json = JSON.parse(response.body);
+              //response.rows.data;
+              itinerary_data = JSON.parse(response.rows[0].data);
+              if(typeof itinerary_data == "undefined"){
                 res.end();                          /// itinerary doesn't exist
                 return;
               }
               ids = [];
-              for(const day of data){
+              for(const day of itinerary_data){
                   for(const place of day.plan){
                       ids.push(place.id)
                   }
@@ -89,7 +90,7 @@ function server_start(){
                     console.log(tags)
                       render_obj = {
                           id : true,
-                          itinerary : itinerary_json,
+                          itinerary_data : itinerary_data,
                           data : data,
                           tags : tags,
                           username : username,
@@ -231,90 +232,16 @@ function server_start(){
         })
       });
 
+    //postgres.add_tuple_in_table("('randomid5', '43'),\n('randomid6', '43');", "itineraries", ()=>{});
+    //postgres.display_table("itineraries");
+    
+
     app.use(auth_routes);
     app.use(api_routes);
 
     app.listen(PORT, () => {console.log("listening for request")});
 }
 
-
-request(
-    {
-        url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/user_db', 
-        method: 'PUT'
-    }, 
-    (error, response, body) => {
-        if(error) {
-            console.log(error); //error creating user_db
-        } else {
-            //console.log(response.body);  //user_db created successfully or already existing
-            request(
-                {
-                    url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/sessions_db', 
-                    method: 'PUT',
-                }, 
-                (error, response, body) => {
-                    if(error) {
-                        console.log(error); //error creating sessions_db
-                    } else {
-                        console.log(response.body); //sessions_db created successfully or already existing
-                        request(
-                            {
-                                url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db', 
-                                method: 'PUT'
-                            }, 
-                            (error, response, body) => {
-                                if(error) {
-                                    console.log(error); //error creating sessions_db
-                                } else {
-                                    console.log(response.body); //sessions_db created successfully or already existing
-                                    //create view
-                                    request(
-                                        {
-                                            url: 'http://'+process.env.COUCHDB_USER+':'+process.env.COUCHDB_PASSWORD+'@database:5984/itineraries_db/_design/it_ddoc', 
-                                            method: 'PUT',
-                                            body: JSON.stringify({
-                                                "views": {
-                                                    "tag_view": {
-                                                        "map": "function(doc) { \n\
-                                                            if (doc.tags == []) return; \n\
-                                                            var emit_sequence = function(base, disp) { \n\
-                                                              if (disp.length > 1) {\n\
-                                                                emit(base.concat(disp[0]), {'title' : doc.title, 'author' :doc.author, 'tags': doc.tags});\n\
-                                                                emit_sequence(base.concat(disp[0]), disp.slice(1, disp.length));\n\
-                                                                emit_sequence(base, disp.slice(1, disp.length));\n\
-                                                              } else if (disp.length == 1) {\n\
-                                                                emit(base.concat(disp[0]), {'title' : doc.title, 'author' :doc.author, 'tags': doc.tags});\n\
-                                                              }\n\
-                                                            }\n\
-                                                            emit_sequence([], doc.tags);\n\
-                                                        }"
-                                                    },
-                                                    "tag_view2": {
-                                                        "map": "function(doc) { \n\
-                                                            emit(doc._id, {'title' : doc.title, 'author' :doc.author, 'tags': doc.tags});\n\
-                                                        }"
-                                                    }
-                                                }
-                                            })
-                                        }, 
-                                        (error, response, body) => {
-                                            if(error) {
-                                                console.log(error); //error creating tag_view
-                                            } else {
-                                                console.log(response.body); //tag_view created
-                                                
-                                                server_start();
-                                                
-                                            }
-                                        }
-                                    );
-                                }
-                            }
-                        );
-                    }
-                }
-            );
-        }
-    }
-);
+couchdb_setup(() => {
+  postgres_setup(server_start);
+});

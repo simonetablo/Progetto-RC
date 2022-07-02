@@ -95,7 +95,7 @@
                 <button id="create" type="button" class="input_style_sm"><i class="fa-solid fa-circle-plus"></i></button>
                 <span id="searchBar"><input id="place" type="text" class="input_style_sm" name="Place"><button type="submit" class="input_style_sm" id="search" onclick=search(this)><i class="fa-solid fa-magnifying-glass"></i></button></span>
                 </div>
-                <div id="days"><%if(id){for(const day of itinerary.data){%><div class="day"><div class="date d-flex justify-content-between align-items-center">
+                <div id="days"><%if(id){for(const day of itinerary_data){%><div class="day"><div class="date d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
                                 <i class="fa-solid fa-circle-exclamation mx-2"></i>
