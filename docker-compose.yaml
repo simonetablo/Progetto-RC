@@ -19,6 +19,16 @@ services:
     networks:
       - proxy-network
 
+  rabbitmq:
+    image: rabbitmq:3.10.5-management
+    logging:
+      driver: none
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - rabbitmq-network
+
   database:
     image: couchdb
     ports:
@@ -64,6 +74,7 @@ services:
       - proxy-network
       - database-network
       - postgres-network
+      - rabbitmq-network
   
 networks:
   proxy-network:
@@ -71,4 +82,6 @@ networks:
   database-network:
     driver: bridge
   postgres-network:
+    driver: bridge
+  rabbitmq-network:
     driver: bridge

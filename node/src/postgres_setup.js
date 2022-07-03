@@ -13,7 +13,7 @@ const pool = new Pool({
     database: 'example_db',
     password: 'password',
     port: 5432,
-  })
+})
   
 
 const setup_postgres = (callback) => {

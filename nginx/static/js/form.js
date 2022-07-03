@@ -56,10 +56,12 @@ $(window).on('load', function () {
         const query_string = data.map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`).join('&');
         get_url = base_url + '/api/itineraries?' + query_string;
         $.get(get_url, (res) => {
+            console.log(res)
             res.data.forEach((itinerary, i) => {
-                title = itinerary.value.title;
-                author = itinerary.value.author;
-                tags = itinerary.value.tags;
+                console.log(itinerary);
+                title = itinerary.title;
+                author = itinerary.author;
+                tags = itinerary.tags;
                 html_tags = "";
                 for (const tag of tags) {
                     if (tag == "architecture") html_tags += '<i class="fa-solid tag_color_architecture fa-archway" style="padding-left:3px"></i>';
