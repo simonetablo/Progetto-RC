@@ -39,6 +39,7 @@ const sendbtn=document.getElementById("send");
 const modal = document.querySelector('#modal');
 const closeBtn = document.querySelector('.close');
 const bell=document.getElementById("bell")
+
 // Events
 sendbtn.addEventListener("click",openPopUp)
 closeBtn.addEventListener('click', closePopUp);
@@ -406,7 +407,6 @@ function forecast_aux(date_element){
         let day=date_element.closest(".day")
         day.getElementsByClassName("not_forecastPopup")[0].innerHTML="Enter a destination to know the weather forecast";
     }
-
 }
 
 function getForecast(coord, day){
@@ -427,13 +427,13 @@ function getForecast(coord, day){
                         let forecast = forct.daily[difference]
                         forecast_element.setAttribute("onclick", "showForecastPopup(this)");
                         forecast_element.setAttribute("onmouseleave", "hideForecastPopup(this)");
-                        forecast_element.innerHTML=`<img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}.png" alt="weather icon" class="w-icon2">
+                        forecast_element.innerHTML=`<img src="https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png" alt="weather icon" class="w-icon2">
                                                     <span class="forecastPopup">Day : ${forecast.temp.day}&#176;C Night : ${forecast.temp.night}&#176;C</span>`
                     }else{
                         forecast_element.setAttribute("onclick", "showNotForecastPopup(this)");
                         forecast_element.setAttribute("onmouseleave", "hideNotForecastPopup(this)");
                         forecast_element.innerHTML=`<i class="fa-solid fa-circle-exclamation mx-2"></i>
-                                                    <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>`
+                                                    <span class="not_forecastPopup">Weather forecast not available for this date</span>`
                     }
         },error:function(error){
             console.log(error)
@@ -621,8 +621,17 @@ const socket=io();
 
 socket.on('message', message =>{
     console.log(message);
-    socket.emit('consumer', user)
+    socket.emit('consumer', user);
+    if(tripID!=null && user!=tripAuthor){
+        socket.emit('tripID', tripID);
+    }
 })
+
+socket.on('liked', message=>{
+    let likeButton=document.getElementById("like");
+    likeButton.innerHTML='<i class="fa-solid fa-heart"></i>';
+})
+
 socket.on('notification', msg=>{
     var num=document.getElementsByClassName("badge")[0];
     var numInt=parseInt(num.innerHTML);

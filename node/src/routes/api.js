@@ -3,10 +3,14 @@ const request = require("request");
 const { v4: uuidv4 } = require('uuid');
 const postgres = require('../postgres');
 
-
+const app=express();
 const router = express.Router();
 const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 const positionstack_key= "6358130f0b66fd2e8cd62f36b84913e1"
+
+router.get('/api/test/', (req, res)=>{
+    res.send("test for api");
+})
 
 //API
 router.get('/api/itineraries/', (req, res) => {
@@ -44,6 +48,7 @@ router.get('/api/itineraries/', (req, res) => {
                 itinerary = {
                     id: row.id,
                     title: row.title,
+                    likes: row.likes,
                     author: row.author,
                     tags : tags
                 }
@@ -152,4 +157,11 @@ router.post('/api/itineraries', (req, res) => {
     get_data(ids);
 });
 
+router.get('/api/likes', (req, res)=>{
+
+})
+
 module.exports = router;
+
+app.use(router);
+module.exports = app;

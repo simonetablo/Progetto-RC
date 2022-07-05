@@ -63,7 +63,7 @@ function server_start(){
 
       amqp.connect(urlAmqp, function(error0, connection) {
           if (error0) {
-              throw error0;
+            throw error0;
           }
           console.log("new WS connection...");
 
@@ -90,26 +90,45 @@ function server_start(){
                           noAck: true
                       });
                   });
+                socket.on('tripID', tripID=>{
+                  console.log(message+" loaded "+tripID);
+                  postgres.get_likes(tripID, message, (err, res)=>{
+                    if(res.rowCount!=0){
+                      socket.emit('liked', res.rowCount);
+                    }
+                  })
+                  socket.emit('tripID received!');
+                })
           })
 
           socket.on('like', msg=>{
-              console.log(msg);
-
-              var sendQueue=msg.queue;
-              
+              var sendQueue=msg.queue;              
               let msgToSend={tripID : msg.tripID, tripName : msg.tripName, fromUser : msg.from}
               var msgString=JSON.stringify(msgToSend);
               connection.createChannel(function(err1, likeCh) {
                   if (err1) {
                       throw err1;
                   }
-              
                   likeCh.assertQueue(sendQueue, {
                       durable: false
                   });
                   likeCh.sendToQueue(sendQueue, Buffer.from(msgString), {persistent: true});
           
-                  console.log(" [x] Sent "+msgString.toString()+" to queue "+sendQueue);
+                  postgres.add_like(msg.tripID, msg.from, (err, res)=>{
+                    if(err){
+                      console.log(err);
+                    }
+                    else{
+                      postgres.get_likes(msg.tripID, msg.from, (err1, res1)=>{
+                        if(err){
+                          console.log(err1);
+                        }
+                        else{
+                          console.log(msg.from+" liked trip "+msg.tripName);
+                        }
+                      })
+                    }
+                  })
                   setTimeout(function() {
                       likeCh.close();
                   }, 1000);
@@ -117,7 +136,21 @@ function server_start(){
               });
           })
           socket.on('unLike', msg=>{
-              console.log("Unliked")
+              postgres.rmv_like(msg.tripID, msg.from, (err, res)=>{
+                if(err){
+                  console.log(err);
+                }
+                else{
+                  postgres.get_likes(msg.tripID, msg.from, (err1, res1)=>{
+                    if(err){
+                      console.log(err1);
+                    }
+                    else{
+                      console.log(msg.from+" unliked trip "+msg.tripName);
+                    }
+                  })
+                }
+              })
           })
           socket.on('disconnect', function(){
               console.log('user disconnected');
@@ -303,10 +336,6 @@ function server_start(){
           }
         })
       });
-
-    //postgres.add_tuple_in_table("('randomid5', '43'),\n('randomid6', '43');", "itineraries", ()=>{});
-    //postgres.display_table("itineraries");
-    
 
     app.use(auth_routes);
     app.use(api_routes);
