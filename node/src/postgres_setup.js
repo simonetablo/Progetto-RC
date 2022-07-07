@@ -32,7 +32,7 @@ const setup_postgres = (callback) => {
       else console.log('The port did not open before the timeout...');
     })
     .catch((err) => {
-      console.err(`An unknown error occured while waiting for the port: ${err}`);
+      console.log(`An unknown error occured while waiting for the port: ${err}`);
     });
 };
 
