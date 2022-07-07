@@ -18,6 +18,9 @@ router.post('/login/', async (req, res) => {
             if(response.statusCode === 200){
                 try{
                     if(await bcrypt.compare(req.body.password, json_response.password)){
+                        if(req.body.token){
+                            req.session.token = req.body.token
+                        }
                         req.session.isAuth = true;
                         req.session.username = req.body.username;
                         req.session.email = json_response.email;
@@ -72,6 +75,9 @@ router.post('/register/', async (req, res) => {
                 res.status(500).send('error, database request');  //internal request error
             } else {
                 if(response.statusCode === 201){
+                    if(req.body.token){
+                        req.session.token = req.body.token
+                    }
                     req.session.isAuth = true;
                     req.session.username = req.body.username;
                     req.session.email = req.body.email;
