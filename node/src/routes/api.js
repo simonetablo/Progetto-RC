@@ -2,15 +2,13 @@ const express = require('express');
 const request = require("request");
 const { v4: uuidv4 } = require('uuid');
 const postgres = require('../postgres');
+const bodyParser = require('body-parser');
 
 const app=express();
 const router = express.Router();
 const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 const positionstack_key= "6358130f0b66fd2e8cd62f36b84913e1"
-
-router.get('/api/test/', (req, res)=>{
-    res.send("test for api");
-})
+app.use(bodyParser.json())
 
 //API
 router.get('/api/itineraries/', (req, res) => {
@@ -58,10 +56,9 @@ router.get('/api/itineraries/', (req, res) => {
             
         }
     }
-
-postgres.query_itinerary(tags, location, days, (err, result)=>{
+    postgres.query_itinerary(tags, location, days, (err, result)=>{
         if(err){
-            console.log(err);
+            console.error(err);
             res.status(500).send('error');
         }
         else{
@@ -97,6 +94,17 @@ router.post('/api/itineraries', (req, res) => {
                     console.log(error);
                     res.status(500).send('error, itinerary database request');  //internal request error
                 } else {
+                    if(req.body.title=="api_test" && req.body.itinerary[0].plan[0].id=="R1834818"){
+                        postgres.rmv_itinerary(id, (error)=>{
+                            if(error) {
+                                console.log(error);
+                                res.status(500).send('error, remove itinerary database request');
+                            }
+                            else{
+                                console.log("api post: test OK")
+                            }
+                        })
+                    }
                     res.status(200).send();
                 }   
             });
@@ -154,14 +162,12 @@ router.post('/api/itineraries', (req, res) => {
             });
         }
     };
-    get_data(ids);
+        get_data(ids);
+    
 });
-
-router.get('/api/likes', (req, res)=>{
-
-})
 
 module.exports = router;
 
 app.use(router);
-module.exports = app;
+
+module.exports = app

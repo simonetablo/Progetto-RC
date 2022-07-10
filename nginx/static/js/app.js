@@ -562,6 +562,7 @@ function sendToServer(e){
     }
     itinerary_obj = {title:"default_title" ,itinerary : days };
     itinerary_obj.title=title
+    console.log(itinerary_obj)
     $.post( base_url+"/api/itineraries", itinerary_obj, ()=>{
         send_button.style.visibility = "hidden";
         spinner.style.visibility = "hidden";

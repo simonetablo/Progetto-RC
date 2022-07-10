@@ -160,11 +160,45 @@ const get_itinerary_data = (id, callback) => {
       callback(error, null);
     }
     else{
-      console.log(JSON.stringify(results));
+      //console.log(JSON.stringify(results));
       callback(null, results);
     }
   })
 }
+
+const rmv_itinerary = (id, callback) => {
+  pool.query(`DELETE FROM itineraries_likes WHERE id='${id}`,
+    (error, results) => {
+      if (error) {
+        console.log('No rows with this id in the "itinerary_likes" database table')
+      }
+        pool.query(`DELETE FROM itineraries_loc WHERE id = '${id}'`,
+        (error, results) => {
+          if (error) {
+            callback(error, null);
+          }
+          else{
+            pool.query(`DELETE FROM itineraries_tag WHERE id = '${id}'`,
+            (error, results) => {
+              if (error) {
+                callback(error, null);
+              }
+              else{
+                pool.query(`DELETE FROM itineraries WHERE id = '${id}'`,
+                (error, results) => {
+                  if (error) {
+                    callback(error, null);
+                  }
+                  else{
+                    callback(null, results);
+                  }
+                })
+              }
+            })
+          }
+        })
+      })
+  }
 
 module.exports = {
                 "insert_itinerary" : insert_itinerary,
@@ -173,5 +207,6 @@ module.exports = {
                 "get_itinerary_data" : get_itinerary_data,
                 "add_like" : add_like,
                 "rmv_like" : rmv_like,
-                "get_likes" : get_likes
+                "get_likes" : get_likes,
+                "rmv_itinerary" : rmv_itinerary
                 };

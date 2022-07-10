@@ -56,10 +56,8 @@ $(window).on('load', function () {
         const query_string = data.map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`).join('&');
         get_url = base_url + '/api/itineraries?' + query_string;
         $.get(get_url, (res) => {
-            console.log(res)
             res.data.forEach((itinerary, i) => {
-                console.log(itinerary.likes)
-                console.log(itinerary);
+                //console.log(itinerary);
                 title = itinerary.title;
                 author = itinerary.author;
                 tags = itinerary.tags;

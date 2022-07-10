@@ -166,7 +166,6 @@ function server_start(){
       });
   })
 
-
     app.get('/planner', (req, res) =>{
       if(!req.session.isAuth){
         res.redirect("/");
@@ -202,8 +201,8 @@ function server_start(){
               tags=[];
               get_info = (array) => {
                   if(array.length == 0){
-                    console.log(data)
-                    console.log(tags)
+                    //console.log(data)
+                    //console.log(tags)
                       render_obj = {
                           id : true,
                           itinerary_data : itinerary_data,
@@ -242,7 +241,6 @@ function server_start(){
 
     app.get('/search', function(req, res){
         var data=req.query.name;
-        console.log(data);
         request({
             url:"https://api.mapbox.com/geocoding/v5/mapbox.places/"+data+".json?access_token="+mapBoxAT,
             method: "GET",
@@ -257,11 +255,6 @@ function server_start(){
             }
         })
     });
-
-    app.post('/addpois', function(req, res){
-        var data=JSON.parse(req.body.info);
-        res.end();
-      });
 
     app.post("/weather", function(req,res,next){
       var data = JSON.parse(req.body.info);
@@ -439,7 +432,6 @@ function server_start(){
           
           
       })
-
 
     app.use(auth_routes);
     app.use(api_routes);
