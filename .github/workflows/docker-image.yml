@@ -9,12 +9,18 @@ on:
 jobs:
 
   compose:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker-compose up -d
     - name: containers list
       run: docker ps
+
+  test:
+    needs: compose
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Test node server and api
+      run: npm test
