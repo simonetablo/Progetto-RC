@@ -29,7 +29,7 @@ const client_id = '610781105752-mf7lj82lmrcrbl8o5eostfrqvuoe4hl1.apps.googleuser
 
 
 
-var urlAmqp="amqp://progetto-rc_rabbitmq_1:5672";
+var urlAmqp="amqp://rabbitmq:5672";
 
 function server_start(){
 
