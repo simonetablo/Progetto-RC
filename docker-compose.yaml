@@ -15,7 +15,8 @@ services:
     cap_add:
       - NET_ADMIN
     depends_on:
-      - node
+      - node1
+      - node2
     networks:
       - proxy-network
 
@@ -55,9 +56,9 @@ services:
     networks:
     - postgres-network
 
-  node:
+  node1:
     build: ./node
-    container_name: node_cont
+#    container_name: node_cont
     working_dir: /usr/node
     environment:
       - COUCHDB_USER=user1234
@@ -65,11 +66,34 @@ services:
       - SESSION_SECRET_KEY=secret
     volumes: 
       - ./node/src:/usr/node/src
-    ports:
-      - "4000:4000"
+#     ports:
+#      - "4000:4000"
     depends_on:
       - database
       - postgres
+      - rabbitmq
+    networks:
+      - proxy-network
+      - database-network
+      - postgres-network
+      - rabbitmq-network
+  
+  node2:
+    build: ./node
+#    container_name: node_cont
+    working_dir: /usr/node
+    environment:
+      - COUCHDB_USER=user1234
+      - COUCHDB_PASSWORD=password1234
+      - SESSION_SECRET_KEY=secret
+    volumes: 
+      - ./node/src:/usr/node/src
+#     ports:
+#      - "4000:4000"
+    depends_on:
+      - database
+      - postgres
+      - rabbitmq
     networks:
       - proxy-network
       - database-network

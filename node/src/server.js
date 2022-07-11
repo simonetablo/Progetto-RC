@@ -167,6 +167,9 @@ function server_start(){
   })
 
     app.get('/planner', (req, res) =>{
+      
+      console.log("connected!");
+
       if(!req.session.isAuth){
         res.redirect("/");
         return;
