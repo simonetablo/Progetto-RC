@@ -12,6 +12,49 @@ html,
 	width: 100%;
 }
 
+#CalendarPopUp{
+   position:absolute;
+   width:40%
+   
+}
+#modalCal{
+    display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+#modalCalContent{
+    margin: 20vh auto;
+	width: 20%;
+    height: 5%;
+    min-width: 500px;
+    min-height: 200px;
+    background-color: #fefefe;
+  
+}
+
+#CalTime1{
+    padding-right: 1%;
+
+}
+#CalTime2{
+    padding-right: 20%;
+   
+}
+
+
+
+
+
+
+
+
 
 body{
     width: 100%;

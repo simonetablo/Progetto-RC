@@ -345,6 +345,17 @@ function addToPlanner(e){
         planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
         planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
         planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick = showCalendarPopUp() id='calendar_post' type='button'  class='fa-solid fa-calendar'>"
+      
+
+
+        planner.innerHTML+= " <div id = 'modalCal' > <div id = 'modalCalContent'  > <p class='txt_msg'> Choose a time for your visit to "+data.name+"</p> <div id = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' id = 'CalTime1' class='input_style_sm my-1' required>End hour <input type='time' id = 'CalTime2' class='input_style_sm my-1' required><button type='button' onclick = postOnCalendar(data.name,dataCorrente) class='fa-solid fa-calendar'></button></div></div></div> "
+            
+            console.log(data.name)
+            console.log(dataCorrente)
+        
+
+
         planner.style.borderLeftColor=whichKind(data.kinds);
         let firstDay=document.getElementById("days").firstChild;
         firstDay.appendChild(planner);
@@ -366,6 +377,47 @@ function addToPlanner(e){
         }
     }
 }
+
+function showCalendarPopUp(){
+    popUp = document.getElementById("CalendarPopUp")
+    modalCal = document.getElementById('modalCal')
+    popUp.style.visibility="visible";
+    modalCal.style.display="block"
+    
+
+}
+
+
+
+
+function postOnCalendar(loc,date_){
+    time1 =  document.getElementById('CalTime1').value
+    time2 =  document.getElementById('CalTime2').value
+    console.log(" post on calendar in app.js ")
+    $.ajax({
+        type:"POST",
+        url:base_url+'/postOnCalendar',
+        dataType:"json",
+        data: { 
+            location:loc,
+            date:date_  ,
+            startH : time1,
+            endH : time2
+        },error:function(error){
+            console.log(error)
+        }
+    })
+
+}
+
+
+
+
+
+
+
+
+
 
 function whichKind(kind){
     if(kind.includes("museums")) return("#d63384");
@@ -390,7 +442,10 @@ function clonePOI(e){
 }
 
 //FORECAST
+let dataCorrente 
 function forecast_aux(date_element){
+    dataCorrente = date_element.value
+
     let tmp=date_element.parentNode;
     let firstPoi=tmp.parentNode.nextSibling;
     if(firstPoi!=null){
@@ -411,6 +466,9 @@ function forecast_aux(date_element){
 
 function getForecast(coord, day){
     let date_element=day.getElementsByClassName("my-1")[0];
+
+
+
     var currentTime = new Date();
     date = new Date(date_element.value);
     difference = Math.ceil((date-currentTime)/ (1000 * 3600 * 24));

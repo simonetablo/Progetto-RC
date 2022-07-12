@@ -15,7 +15,9 @@ const { connect } = require("http2");
 const couchdb_setup = require('./couchdb_setup');
 const postgres_setup = require('./postgres_setup');
 const postgres = require('./postgres');
-
+const { google } = require('googleapis');
+const { OAuth2 } = google.auth
+ 
 
 const PORT = 4000
 
@@ -26,7 +28,7 @@ var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWM
 const clientSecret = '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'
 const red_uri ='https://localhost:8083/red_uri'
 const client_id = '610781105752-mf7lj82lmrcrbl8o5eostfrqvuoe4hl1.apps.googleusercontent.com'
-
+let token =''
 
 
 var urlAmqp="amqp://rabbitmq:5672";
@@ -364,6 +366,7 @@ function server_start(){
           console.log('Upload successful!  Server responded with:', body);
           var info = JSON.parse(body);
           a_t = info.access_token
+          token = info.access_token
           next()
         })
       },
@@ -436,11 +439,100 @@ function server_start(){
           
       })
 
+
+      
+
+
+
+
+
+
+      const oAuth2Client = new OAuth2(client_id, clientSecret, red_uri);
+      
+
+      // Create a new calender instance.
+      const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
+   
+      app.post('/postOnCalendar',function(req,res){
+      
+        oAuth2Client.setCredentials({refresh_token: req.session.token,});
+
+
+        date = req.body.date
+        let dateArr = date.split('-',3)
+        console.log(dateArr)
+        startHour = req.body.startH.split(':',2)
+        endHour = req.body.endH.split(':',2)
+
+        // Create a new event start date instance for temp uses in our calendar.
+        const eventStartTime = new Date()
+        eventStartTime.setFullYear(dateArr[0], dateArr[1] -1, dateArr[2])
+        eventStartTime.setHours(startHour[0] - 2)
+        eventStartTime.setMinutes(startHour[1])
+
+        // Create a new event end date instance for temp uses in our calendar.
+        const eventEndTime = new Date()
+        eventEndTime.setFullYear(dateArr[0], dateArr[1] - 1, dateArr[2])
+        eventEndTime.setHours(endHour[0] -2)
+        eventEndTime.setMinutes(endHour[1])
+        
+        //eventEndTime.setMinutes(60)
+        let event = { 
+                      summary : 'Trip Planner reminder',
+                      location : req.body.location,
+                      start: {dateTime: eventStartTime },
+                      end:{dateTime : eventEndTime}
+        }
+        calendar.freebusy.query(
+          {
+            resource: {
+              timeMin: eventStartTime,
+              timeMax: eventEndTime,
+              items: [{ id: 'primary' }],
+            },
+          },
+          (err, res) => { 
+            // Check for errors in our query and log them if they exist.
+            if (err) return console.error('Free Busy Query Error: ', err)
+        
+            // Create an array of all events on our calendar during that time.
+            const eventArr = res.data.calendars.primary.busy
+        
+            // Check if event array is empty which means we are not busy
+            if (eventArr.length === 0)
+              // If we are not busy create a new calendar event.
+              return calendar.events.insert(
+                { calendarId: 'primary', resource: event },
+                err => {
+                  // Check for errors and log them if they exist.
+                  if (err) return console.error('Error Creating Calender Event:', err)
+                  // Else log that the event was created.
+                  return console.log('Calendar event successfully created.')
+                }
+              )
+        
+            // If event array is not empty log that we are busy.
+            return console.log(`Sorry I'm busy...`)
+          }
+        )
+        
+        
+
+
+        })
+
+
+
+
+
+
+
+
     app.use(auth_routes);
     app.use(api_routes);
 
     server.listen(PORT, () => {console.log("listening for request")});
-}
+  }
 
 couchdb_setup(() => {
   postgres_setup(server_start);
