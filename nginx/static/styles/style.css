@@ -14,7 +14,8 @@ html,
 
 #CalendarPopUp{
    position:absolute;
-   width:40%
+   width:40%;
+   text-align: center;
    
 }
 #modalCal{
@@ -36,16 +37,41 @@ html,
     min-width: 500px;
     min-height: 200px;
     background-color: #fefefe;
+    border-radius: 5px;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
+    
   
 }
 
+
+#calPopUpText{
+    font-size: x-large;
+    text-align: center;
+}
+
 #CalTime1{
-    padding-right: 1%;
+    padding-right: 5%;
 
 }
 #CalTime2{
-    padding-right: 20%;
+    padding-right: 5%;
    
+}
+#CalPopUpBtn{
+    padding: 1%;
+    border-color: #ffffff;
+    
+}
+#calendar_post{
+    border-color: #ffffff;
+    border-style: none;
+    background-color: #ffffff;
+}
+#calTime_f{
+    align-self: center;
+    font-size: small;
+    text-align: center;
+    color: crimson;
 }
 
 

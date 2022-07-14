@@ -28,7 +28,8 @@ var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWM
 const clientSecret = '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'
 const red_uri ='https://localhost:8083/red_uri'
 const client_id = '610781105752-mf7lj82lmrcrbl8o5eostfrqvuoe4hl1.apps.googleusercontent.com'
-let token =''
+let googleLogin = false
+let token_used = false
 
 
 var urlAmqp="amqp://rabbitmq:5672";
@@ -366,28 +367,32 @@ function server_start(){
           console.log('Upload successful!  Server responded with:', body);
           var info = JSON.parse(body);
           a_t = info.access_token
-          token = info.access_token
+          req.session_token = info.access_token
+          
           next()
         })
       },
       function(req,res){
-        res.redirect('https://localhost:8083/use_token')
+          res.redirect('https://localhost:8083/use_token')
       })
 
+
     app.get('/use_token',function(req,res,next){
+        token_used = true 
         url_string = 'https://www.googleapis.com/oauth2/v2/userinfo?access_token='+a_t
         var options = {
           url : url_string,
-          /*headers :{
+          headers :{
 
             'Authorization': 'Bearer '+a_t
-          }*/
+          }
         }
         request(options, function callback(error , response, body ){
           if(error == null && response.statusCode == 200){
             var info = JSON.parse(body)
             console.log("user info : \n")
             console.log(info)
+            googleLogin = true
             res.body = info
             req.session.username = info.name
             req.session.email = info.email
@@ -440,30 +445,22 @@ function server_start(){
       })
 
 
+    const oAuth2Client = new OAuth2(client_id, clientSecret, red_uri);
       
 
-
-
-
-
-
-      const oAuth2Client = new OAuth2(client_id, clientSecret, red_uri);
-      
-
-      // Create a new calender instance.
-      const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
+    // Create a new calender instance.
+    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
    
-      app.post('/postOnCalendar',function(req,res){
-      
-        oAuth2Client.setCredentials({refresh_token: req.session.token,});
-
-
+    app.post('/postOnCalendar',function(req,res){
+        let success = false
         date = req.body.date
         let dateArr = date.split('-',3)
         console.log(dateArr)
         startHour = req.body.startH.split(':',2)
         endHour = req.body.endH.split(':',2)
 
+        oAuth2Client.setCredentials({access_token: req.session.token });
+    
         // Create a new event start date instance for temp uses in our calendar.
         const eventStartTime = new Date()
         eventStartTime.setFullYear(dateArr[0], dateArr[1] -1, dateArr[2])
@@ -493,7 +490,9 @@ function server_start(){
           },
           (err, res) => { 
             // Check for errors in our query and log them if they exist.
-            if (err) return console.error('Free Busy Query Error: ', err)
+            if (err) {  console.log(err)
+                        return 
+                      }
         
             // Create an array of all events on our calendar during that time.
             const eventArr = res.data.calendars.primary.busy
@@ -507,24 +506,37 @@ function server_start(){
                   // Check for errors and log them if they exist.
                   if (err) return console.error('Error Creating Calender Event:', err)
                   // Else log that the event was created.
-                  return console.log('Calendar event successfully created.')
+                  
+                  console.log('Calendar event successfully created.')
+                  success = true
+                  
                 }
               )
         
             // If event array is not empty log that we are busy.
             return console.log(`Sorry I'm busy...`)
+        
           }
-        )
-        
-        
+        )       
+        if(success==true){
+          res.send({event_posted : true})
+        }else{
+          res.send({event_posted :false})
+        }
+    })
 
 
-        })
 
 
-
-
-
+    app.get('/isGoogleAuth',function(req,res){
+      
+      if (req.session.token != null  ){
+        res.send({gAuth:true})
+      }
+      else {
+        res.send({gAuth:false})
+      }
+    })
 
 
 
