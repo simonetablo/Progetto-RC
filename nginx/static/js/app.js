@@ -347,8 +347,8 @@ function addToPlanner(e){
         planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
         $.ajax({url:'https://localhost:8083/isGoogleAuth', success:function (res){
             if (res.gAuth == true){
-                    planner.innerHTML+="<button onclick = showCalendarPopUp() id='calendar_post' type='button'  class='fa-solid fa-calendar'></button>"
-                    planner.innerHTML+= " <div id = 'modalCal' > <div id = 'modalCalContent'  > <p id = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p id = 'calTime_f'></p> <form id='CalPost_form' action='' class='needs-validation' novalidate><div id = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' id = 'CalTime1' class=' input_style_sm my-1' required><div class='invalid-feedback' id='calPopup-title_f'>Type an hour for the start.</div>End hour <input type='time' id = 'CalTime2' class='input_style_sm my-1' required><div class='invalid-feedback' id='calPopup-title_f'>Type an hour for the end.</div><button class='input_style_sm' id ='CalPopUpBtn' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></form></div></div> "
+                    planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
+                    planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <form class='CalPost_form' action='' class='needs-validation' novalidate><div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></form></div></div> "
                     console.log(data.name)
                     console.log(dataCorrente)
             }
@@ -380,30 +380,41 @@ function addToPlanner(e){
 
 window.addEventListener('click',outsideCalpopUp_click)
 
-function showCalendarPopUp(){
-    title = document.getElementById('calPopUpText')
-    titleF = document.getElementById('calPopup-title_f')
-    modalCalContent = document.getElementById('modalCalContent')
-    popUp = document.getElementById("CalendarPopUp")
-    modalCal = document.getElementById('modalCal')
+function showCalendarPopUp(e){
+    let parent=e.parentElement;
+    //let title = parent.getElementsByClassName('calPopUpText')[0]
+    //let titleF = parent.getElementsByClassName('calPopup-title_f')[0]
+    let modalCalContent = parent.getElementsByClassName('modalCalContent')[0]
+    let popUp = parent.getElementsByClassName("CalendarPopUp")[0]
+    let modalCal = parent.getElementsByClassName('modalCal')[0]
     popUp.style.visibility="visible";
+    //popUp.classList.add("CalendarPopUpVisible")
     modalCal.style.display="block"
     modalCal.style.visibility='visible'
+    modalCal.classList.add("modalCalVisible")
     modalCalContent.style.visibility = 'visible'
-    //calForm = document.getElementById('CalPost_form')
-    calTime1 = document.getElementById('CalTime1')
-    calTime2= document.getElementById('CalTime2')
+    //modalCalContent.classList.add("modalCalContentVisible")
+    //let calForm = document.getElementsByClassName('CalPost_form')[0]
+    //let calTime1 = parent.getElementsByClassName('CalTime1')[0]
+    //let calTime2= parent.getElementsByClassName('CalTime2')[0]
     
 }
 
 function outsideCalpopUp_click(e){
-    modalCal = document.getElementById('modalCal')
+    var modalCal = document.getElementsByClassName('modalCalVisible')[0]
     if (e.target == modalCal) {
+        let popUp=modalCal.getElementsByClassName("CalendarPopUp")[0];
         popUp.style.visibility = 'hidden';
+        //popUp.classList.remove("CalendarPopUpVisible")
+        //let modalCal=document.getElementsByClassName("modalCalVisible")[0]
         modalCal.style.visibility = 'hidden';
         modalCal.style.display = 'none'
+        modalCal.classList.remove("modalCalVisible")
+        let modalCalContent=modalCal.getElementsByClassName("modalCalContent")[0]
         modalCalContent.style.visibility = 'hidden'
-        calTime_f = document.getElementById('calTime_f')
+        //modalCalContent.classList.remove("modalCalContentVisible")
+
+        let calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
         calTime_f.innerHTML = ''
     }
 }
@@ -411,18 +422,21 @@ function outsideCalpopUp_click(e){
 
 
 function postOnCalendar(loc,date_){
-    calTime_f = document.getElementById('calTime_f')
+    var modalCal=document.getElementsByClassName("modalCalVisible")[0]
+    calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
+    calTime1 = modalCal.getElementsByClassName('CalTime1')[0]
+    calTime2 = modalCal.getElementsByClassName('CalTime2')[0]
     if(date_ == undefined){
         calTime_f.innerHTML="you must choose a date in the day box"
         return
     }
-    console.log( typeof document.getElementById('CalTime1').value)
-    if(document.getElementById('CalTime1').value == '' || document.getElementById('CalTime2').value ==''){
+    console.log( typeof calTime1.value)
+    if(calTime1.value == '' || calTime2.value ==''){
         calTime_f.innerHTML="start and end hours can t be empty"
         return
     }
-    arrTime1 = document.getElementById('CalTime1').value.split(':',2)
-    arrTime2 =document.getElementById('CalTime2').value.split(':',2)
+    arrTime1 = calTime1.value.split(':',2)
+    arrTime2 = calTime2.value.split(':',2)
     console.log(arrTime1)
     if(arrTime1[0] > arrTime2[0] ){
         calTime_f.innerHTML = 'end time must be at least equal to start time'
@@ -432,8 +446,8 @@ function postOnCalendar(loc,date_){
         return
     }
 
-    time1 =  document.getElementById('CalTime1').value
-    time2 =  document.getElementById('CalTime2').value
+    time1 = calTime1.value
+    time2 =  calTime2.value
     console.log(" post on calendar in app.js ")
     $.ajax({
         type:"POST",
@@ -448,7 +462,7 @@ function postOnCalendar(loc,date_){
         sccess:function(res){
             console.log(res)
             if (res.event_posted == true){
-                title = document.getElementById('calPopUpText')
+                title = modalCal.getElementsByClassName('calPopUpText')[0]
                 calTime_f.innerHTML = 'Event posted on Calendar'
                 calTime_f.style.color = 'green'
                 return

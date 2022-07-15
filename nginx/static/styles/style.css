@@ -12,13 +12,13 @@ html,
 	width: 100%;
 }
 
-#CalendarPopUp{
+.CalendarPopUp{
    position:absolute;
    width:40%;
    text-align: center;
    
 }
-#modalCal{
+.modalCal{
     display: none;
 	position: fixed;
 	z-index: 1;
@@ -30,7 +30,7 @@ html,
 	background-color: rgba(0, 0, 0, 0.7);
 }
 
-#modalCalContent{
+.modalCalContent{
     margin: 20vh auto;
 	width: 20%;
     height: 5%;
@@ -44,30 +44,30 @@ html,
 }
 
 
-#calPopUpText{
+.calPopUpText{
     font-size: x-large;
     text-align: center;
 }
 
-#CalTime1{
+.CalTime1{
     padding-right: 5%;
 
 }
-#CalTime2{
+.CalTime2{
     padding-right: 5%;
    
 }
-#CalPopUpBtn{
+.CalPopUpBtn{
     padding: 1%;
     border-color: #ffffff;
     
 }
-#calendar_post{
+.calendar_post{
     border-color: #ffffff;
     border-style: none;
     background-color: #ffffff;
 }
-#calTime_f{
+.calTime_f{
     align-self: center;
     font-size: small;
     text-align: center;

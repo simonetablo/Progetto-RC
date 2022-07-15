@@ -490,7 +490,7 @@ function server_start(){
           },
           (err, res) => { 
             // Check for errors in our query and log them if they exist.
-            if (err) {  console.log(err)
+            if (err) {  console.log("server.js: 493 - "+err)
                         return 
                       }
         
