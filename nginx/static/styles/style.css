@@ -13,8 +13,8 @@ html,
 }
 
 .CalendarPopUp{
-   position:absolute;
-   width:40%;
+   position:relative;
+   width:100%;
    text-align: center;
    
 }
@@ -32,7 +32,7 @@ html,
 
 .modalCalContent{
     margin: 20vh auto;
-	width: 20%;
+	width: min-content;
     height: 5%;
     min-width: 500px;
     min-height: 200px;

@@ -348,7 +348,7 @@ function addToPlanner(e){
         $.ajax({url:'https://localhost:8083/isGoogleAuth', success:function (res){
             if (res.gAuth == true){
                     planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
-                    planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <form class='CalPost_form' action='' class='needs-validation' novalidate><div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></form></div></div> "
+                    planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></div></div> "
                     console.log(data.name)
                     console.log(dataCorrente)
             }
@@ -420,8 +420,9 @@ function outsideCalpopUp_click(e){
 }
 
 
-
+let tokenExpired = false
 function postOnCalendar(loc,date_){
+    
     var modalCal=document.getElementsByClassName("modalCalVisible")[0]
     calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
     calTime1 = modalCal.getElementsByClassName('CalTime1')[0]
@@ -437,7 +438,6 @@ function postOnCalendar(loc,date_){
     }
     arrTime1 = calTime1.value.split(':',2)
     arrTime2 = calTime2.value.split(':',2)
-    console.log(arrTime1)
     if(arrTime1[0] > arrTime2[0] ){
         calTime_f.innerHTML = 'end time must be at least equal to start time'
         return
@@ -448,7 +448,6 @@ function postOnCalendar(loc,date_){
 
     time1 = calTime1.value
     time2 =  calTime2.value
-    console.log(" post on calendar in app.js ")
     $.ajax({
         type:"POST",
         url:base_url+'/postOnCalendar',
@@ -457,15 +456,30 @@ function postOnCalendar(loc,date_){
             location:loc,
             date:date_  ,
             startH : time1,
-            endH : time2
+            endH : time2,
+            t_exp : tokenExpired
         },
-        sccess:function(res){
-            console.log(res)
+        success:function(res){
+            
             if (res.event_posted == true){
                 title = modalCal.getElementsByClassName('calPopUpText')[0]
                 calTime_f.innerHTML = 'Event posted on Calendar'
                 calTime_f.style.color = 'green'
                 return
+            }
+            else if (res.event_posted == false && res.busy == true){
+                calTime_f.innerHTML = 'You are busy at the chosen time'
+            }
+            else if(res.event_posted == false && res.busy == false){
+                if(res.invalidCredentials == true ){
+                    calTime_f.innerHTML = 'Google session expired'
+                    tokenExpired = true 
+                    postOnCalendar(loc,date_)
+
+                }else{
+                    calTime_f.innerHTML ='Error posting the event'
+                }
+
             }
         },error:function(error){
 
@@ -475,9 +489,6 @@ function postOnCalendar(loc,date_){
         }
     })
 }
-
-
-
 
 function whichKind(kind){
     if(kind.includes("museums")) return("#d63384");
@@ -550,7 +561,7 @@ function getForecast(coord, day){
                         forecast_element.setAttribute("onclick", "showNotForecastPopup(this)");
                         forecast_element.setAttribute("onmouseleave", "hideNotForecastPopup(this)");
                         forecast_element.innerHTML=`<i class="fa-solid fa-circle-exclamation mx-2"></i>
-                                                    <span class="not_forecastPopup">Weather forecast not available for this date</span>`
+                                                    <span class="not_forecastPopup">Weather forecast not available for this date</span> `
                     }
         },error:function(error){
             console.log(error)
