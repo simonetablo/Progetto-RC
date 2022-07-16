@@ -78,6 +78,7 @@ services:
       - database-network
       - postgres-network
       - rabbitmq-network
+    restart: on-failure
   
   node2:
     build: ./node
@@ -100,6 +101,7 @@ services:
       - database-network
       - postgres-network
       - rabbitmq-network
+    restart: on-failure
   
 networks:
   proxy-network:

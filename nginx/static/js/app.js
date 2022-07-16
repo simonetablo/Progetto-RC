@@ -33,6 +33,23 @@ var map = new mapboxgl.Map({
     zoom: -1,
 });
 
+function blurText(e){
+    if(e.classList.contains("hidden")){
+        e.style.webkitFilter="blur(0px)";
+        e.classList.remove("hidden");
+        e.classList.add("visible");
+    }
+    else if(e.classList.contains("visible")){
+        e.style.webkitFilter="blur(3px)";
+        e.classList.remove("visible");
+        e.classList.add("hidden");
+    }
+}
+
+$('.dropdown-menu').on('click', function(e) {
+    e.stopPropagation();
+});
+
 map.addControl(new mapboxgl.NavigationControl());
 
 const sendbtn=document.getElementById("send");   
@@ -349,8 +366,8 @@ function addToPlanner(e){
             if (res.gAuth == true){
                     planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
                     planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></div></div> "
-                    console.log(data.name)
-                    console.log(dataCorrente)
+//                    console.log(data.name)
+//                    console.log(dataCorrente)
             }
 
         }});

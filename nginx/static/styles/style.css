@@ -12,6 +12,10 @@ html,
 	width: 100%;
 }
 
+#email{
+    -webkit-filter: blur(3px);
+}
+
 .CalendarPopUp{
    position:relative;
    width:100%;
