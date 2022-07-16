@@ -4,6 +4,10 @@
   font-family : 'Poppins', sans-serif
 }
 
+#apikey{
+  -webkit-filter: blur(3px); 
+}
+
 .content {
   position: relative;
   background-color: black;
@@ -94,6 +98,33 @@ img {
   max-width: 10px;
 }
 
+.dropdown-menu{
+  background-color: rgb(50, 50, 50, 0.3);
+}
+
+.dropdown-item > .card-header{
+  max-width: 170px;
+}
+
+.dropdown-menu{
+  background-color: rgb(50, 50, 50, 0.3);
+}
+
+.dropdown-item > .card-header{
+  max-width: 170px;
+}
+  
+.card-title{
+  font-size:80%; 
+  overflow-x: scroll;
+  overflow-y: hidden; 
+}
+
+
+.card-text{
+  font-size:80%; 
+  overflow-x: scroll;
+}
 
 @media (pointer: coarse) and (hover: none) {
   .content video {

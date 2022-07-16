@@ -10,17 +10,31 @@
     <script src="../libraries/bootstrap.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js"></script>
     <script type="text/javascript" src="https://opentripmap.io/js/directory.en.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css"/>
     <script src="https://kit.fontawesome.com/285899448d.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/style.css"/>
     
 <body>
-
     <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
         <div class="container-fluid">
-
             <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
-
+            <ul class="navbar-nav px-5 ms-auto">
+                <li class="nav-item dropdown">
+                    <a id="bell" class="nav-link text-white px-5" href="" role="button" data-bs-toggle="dropdown">
+                        <i class="fa-regular fa-bell fa-lg"><div class=badge>0</div></i>
+                    </a>
+                    <ul class="dropdown-menu mt-2">
+                        <li>
+                            <div class="dropdown-item card bg-dark text-white">
+                                <div id="notifications" class="card-header">
+                                    
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
             <ul class="navbar-nav px-5">
                 <li id="dropDown" class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
@@ -30,7 +44,7 @@
                                 <div class="card-header">
                                     <h4 class="card-title"><%=username%></h4>
                                     <p class="card-text"><%=email%></p>
-                                    <p class="card-text hidden" onclick="blurText(this)"><%=api_key%></p>
+                                    <p id="apikey" class="card-text hidden" onclick="blurText(this)"><%=api_key%></p>
                                     <script>
                                         var username = "<%=username%>"
                                         var api_key = "<%=api_key%>"
@@ -115,3 +129,4 @@
     <script src="../js/app.js"></script>
 </body>
 </html>
+

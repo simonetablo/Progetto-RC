@@ -9,6 +9,10 @@ html, body{
   height: 100%;
 }
 
+#apikey{
+  -webkit-filter: blur(3px); 
+}
+
 .content {
   position: relative;
   background-color: black;
@@ -187,7 +191,33 @@ html, body{
   background-color: #cad2d3;
 }
 
+.dropdown-menu{
+  background-color: rgb(50, 50, 50, 0.3);
+}
 
+.dropdown-item > .card-header{
+  max-width: 170px;
+}
+
+.dropdown-menu{
+  background-color: rgb(50, 50, 50, 0.3);
+}
+
+.dropdown-item > .card-header{
+  max-width: 170px;
+}
+  
+.card-title{
+  font-size:80%; 
+  overflow-x: scroll;
+  overflow-y: hidden; 
+}
+
+
+.card-text{
+  font-size:80%; 
+  overflow-x: scroll;
+}
 
 #likes{
   padding-left: 4px;

@@ -4,6 +4,9 @@ const Expression = require('couchdb-expression')(session);
 const request = require("request");
 const cors = require("cors");
 const path = require('path')
+const amqp = require('amqplib/callback_api');
+const http=require('http');
+const socketio=require('socket.io');
 
 const auth_routes = require('./routes/auth');
 const api_routes = require('./routes/api');
@@ -14,11 +17,6 @@ const nodemailer = require('./nodemailer');
 
 const postgres = require('./postgres');
 
-
-
-const couchdb_setup = require('./couchdb_setup');
-const postgres_setup = require('./postgres_setup');
-const postgres = require('./postgres');
 const { google } = require('googleapis');
 const { OAuth2 } = google.auth
  

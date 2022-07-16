@@ -146,3 +146,20 @@ $(window).on('load', function() {
         }
     })  
 });
+
+function blurText(e){
+    if(e.classList.contains("hidden")){
+        e.style.webkitFilter="blur(0px)";
+        e.classList.remove("hidden");
+        e.classList.add("visible");
+    }
+    else if(e.classList.contains("visible")){
+        e.style.webkitFilter="blur(3px)";
+        e.classList.remove("visible");
+        e.classList.add("hidden");
+    }
+}
+
+$('.dropdown-menu').on('click', function(e) {
+    e.stopPropagation();
+});

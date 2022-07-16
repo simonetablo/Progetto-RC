@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 let transporter = null;
-const USE_NODEMAILER = false;
+const USE_NODEMAILER = true;
 
 const nodemailer_setup = (callback) => {
     if(USE_NODEMAILER == true){
@@ -10,7 +10,7 @@ const nodemailer_setup = (callback) => {
                     service: "Gmail",
                     auth: {
                         user: "tripplannerservice@gmail.com",
-                        pass: ""
+                        pass: "iuqbwzwytjiazwwt"
                     }
                 }
             );

@@ -1,3 +1,4 @@
+
 var base_url = window.location.origin;
 
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
@@ -16,14 +17,14 @@ window.addEventListener('load', (event)=>{
         let value=lpoi.getAttribute("value")
         if(value){
             let info=JSON.parse(value)
-            console.log(info)
             $(lpoi).data(info)
             lpoi.removeAttribute("value");
-            console.log($(lpoi).data().name)
         }
     }
+    if(params.get('id')!=null && tripAuthor!=user){
+        document.getElementById("like").style.visibility="visible";
+    }
 })
-
 
 mapboxgl.accessToken = mapBoxAT;
 var map = new mapboxgl.Map({
@@ -69,26 +70,23 @@ function openPopUp() {
     send_button = document.getElementById("dbSave");
     spinner = document.getElementById("spinner");
     ok_message = document.getElementById("ok");
-
     send_button.style.visibility = "visible";
     spinner.style.visibility = "hidden";
     ok_message.style.visibility = "hidden";
-
     modal.style.display = 'block';
-    //
-  }
-  
+}
+
   // Close
-  function closePopUp() {
+function closePopUp() {
     modal.style.display = 'none';
-  }
+}
   
   // Close If Outside Click
-  function outsideClick(e) {
+function outsideClick(e) {
     if (e.target == modal) {
-      modal.style.display = 'none';
+        modal.style.display = 'none';
     }
-  }
+}
 
 $("#logout_button").click(function(){
     $.post(base_url + "/logout",()=>{ 
@@ -140,13 +138,18 @@ function showLayer(e){
     }
     else{
         this.value='on'
+        map.addSource("OTM-pois-"+name, {
+            type: "vector",
+            minzoom: 8,
+            maxzoom: 14,
+            scheme: "xyz",
+            tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
+        })
         map.addLayer({
             id: "OTM-pois-"+name,
             type: "circle",
-            source: {
-                type: "vector",
-                tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
-            },
+            source: "OTM-pois-"+name,
+            minzoom: 8,
             layout: {
                 "visibility" : "visible"
             },
@@ -157,24 +160,6 @@ function showLayer(e){
             "source-layer": "pois",
         });
         map.setPaintProperty("OTM-pois-"+name, 'circle-color', whichKind(name));
-        /*if(name=="foods"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(158, 0, 34)")
-        }
-        if(name=="religion"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(214, 180, 29)")
-        }
-        if(name=="natural"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(11, 116, 28)")
-        }
-        if(name=="museums"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(0, 168, 197)")
-        }
-        if(name=="architecture"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(123, 14, 138)")
-        }
-        if(name=="accomodations"){
-            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
-        }*/
         map.on("click", "OTM-pois-"+name, function(e) {
             let id = e.features[0].properties.id;
             let poiname = e.features[0].properties.name;
@@ -194,7 +179,7 @@ function showLayer(e){
                     showInfo(data)
                 },
                 error: function() {
-                    alert('error')
+                    console.log('error')
                 }
             });
         });
@@ -218,7 +203,7 @@ function showLayer(e){
         map.on("mouseleave", "OTM-pois-"+name, function () {
             map.getCanvas().style.cursor = "";
             popup.remove();
-        });   
+        });
     }
 };
 
@@ -244,20 +229,20 @@ function showPOI(e){
                 btn.classList.remove("tag_color_"+btn.id);
             }
         }
-        let parent=e.parentNode;
-        var pois=parent.parentNode.getElementsByClassName("poi");
+        var pois=e.closest(".day").getElementsByClassName("poi");
         var geoJson={
             type: "FeatureCollection",
             features: []
         }
         for(j=0; j<pois.length; j++){
             let datastring=JSON.stringify($(pois[j]).data());
-            let data=JSON.parse(datastring);
+            var data=JSON.parse(datastring);
+            var latLon=[data.point.lon, data.point.lat]
             geoJson.features.push({
                 "type": "Feature",
                     "geometry": {
                         "type": "Point",
-                        "coordinates": [data.point.lon, data.point.lat]
+                        "coordinates": latLon
                     },
                     "properties": {
                         "name": data.name
@@ -284,11 +269,17 @@ function showPOI(e){
         let eye= e.getElementsByClassName("fa-eye")[0]
         eye.classList.remove("fa-eye")
         eye.classList.add("fa-eye-slash")
+
+        map.flyTo({
+            center: latLon,
+            zoom: 10,
+            speed: 2,
+        })
         
-            let popup = new mapboxgl.Popup({
-                closeButton: false,
-                closeOnClick: false,
-            });
+        let popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false,
+        });
 
         map.on("mouseenter", "day", function(e) {
             map.getCanvas().style.cursor = "pointer";
@@ -375,8 +366,8 @@ function addToPlanner(e){
             if (res.gAuth == true){
                     planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
                     planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></div></div> "
-//                    console.log(data.name)
-//                    console.log(dataCorrente)
+                    console.log(data.name)
+                    console.log(dataCorrente)
             }
 
         }});
@@ -570,8 +561,12 @@ function getForecast(coord, day){
     difference = Math.ceil((date-currentTime)/ (1000 * 3600 * 24));
     forecast_element = date_element.nextElementSibling;
     $.ajax({
-        type:"GET",
+        type:"POST",
         url:base_url+'/weather',
+        dataType:"json",
+        data: { 
+            info: coord 
+        },
         success:function (forct){
                     if(difference >= 0 && difference <= 7){   
                         let forecast = forct.daily[difference]
@@ -640,6 +635,19 @@ function handleDrop(e){
         }
     }else if(e.target.classList.contains("day")){
         e.target.appendChild(dragging);
+        let day=e.target;
+        let pois=day.getElementsByClassName("poi");
+        if(pois.length==1){
+            let date=day.getElementsByClassName("date_elem")[0]
+            if(date.value!=""){
+                let coord={
+                    lat : $(pois[0]).data().point.lat,
+                    lon : $(pois[0]).data().point.lon
+                }
+                let coordToServer=JSON.stringify(coord);
+                getForecast(coordToServer, day);
+            }
+        }
     }
 }
 
@@ -713,9 +721,9 @@ $("#create").on('click', () => {
     let day=document.createElement("div");
     day.innerHTML = `<div class="date d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-        <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
+        <input type="date" class="input_style_sm my-1 date_elem" oninput="forecast_aux(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
             <i class="fa-solid fa-circle-exclamation mx-2"></i>
-            <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
+            <span class="not_forecastPopup">Enter a date to know the weather forecast</span>
         </div>
     </div>
     <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
@@ -729,11 +737,9 @@ $("#create").on('click', () => {
 
 const send_form = document.getElementById('send_form');
 send_form.addEventListener('submit', function(event) {
-                //
                 send_button = document.getElementById("dbSave");
                 spinner = document.getElementById("spinner");
                 ok_message = document.getElementById("ok");
-                //
                 const title = document.getElementById("popup-title");
                 const title_f = document.getElementById("popup-title_f");
                 if (this.checkValidity() === false) {
