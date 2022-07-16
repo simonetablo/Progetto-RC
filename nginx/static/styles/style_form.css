@@ -189,6 +189,14 @@ html, body{
 
 
 
+#likes{
+  padding-left: 4px;
+}
+
+.fa-heart{
+  padding-right: 2px;
+}
+
 @media (pointer: coarse) and (hover: none) {
   .content {
     background: url('https://source.unsplash.com/XT5OInaElMw/1600x900') black no-repeat center center scroll;

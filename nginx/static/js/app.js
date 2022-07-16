@@ -3,6 +3,12 @@ var base_url = window.location.origin;
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
 
+const params=new URLSearchParams(window.location.search);
+var tripID=params.get("id");
+var tripAuthor=params.get("author");
+var tripName=params.get("name");
+var user=username.toLowerCase();
+
 window.addEventListener('load', (event)=>{
     var lPois=document.getElementsByClassName("poi");
     for(i=0; i<lPois.length; i++){
@@ -25,25 +31,41 @@ var map = new mapboxgl.Map({
     style: "mapbox://styles/mapbox/light-v10",
     zoom: -1,
 });
+
+function blurText(e){
+    if(e.classList.contains("hidden")){
+        e.style.webkitFilter="blur(0px)";
+        e.classList.remove("hidden");
+        e.classList.add("visible");
+    }
+    else if(e.classList.contains("visible")){
+        e.style.webkitFilter="blur(3px)";
+        e.classList.remove("visible");
+        e.classList.add("hidden");
+    }
+}
+
+$('.dropdown-menu').on('click', function(e) {
+    e.stopPropagation();
+});
+
 map.addControl(new mapboxgl.NavigationControl());
-const sendbtn=document.getElementById("send");
-   
-    const modal = document.querySelector('#modal');
 
-    const closeBtn = document.querySelector('.close');
+const sendbtn=document.getElementById("send");   
+const modal = document.querySelector('#modal');
+const closeBtn = document.querySelector('.close');
+const bell=document.getElementById("bell")
 
-    // Events
-    sendbtn.addEventListener("click",openPopUp)
-    closeBtn.addEventListener('click', closePopUp);
-    window.addEventListener('click', outsideClick);
+// Events
+sendbtn.addEventListener("click",openPopUp)
+closeBtn.addEventListener('click', closePopUp);
+window.addEventListener('click', outsideClick);
+addOnDb_btn=document.getElementById("dbSave")
+addOnDb_btn.addEventListener("click", sendToServer);
+bell.addEventListener("click", rmvBadge)
 
-    addOnDb_btn=document.getElementById("dbSave")
-    addOnDb_btn.addEventListener("click", sendToServer);
-
-    // Open
-    function openPopUp() {
-    
-    //
+// Open
+function openPopUp() {
     send_button = document.getElementById("dbSave");
     spinner = document.getElementById("spinner");
     ok_message = document.getElementById("ok");
@@ -335,22 +357,163 @@ function showInfo(obj){
 }
 
 function addToPlanner(e){
-    let planner=document.createElement("div");
-    planner.classList.add("poi");
-    planner.setAttribute('draggable', true);
-    data=$(".info").data();
-    $(planner).data(data);
-    planner.innerHTML="<div class='name'>"+data.name+"</div>";
-    planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
-    planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
-    planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
-    planner.style.borderLeftColor=whichKind(data.kinds);
-    document.getElementById("days").firstChild.appendChild(planner); 
-    planner.addEventListener("dragstart", handleDragStart);
-    planner.addEventListener("dragleave", handleDragLeave);
-    planner.addEventListener("dragend", handleDragEnd)
-    planner.addEventListener('drop', handleDrop);
-    planner.addEventListener('dragover', allowDrop);
+    let day = document.getElementsByClassName("day");
+    if(day.length == 0){
+        alert("you need to create a day card first");
+    }
+    else{
+        let planner=document.createElement("div");
+        planner.classList.add("poi");
+        planner.setAttribute('draggable', true);
+        data=$(".info").data();
+        $(planner).data(data);
+        planner.innerHTML="<div class='name'>"+data.name+"</div>";
+        planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
+        planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
+        $.ajax({url:'https://localhost:8083/isGoogleAuth', success:function (res){
+            if (res.gAuth == true){
+                    planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
+                    planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></div></div> "
+//                    console.log(data.name)
+//                    console.log(dataCorrente)
+            }
+
+        }});
+        planner.style.borderLeftColor=whichKind(data.kinds);
+        let firstDay=document.getElementById("days").firstChild;
+        firstDay.appendChild(planner);
+        planner.addEventListener("dragstart", handleDragStart);
+        planner.addEventListener("dragleave", handleDragLeave);
+        planner.addEventListener("dragend", handleDragEnd)
+        planner.addEventListener('drop', handleDrop);
+        planner.addEventListener('dragover', allowDrop);
+        if(firstDay.getElementsByClassName("poi").length==1){
+            let date=firstDay.getElementsByClassName("date_elem")[0]
+                if(date.value!=""){
+                let coord={
+                    lat : data.point.lat,
+                    lon : data.point.lon
+                }
+                let coordToServer=JSON.stringify(coord);
+                getForecast(coordToServer, firstDay);
+            }
+        }
+    }
+}
+
+
+
+window.addEventListener('click',outsideCalpopUp_click)
+
+function showCalendarPopUp(e){
+    let parent=e.parentElement;
+    //let title = parent.getElementsByClassName('calPopUpText')[0]
+    //let titleF = parent.getElementsByClassName('calPopup-title_f')[0]
+    let modalCalContent = parent.getElementsByClassName('modalCalContent')[0]
+    let popUp = parent.getElementsByClassName("CalendarPopUp")[0]
+    let modalCal = parent.getElementsByClassName('modalCal')[0]
+    popUp.style.visibility="visible";
+    //popUp.classList.add("CalendarPopUpVisible")
+    modalCal.style.display="block"
+    modalCal.style.visibility='visible'
+    modalCal.classList.add("modalCalVisible")
+    modalCalContent.style.visibility = 'visible'
+    //modalCalContent.classList.add("modalCalContentVisible")
+    //let calForm = document.getElementsByClassName('CalPost_form')[0]
+    //let calTime1 = parent.getElementsByClassName('CalTime1')[0]
+    //let calTime2= parent.getElementsByClassName('CalTime2')[0]
+    
+}
+
+function outsideCalpopUp_click(e){
+    var modalCal = document.getElementsByClassName('modalCalVisible')[0]
+    if (e.target == modalCal) {
+        let popUp=modalCal.getElementsByClassName("CalendarPopUp")[0];
+        popUp.style.visibility = 'hidden';
+        //popUp.classList.remove("CalendarPopUpVisible")
+        //let modalCal=document.getElementsByClassName("modalCalVisible")[0]
+        modalCal.style.visibility = 'hidden';
+        modalCal.style.display = 'none'
+        modalCal.classList.remove("modalCalVisible")
+        let modalCalContent=modalCal.getElementsByClassName("modalCalContent")[0]
+        modalCalContent.style.visibility = 'hidden'
+        //modalCalContent.classList.remove("modalCalContentVisible")
+
+        let calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
+        calTime_f.innerHTML = ''
+    }
+}
+
+
+let tokenExpired = false
+function postOnCalendar(loc,date_){
+    
+    var modalCal=document.getElementsByClassName("modalCalVisible")[0]
+    calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
+    calTime1 = modalCal.getElementsByClassName('CalTime1')[0]
+    calTime2 = modalCal.getElementsByClassName('CalTime2')[0]
+    if(date_ == undefined){
+        calTime_f.innerHTML="you must choose a date in the day box"
+        return
+    }
+    console.log( typeof calTime1.value)
+    if(calTime1.value == '' || calTime2.value ==''){
+        calTime_f.innerHTML="start and end hours can t be empty"
+        return
+    }
+    arrTime1 = calTime1.value.split(':',2)
+    arrTime2 = calTime2.value.split(':',2)
+    if(arrTime1[0] > arrTime2[0] ){
+        calTime_f.innerHTML = 'end time must be at least equal to start time'
+        return
+    }else  if( (arrTime1[0]==arrTime2[0] && arrTime1[1] > arrTime2[1])){
+        calTime_f.innerHTML = 'end time must be at least equal to start time'
+        return
+    }
+
+    time1 = calTime1.value
+    time2 =  calTime2.value
+    $.ajax({
+        type:"POST",
+        url:base_url+'/postOnCalendar',
+        dataType:"json",
+        data: { 
+            location:loc,
+            date:date_  ,
+            startH : time1,
+            endH : time2,
+            t_exp : tokenExpired
+        },
+        success:function(res){
+            
+            if (res.event_posted == true){
+                title = modalCal.getElementsByClassName('calPopUpText')[0]
+                calTime_f.innerHTML = 'Event posted on Calendar'
+                calTime_f.style.color = 'green'
+                return
+            }
+            else if (res.event_posted == false && res.busy == true){
+                calTime_f.innerHTML = 'You are busy at the chosen time'
+            }
+            else if(res.event_posted == false && res.busy == false){
+                if(res.invalidCredentials == true ){
+                    calTime_f.innerHTML = 'Google session expired'
+                    tokenExpired = true 
+                    postOnCalendar(loc,date_)
+
+                }else{
+                    calTime_f.innerHTML ='Error posting the event'
+                }
+
+            }
+        },error:function(error){
+
+            console.log(error)
+            calTime_f.innerHTML = 'Error posting the event'
+            return
+        }
+    })
 }
 
 function whichKind(kind){
@@ -376,7 +539,32 @@ function clonePOI(e){
 }
 
 //FORECAST
-function getForecast(date_element){
+let dataCorrente 
+function forecast_aux(date_element){
+    dataCorrente = date_element.value
+    
+    let tmp=date_element.parentNode;
+    let firstPoi=tmp.parentNode.nextSibling;
+    if(firstPoi!=null){
+        let lat=$(firstPoi).data().point.lat;
+        let lon=$(firstPoi).data().point.lon;
+        let day=firstPoi.closest(".day");
+        let coord={
+            lat : lat,
+            lon : lon
+        }
+        let coordToServer=JSON.stringify(coord);
+        getForecast(coordToServer, day);
+    }else{
+        let day=date_element.closest(".day")
+        day.getElementsByClassName("not_forecastPopup")[0].innerHTML="Enter a destination to know the weather forecast";
+    }
+}
+
+function getForecast(coord, day){
+    let date_element=day.getElementsByClassName("my-1")[0];
+    
+
     var currentTime = new Date();
     date = new Date(date_element.value);
     difference = Math.ceil((date-currentTime)/ (1000 * 3600 * 24));
@@ -389,13 +577,13 @@ function getForecast(date_element){
                         let forecast = forct.daily[difference]
                         forecast_element.setAttribute("onclick", "showForecastPopup(this)");
                         forecast_element.setAttribute("onmouseleave", "hideForecastPopup(this)");
-                        forecast_element.innerHTML=`<img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}.png" alt="weather icon" class="w-icon2">
+                        forecast_element.innerHTML=`<img src="https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png" alt="weather icon" class="w-icon2">
                                                     <span class="forecastPopup">Day : ${forecast.temp.day}&#176;C Night : ${forecast.temp.night}&#176;C</span>`
                     }else{
                         forecast_element.setAttribute("onclick", "showNotForecastPopup(this)");
                         forecast_element.setAttribute("onmouseleave", "hideNotForecastPopup(this)");
                         forecast_element.innerHTML=`<i class="fa-solid fa-circle-exclamation mx-2"></i>
-                                                    <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>`
+                                                    <span class="not_forecastPopup">Weather forecast not available for this date</span> `
                     }
         },error:function(error){
             console.log(error)
@@ -569,3 +757,63 @@ send_form.addEventListener('submit', function(event) {
                     }
                 }
             })
+
+//ASYNC
+const socket=io();
+
+socket.on('message', message =>{
+    console.log(message);
+    socket.emit('consumer', user);
+    if(tripID!=null && user!=tripAuthor){
+        socket.emit('tripID', tripID);
+    }
+})
+
+socket.on('liked', message=>{
+    let likeButton=document.getElementById("like");
+    likeButton.innerHTML='<i class="fa-solid fa-heart"></i>';
+})
+
+socket.on('notification', msg=>{
+    var num=document.getElementsByClassName("badge")[0];
+    var numInt=parseInt(num.innerHTML);
+    num.innerHTML=numInt+1;
+    if(num.style.visibility="hidden"){
+        num.style.visibility="visible";
+    }
+    if(numInt==9){
+        num.style.fontSize="11px"
+        num.style.paddingTop="3.9px"
+    }
+    let JsonMsg=JSON.parse(msg);
+    var not=document.getElementById("notifications");
+    not.innerHTML+='<n class="card-text">'+JsonMsg.fromUser+' liked '+JsonMsg.tripName+'</n><br>';
+})
+
+function rmvBadge(){
+    var badge=document.getElementsByClassName("badge")[0];
+    badge.innerHTML=0;
+    badge.style.visibility="hidden"
+}
+
+function like(e){
+    if(user!=tripAuthor){
+        var likeMsg={
+            queue: tripAuthor,
+            tripID: tripID,
+            tripName: tripName,
+            from: user
+        }
+        var liked=e.getElementsByTagName("i")[0];
+        if(liked.classList.contains("fa-solid")){
+            e.innerHTML='<i class="fa-regular fa-heart"></i>';
+            socket.emit('unLike', likeMsg);
+            console.log("unlike");
+        }
+        else{
+            e.innerHTML='<i class="fa-solid fa-heart"></i>';
+            socket.emit('like', likeMsg);
+            console.log("like");
+        }
+    }
+}

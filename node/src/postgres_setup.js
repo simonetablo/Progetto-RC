@@ -23,14 +23,16 @@ const setup_postgres = (callback) => {
         console.log('The port is now open!');
         create_itineraries_db( ()=>{
             create_itineraries_tag_db( ()=>{
-                create_itineraries_loc_db(callback)
+                create_itineraries_loc_db( ()=>{
+                  create_itineraries_likes_db(callback)
+                })
             });
         });
       } 
       else console.log('The port did not open before the timeout...');
     })
     .catch((err) => {
-      console.err(`An unknown error occured while waiting for the port: ${err}`);
+      console.log(`An unknown error occured while waiting for the port: ${err}`);
     });
 };
 
@@ -106,5 +108,28 @@ const create_itineraries_loc_db = (callback) => {
       }
   });
 };
+
+const create_itineraries_likes_db = (callback) =>{
+  pool.query(`CREATE TABLE itineraries_likes (
+      id VARCHAR(255)  NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      FOREIGN KEY(id)
+        REFERENCES itineraries(id)
+      );`, (error, results) => {
+        if (error) {
+          if(error.message == 'relation "itineraries_likes" already exists'){
+              console.log(error.message);
+              callback();
+          }
+          else{
+            throw error;
+          }
+        }
+        else{
+          console.log(results);
+          callback();
+        }
+    });
+}
 
 module.exports = setup_postgres;

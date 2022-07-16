@@ -42,6 +42,70 @@ const insert_itinerary = (itinerary, id, tags, locs, callback) => {
   })
 }
 
+const get_likes = (id, name, callback)=>{
+  pool.query(
+    `SELECT * FROM itineraries_likes
+    WHERE (id = '${id}' AND name='${name}')`,
+  (error, results) => {
+    if (error) {
+      callback(error, null);
+    }
+    else{
+      callback(null, results);
+    }
+  })
+}
+
+const add_like = (id, name, callback)=>{
+  pool.query(
+    `INSERT INTO itineraries_likes
+    VALUES ('${id}', '${name}');`,
+  (error, results) => {
+    if (error) {
+      callback(error, null);
+    }
+    else{
+      pool.query(
+        `UPDATE itineraries
+        SET likes = likes+1 WHERE id = '${id}'`,
+        (error1, result1) => {
+          if(error1) {
+            callback(error1, null);
+          }
+          else{
+            callback(null, result1);
+          }
+        }
+      )
+    }
+  })
+}
+
+const rmv_like = (id, name, callback)=>{
+  pool.query(
+    `DELETE FROM itineraries_likes
+    WHERE (id = '${id}' AND name = '${name}');`,
+  (error, results) => {
+    if (error) {
+      callback(error, null);
+    }
+    else{
+      pool.query(
+        `UPDATE itineraries
+        SET likes = likes-1 WHERE id = '${id}'`,
+        (error1, result1) => {
+          if(error1) {
+            callback(error1, null);
+          }
+          else{
+            callback(null, result1);
+          }
+        }
+      )
+    }
+  })
+}
+
 const query_itinerary = (tags, location, days, callback) => {
   loc_condition_string = "";
   if(location != ""){
@@ -130,6 +194,39 @@ const get_itinerary = (id, callback) => {
     }
   })
 }
+const rmv_itinerary = (id, callback) => {
+  pool.query(`DELETE FROM itineraries_likes WHERE id='${id}`,
+    (error, results) => {
+      if (error) {
+        console.log('No rows with this id in the "itinerary_likes" database table')
+      }
+        pool.query(`DELETE FROM itineraries_loc WHERE id = '${id}'`,
+        (error, results) => {
+          if (error) {
+            callback(error, null);
+          }
+          else{
+            pool.query(`DELETE FROM itineraries_tag WHERE id = '${id}'`,
+            (error, results) => {
+              if (error) {
+                callback(error, null);
+              }
+              else{
+                pool.query(`DELETE FROM itineraries WHERE id = '${id}'`,
+                (error, results) => {
+                  if (error) {
+                    callback(error, null);
+                  }
+                  else{
+                    callback(null, results);
+                  }
+                })
+              }
+            })
+          }
+        })
+      })
+  }
 
 module.exports = {
                 "insert_itinerary" : insert_itinerary,
@@ -137,5 +234,9 @@ module.exports = {
                 "get_itinerary_tags" : get_itinerary_tags,
                 "get_itinerary_data" : get_itinerary_data,
                 "get_itinerary" : get_itinerary,
-                "get_itinerary_locations" : get_itinerary_locations
+                "get_itinerary_locations" : get_itinerary_locations,
+                "add_like" : add_like,
+                "rmv_like" : rmv_like,
+                "get_likes" : get_likes,
+                "rmv_itinerary" : rmv_itinerary
                 };

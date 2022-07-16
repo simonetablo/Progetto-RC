@@ -5,6 +5,79 @@ html,
 	width: 100%;
 }
 
+#email{
+    -webkit-filter: blur(3px);
+}
+
+.CalendarPopUp{
+   position:relative;
+   width:100%;
+   text-align: center;
+   
+}
+.modalCal{
+    display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modalCalContent{
+    margin: 20vh auto;
+	width: min-content;
+    height: 5%;
+    min-width: 500px;
+    min-height: 200px;
+    background-color: #fefefe;
+    border-radius: 5px;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
+    
+  
+}
+
+
+.calPopUpText{
+    font-size: x-large;
+    text-align: center;
+}
+
+.CalTime1{
+    padding-right: 5%;
+
+}
+.CalTime2{
+    padding-right: 5%;
+   
+}
+.CalPopUpBtn{
+    padding: 1%;
+    border-color: #ffffff;
+    
+}
+.calendar_post{
+    border-color: #ffffff;
+    border-style: none;
+    background-color: #ffffff;
+}
+.calTime_f{
+    align-self: center;
+    font-size: small;
+    text-align: center;
+    color: crimson;
+}
+
+
+
+
+
+
+
+
 
 body{
     width: 100%;
@@ -120,7 +193,7 @@ body{
     position: absolute;
     background-color: rgb(201, 201, 201);
     opacity: 0.9;
-    width: 150px;
+    width: 160px;
     padding: 4px;
     border-radius: 10px;
     z-index: 1000;

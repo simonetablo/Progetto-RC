@@ -57,9 +57,11 @@ $(window).on('load', function () {
         get_url = base_url + '/api/itineraries?' + query_string;
         $.get(get_url, (res) => {
             res.data.forEach((itinerary, i) => {
+                //console.log(itinerary);
                 title = itinerary.title;
                 author = itinerary.author;
                 tags = itinerary.tags;
+                likes = itinerary.likes;
                 html_tags = "";
                 for (const tag of tags) {
                     if (tag == "architecture") html_tags += '<i class="fa-solid tag_color_architecture fa-archway" style="padding-left:3px"></i>';
@@ -76,6 +78,10 @@ $(window).on('load', function () {
 						<p class="card-text small">by: ${author}</p>
 					</div>
 				</div>
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-heart"></i>
+                    <l id="likes"> ${likes} </l>
+                </div>
 				<div class="text-end align-items-end d-flex flex-column p-2 mx-3"  >
 						<a href="${base_url + '/planner?id=' + itinerary.id+'&name='+title+'&author=' + author}"><button class="input_style_small mx-2 mb-2">View</button></a>
 						<div>

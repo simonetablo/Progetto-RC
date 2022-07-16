@@ -22,8 +22,7 @@
             <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
 
             <ul class="navbar-nav px-5">
-
-                <li class="nav-item dropdown">
+                <li id="dropDown" class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white px-5" href="" role="button" data-bs-toggle="dropdown"> <%=username%></a>
                     <ul class="dropdown-menu mt-2" style="background-color: rgb(50, 50, 50, 0.3);">
                         <li>
@@ -31,7 +30,7 @@
                                 <div class="card-header">
                                     <h4 class="card-title"><%=username%></h4>
                                     <p class="card-text"><%=email%></p>
-                                    <p class="card-text"><%=api_key%></p>
+                                    <p class="card-text hidden" onclick="blurText(this)"><%=api_key%></p>
                                     <script>
                                         var username = "<%=username%>"
                                         var api_key = "<%=api_key%>"
@@ -47,7 +46,6 @@
                 </li>
 
             </ul>
-
         </div>
     </nav>
     <div id="container">
@@ -99,19 +97,19 @@
                   </div>
                 <button id="create" type="button" class="input_style_sm"><i class="fa-solid fa-circle-plus"></i></button>
                 <span id="searchBar"><input id="place" type="text" class="input_style_sm" name="Place"><button type="submit" class="input_style_sm" id="search" onclick=search(this)><i class="fa-solid fa-magnifying-glass"></i></button></span>
+                <button id="like" type="button" class="input_style_sm" onclick="like(this)"><i class="fa-regular fa-heart"></i></button>
                 </div>
                 <div id="days"><%if(id){for(const day of itinerary_data){%><div class="day"><div class="date d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
+                            <input type="date" class="input_style_sm my-1" oninput="forecast_aux(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
                                 <i class="fa-solid fa-circle-exclamation mx-2"></i>
-                                <span class="not_forecastPopup" style="visibility: hidden;">Previsioni Meteo non disponibili per questa data</span>
+                                <span class="not_forecastPopup" style="visibility: hidden;">Weather forecast not available for this date</span>
                             </div>
                         </div>
                         <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
                         <button value='off' type='button' onclick=showPOI(this) class='showBtn input_style_sm'><i class='fa-solid fa-eye'></i></button>
-                        </div><%for(const pois of day.plan){ tag = tags.pop(); info = data.pop(); name=info.name ; info_s=JSON.stringify(info)%><div class="poi" value="<%=info_s%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>
-                <%}}%></div>
-                
+                        </div><%for(const pois of day.plan){ tag = tags.pop(); info = data.pop(); name=info.name ; info_s=JSON.stringify(info)%><div class="poi" value="<%=info_s%>" draggable="true" style="border-left-color:<%=tag%>;"><div class="name"><%=name%></div><button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button><button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button><button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button></div><%}%></div>                   
+                <%}}%></div>  
             </div>
     </div>
     <script src="../js/app.js"></script>
