@@ -1,14 +1,7 @@
-
 var base_url = window.location.origin;
 
 var OpenTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
 var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
-
-const params=new URLSearchParams(window.location.search);
-var tripID=params.get("id");
-var tripAuthor=params.get("author");
-var tripName=params.get("trip");
-var user=username.toLowerCase();
 
 window.addEventListener('load', (event)=>{
     var lPois=document.getElementsByClassName("poi");
@@ -17,14 +10,14 @@ window.addEventListener('load', (event)=>{
         let value=lpoi.getAttribute("value")
         if(value){
             let info=JSON.parse(value)
+            console.log(info)
             $(lpoi).data(info)
             lpoi.removeAttribute("value");
+            console.log($(lpoi).data().name)
         }
     }
-    if(params.get('id')!=null && tripAuthor!=user){
-        document.getElementById("like").style.visibility="visible";
-    }
 })
+
 
 mapboxgl.accessToken = mapBoxAT;
 var map = new mapboxgl.Map({
@@ -32,42 +25,48 @@ var map = new mapboxgl.Map({
     style: "mapbox://styles/mapbox/light-v10",
     zoom: -1,
 });
-
 map.addControl(new mapboxgl.NavigationControl());
+const sendbtn=document.getElementById("send");
+   
+    const modal = document.querySelector('#modal');
 
-const sendbtn=document.getElementById("send");   
-const modal = document.querySelector('#modal');
-const closeBtn = document.querySelector('.close');
-const bell=document.getElementById("bell")
-// Events
-sendbtn.addEventListener("click",openPopUp)
-closeBtn.addEventListener('click', closePopUp);
-window.addEventListener('click', outsideClick);
-addOnDb_btn=document.getElementById("dbSave")
-addOnDb_btn.addEventListener("click", sendToServer);
-bell.addEventListener("click", rmvBadge)
-// Open
-function openPopUp() {
+    const closeBtn = document.querySelector('.close');
+
+    // Events
+    sendbtn.addEventListener("click",openPopUp)
+    closeBtn.addEventListener('click', closePopUp);
+    window.addEventListener('click', outsideClick);
+
+    addOnDb_btn=document.getElementById("dbSave")
+    addOnDb_btn.addEventListener("click", sendToServer);
+
+    // Open
+    function openPopUp() {
+    
+    //
     send_button = document.getElementById("dbSave");
     spinner = document.getElementById("spinner");
     ok_message = document.getElementById("ok");
+
     send_button.style.visibility = "visible";
     spinner.style.visibility = "hidden";
     ok_message.style.visibility = "hidden";
-    modal.style.display = 'block';
-}
 
+    modal.style.display = 'block';
+    //
+  }
+  
   // Close
-function closePopUp() {
+  function closePopUp() {
     modal.style.display = 'none';
-}
+  }
   
   // Close If Outside Click
-function outsideClick(e) {
+  function outsideClick(e) {
     if (e.target == modal) {
-        modal.style.display = 'none';
+      modal.style.display = 'none';
     }
-}
+  }
 
 $("#logout_button").click(function(){
     $.post(base_url + "/logout",()=>{ 
@@ -119,18 +118,13 @@ function showLayer(e){
     }
     else{
         this.value='on'
-        map.addSource("OTM-pois-"+name, {
-            type: "vector",
-            minzoom: 8,
-            maxzoom: 14,
-            scheme: "xyz",
-            tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
-        })
         map.addLayer({
             id: "OTM-pois-"+name,
             type: "circle",
-            source: "OTM-pois-"+name,
-            minzoom: 8,
+            source: {
+                type: "vector",
+                tiles: ["https://api.opentripmap.com/0.1/en/tiles/pois/{z}/{x}/{y}.pbf?kinds="+name+"&rate=2&apikey=" + OpenTripMapKey]
+            },
             layout: {
                 "visibility" : "visible"
             },
@@ -141,6 +135,24 @@ function showLayer(e){
             "source-layer": "pois",
         });
         map.setPaintProperty("OTM-pois-"+name, 'circle-color', whichKind(name));
+        /*if(name=="foods"){
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(158, 0, 34)")
+        }
+        if(name=="religion"){
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(214, 180, 29)")
+        }
+        if(name=="natural"){
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(11, 116, 28)")
+        }
+        if(name=="museums"){
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(0, 168, 197)")
+        }
+        if(name=="architecture"){
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(123, 14, 138)")
+        }
+        if(name=="accomodations"){
+            map.setPaintProperty("OTM-pois-"+name, 'circle-color', "rgb(20, 18, 100)")
+        }*/
         map.on("click", "OTM-pois-"+name, function(e) {
             let id = e.features[0].properties.id;
             let poiname = e.features[0].properties.name;
@@ -160,7 +172,7 @@ function showLayer(e){
                     showInfo(data)
                 },
                 error: function() {
-                    console.log('error')
+                    alert('error')
                 }
             });
         });
@@ -184,7 +196,7 @@ function showLayer(e){
         map.on("mouseleave", "OTM-pois-"+name, function () {
             map.getCanvas().style.cursor = "";
             popup.remove();
-        });
+        });   
     }
 };
 
@@ -210,20 +222,20 @@ function showPOI(e){
                 btn.classList.remove("tag_color_"+btn.id);
             }
         }
-        var pois=e.closest(".day").getElementsByClassName("poi");
+        let parent=e.parentNode;
+        var pois=parent.parentNode.getElementsByClassName("poi");
         var geoJson={
             type: "FeatureCollection",
             features: []
         }
         for(j=0; j<pois.length; j++){
             let datastring=JSON.stringify($(pois[j]).data());
-            var data=JSON.parse(datastring);
-            var latLon=[data.point.lon, data.point.lat]
+            let data=JSON.parse(datastring);
             geoJson.features.push({
                 "type": "Feature",
                     "geometry": {
                         "type": "Point",
-                        "coordinates": latLon
+                        "coordinates": [data.point.lon, data.point.lat]
                     },
                     "properties": {
                         "name": data.name
@@ -250,17 +262,11 @@ function showPOI(e){
         let eye= e.getElementsByClassName("fa-eye")[0]
         eye.classList.remove("fa-eye")
         eye.classList.add("fa-eye-slash")
-
-        map.flyTo({
-            center: latLon,
-            zoom: 10,
-            speed: 2,
-        })
         
-        let popup = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false,
-        });
+            let popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false,
+            });
 
         map.on("mouseenter", "day", function(e) {
             map.getCanvas().style.cursor = "pointer";
@@ -329,40 +335,22 @@ function showInfo(obj){
 }
 
 function addToPlanner(e){
-    let day = document.getElementsByClassName("day");
-    if(day.length == 0){
-        alert("you need to create a day card first");
-    }
-    else{
-        let planner=document.createElement("div");
-        planner.classList.add("poi");
-        planner.setAttribute('draggable', true);
-        data=$(".info").data();
-        $(planner).data(data);
-        planner.innerHTML="<div class='name'>"+data.name+"</div>";
-        planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
-        planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
-        planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
-        planner.style.borderLeftColor=whichKind(data.kinds);
-        let firstDay=document.getElementById("days").firstChild;
-        firstDay.appendChild(planner);
-        planner.addEventListener("dragstart", handleDragStart);
-        planner.addEventListener("dragleave", handleDragLeave);
-        planner.addEventListener("dragend", handleDragEnd)
-        planner.addEventListener('drop', handleDrop);
-        planner.addEventListener('dragover', allowDrop);
-        if(firstDay.getElementsByClassName("poi").length==1){
-            let date=firstDay.getElementsByClassName("date_elem")[0]
-                if(date.value!=""){
-                let coord={
-                    lat : data.point.lat,
-                    lon : data.point.lon
-                }
-                let coordToServer=JSON.stringify(coord);
-                getForecast(coordToServer, firstDay);
-            }
-        }
-    }
+    let planner=document.createElement("div");
+    planner.classList.add("poi");
+    planner.setAttribute('draggable', true);
+    data=$(".info").data();
+    $(planner).data(data);
+    planner.innerHTML="<div class='name'>"+data.name+"</div>";
+    planner.innerHTML+="<button onclick='this.parentElement.remove()' class='remove btn btn-light'><i class='fa-solid fa-trash-can fa-lg'></i></button>";
+    planner.innerHTML+="<button onclick=clonePOI(this) class='clone btn btn-light'><i class='fa-solid fa-plus fa-lg'></i></button>";
+    planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
+    planner.style.borderLeftColor=whichKind(data.kinds);
+    document.getElementById("days").firstChild.appendChild(planner); 
+    planner.addEventListener("dragstart", handleDragStart);
+    planner.addEventListener("dragleave", handleDragLeave);
+    planner.addEventListener("dragend", handleDragEnd)
+    planner.addEventListener('drop', handleDrop);
+    planner.addEventListener('dragover', allowDrop);
 }
 
 function whichKind(kind){
@@ -388,39 +376,14 @@ function clonePOI(e){
 }
 
 //FORECAST
-function forecast_aux(date_element){
-    let tmp=date_element.parentNode;
-    let firstPoi=tmp.parentNode.nextSibling;
-    if(firstPoi!=null){
-        let lat=$(firstPoi).data().point.lat;
-        let lon=$(firstPoi).data().point.lon;
-        let day=firstPoi.closest(".day");
-        let coord={
-            lat : lat,
-            lon : lon
-        }
-        let coordToServer=JSON.stringify(coord);
-        getForecast(coordToServer, day);
-    }else{
-        let day=date_element.closest(".day")
-        day.getElementsByClassName("not_forecastPopup")[0].innerHTML="Enter a destination to know the weather forecast";
-    }
-
-}
-
-function getForecast(coord, day){
-    let date_element=day.getElementsByClassName("my-1")[0];
+function getForecast(date_element){
     var currentTime = new Date();
     date = new Date(date_element.value);
     difference = Math.ceil((date-currentTime)/ (1000 * 3600 * 24));
     forecast_element = date_element.nextElementSibling;
     $.ajax({
-        type:"POST",
+        type:"GET",
         url:base_url+'/weather',
-        dataType:"json",
-        data: { 
-            info: coord 
-        },
         success:function (forct){
                     if(difference >= 0 && difference <= 7){   
                         let forecast = forct.daily[difference]
@@ -489,19 +452,6 @@ function handleDrop(e){
         }
     }else if(e.target.classList.contains("day")){
         e.target.appendChild(dragging);
-        let day=e.target;
-        let pois=day.getElementsByClassName("poi");
-        if(pois.length==1){
-            let date=day.getElementsByClassName("date_elem")[0]
-            if(date.value!=""){
-                let coord={
-                    lat : $(pois[0]).data().point.lat,
-                    lon : $(pois[0]).data().point.lon
-                }
-                let coordToServer=JSON.stringify(coord);
-                getForecast(coordToServer, day);
-            }
-        }
     }
 }
 
@@ -548,6 +498,7 @@ function sendToServer(e){
         let values=day_elements[i].getElementsByClassName("poi");
         let plan=[];
         for(j=0; j<values.length; j++){
+            console.log(values[j].getAttribute("value"));
             if(values[j].getAttribute("value")==null){
                 poi_obj = { id: $(values[j]).data().xid}
                 plan.push(poi_obj);
@@ -559,9 +510,11 @@ function sendToServer(e){
         day_obj = {plan : plan}
         days.push(day_obj);
     }
-    itinerary_obj = {title:"default_title" ,itinerary : days };
-    itinerary_obj.title=title
-    $.post( base_url+"/api/itineraries", itinerary_obj, ()=>{
+    itinerary_obj = {title:title ,data : days, api_key : api_key };
+    console.log(itinerary_obj);
+    var cookies = document.cookie
+    console.log(cookies);
+    $.post( base_url+"/api/itinerary", itinerary_obj, ()=>{
         send_button.style.visibility = "hidden";
         spinner.style.visibility = "hidden";
         ok_message.style.visibility = "visible";
@@ -572,9 +525,9 @@ $("#create").on('click', () => {
     let day=document.createElement("div");
     day.innerHTML = `<div class="date d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-        <input type="date" class="input_style_sm my-1 date_elem" oninput="forecast_aux(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
+        <input type="date" class="input_style_sm my-1" oninput="getForecast(this)"><div class="text-start" onclick="showNotForecastPopup(this)" onmouseleave="hideNotForecastPopup(this)">
             <i class="fa-solid fa-circle-exclamation mx-2"></i>
-            <span class="not_forecastPopup">Enter a date to know the weather forecast</span>
+            <span class="not_forecastPopup">Previsioni Meteo non disponibili per questa data</span>
         </div>
     </div>
     <button type='button' onclick=removeDay(this) class='removeDay input_style_sm'><i class="fa-solid fa-x"></i></button>
@@ -588,9 +541,11 @@ $("#create").on('click', () => {
 
 const send_form = document.getElementById('send_form');
 send_form.addEventListener('submit', function(event) {
+                //
                 send_button = document.getElementById("dbSave");
                 spinner = document.getElementById("spinner");
                 ok_message = document.getElementById("ok");
+                //
                 const title = document.getElementById("popup-title");
                 const title_f = document.getElementById("popup-title_f");
                 if (this.checkValidity() === false) {
@@ -614,54 +569,3 @@ send_form.addEventListener('submit', function(event) {
                     }
                 }
             })
-
-//ASYNC
-const socket=io();
-
-socket.on('message', message =>{
-    console.log(message);
-    socket.emit('consumer', user)
-})
-socket.on('notification', msg=>{
-    var num=document.getElementsByClassName("badge")[0];
-    var numInt=parseInt(num.innerHTML);
-    num.innerHTML=numInt+1;
-    if(num.style.visibility="hidden"){
-        num.style.visibility="visible";
-    }
-    if(numInt==9){
-        num.style.fontSize="11px"
-        num.style.paddingTop="3.9px"
-    }
-    let JsonMsg=JSON.parse(msg);
-    var not=document.getElementById("notifications");
-    not.innerHTML+='<n class="card-text">'+JsonMsg.fromUser+' liked '+JsonMsg.tripName+'</n><br>';
-})
-
-function rmvBadge(){
-    var badge=document.getElementsByClassName("badge")[0];
-    badge.innerHTML=0;
-    badge.style.visibility="hidden"
-}
-
-function like(e){
-    if(user!=tripAuthor){
-        var likeMsg={
-            queue: tripAuthor,
-            tripID: tripID,
-            tripName: tripName,
-            from: user
-        }
-        var liked=e.getElementsByTagName("i")[0];
-        if(liked.classList.contains("fa-solid")){
-            e.innerHTML='<i class="fa-regular fa-heart"></i>';
-            socket.emit('unLike', likeMsg);
-            console.log("unlike");
-        }
-        else{
-            e.innerHTML='<i class="fa-solid fa-heart"></i>';
-            socket.emit('like', likeMsg);
-            console.log("like");
-        }
-    }
-}

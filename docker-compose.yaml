@@ -1,28 +1,23 @@
 services:
 
   nginx:
-    image: nginx
+    build: ./nginx
     container_name: nginx_cont
     working_dir: /usr/nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/static:/usr/nginx/static
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/iptables:/etc/nginx/iptables
     ports:
       - "8080:80"
+      - "8083:443"
+    cap_add:
+      - NET_ADMIN
     depends_on:
       - node
     networks:
       - proxy-network
-  
-  rabbitmq:
-    image: rabbitmq:3.10.5-management
-    logging:
-      driver: none
-    ports:
-      - 5672:5672
-      - 15672:15672
-    networks:
-      - rabbitmq-network
 
   database:
     image: couchdb
@@ -37,6 +32,19 @@ services:
     networks:
       - database-network
 
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: example_db
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+    - postgres-network
+
   node:
     build: ./node
     container_name: node_cont
@@ -50,17 +58,17 @@ services:
     ports:
       - "4000:4000"
     depends_on:
-      - rabbitmq
       - database
+      - postgres
     networks:
       - proxy-network
       - database-network
-      - rabbitmq-network
+      - postgres-network
   
 networks:
   proxy-network:
     driver: bridge
   database-network:
     driver: bridge
-  rabbitmq-network:
+  postgres-network:
     driver: bridge

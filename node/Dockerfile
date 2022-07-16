@@ -3,6 +3,7 @@ FROM node
 WORKDIR /usr/node
 
 RUN npm install -g nodemon
+RUN npm install apidoc -g
 
 COPY package.json .
 COPY package-lock.json .

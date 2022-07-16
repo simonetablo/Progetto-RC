@@ -1,0 +1,9 @@
+{
+    "name": "title",
+    "version": "0.1.0",
+    "description": "description",
+    "apidoc": {
+      "title": "window title",
+      "url" : "https://localhost:8083/api"
+    }
+  }
