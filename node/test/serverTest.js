@@ -21,6 +21,8 @@ describe('Rest api test', ()=>{
         })
     })
 
+    var id;
+
     describe('POST /api/itinerary', () => {
         it("Should insert an itinerary in db", (done) =>{
             var data={
@@ -39,7 +41,8 @@ describe('Rest api test', ()=>{
                 .send(data)
                 .end((err, res) => {
                     res.should.have.status(200);
-                    res.text.should.be.eql("Test passed");
+                    id=res.text
+                    res.text.should.be.an("string");
                 done()
                 })
         })
@@ -48,7 +51,7 @@ describe('Rest api test', ()=>{
     describe('GET /api/itinerary', () => {
         it("Should get info about the referenced itinerary", (done) =>{
             chai.request(SERVER_URL)
-                .get("/api/itinerary/?id=ae3286bf-8814-451d-91f1-62b495a7158a&api_key=4199fb08-e33a-48c0-9f54-43b33f3fec9d")
+                .get("/api/itinerary/?id="+id+"&api_key=4199fb08-e33a-48c0-9f54-43b33f3fec9d")
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.text.should.be.an("string");

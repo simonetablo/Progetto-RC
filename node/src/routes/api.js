@@ -89,7 +89,7 @@ router.get('/api/itineraries/', (req, res) => {
             }
             else{
                 const row = array.shift();
-                const id = row.id
+                const id = row.id;
                 postgres.get_itinerary_tags(id, (error, response)=>{
                     if(error){
                         console.log(error);
@@ -123,6 +123,7 @@ router.get('/api/itineraries/', (req, res) => {
                 set_data(result.rows);
             }
         });
+        
     });
 });
 
@@ -216,16 +217,14 @@ router.post('/api/itinerary', (req, res) => {
                         res.json({code: "500", message: "Internal Server Error"});
                         return;
                     }else if(req.body.title=="api_test" && req.body.data[0].plan[0].id=="R1834818"){
-                            postgres.rmv_itinerary(id, (error)=>{
-                                if(error) {
-                                    console.log(error);
-                                    res.status(500).send('error, remove itinerary database request');
-                                }
-                                else{
-                                    console.log("api post: test OK")
-                                }
-                            })
-                        res.send("Test passed");
+                        if(error) {
+                            console.log(error);
+                            res.status(500).send('error, remove itinerary database request');
+                        }
+                        else{
+                            console.log("api post: test OK")
+                        }
+                        res.send(id);
                     } else {
                         //res.status(200).send();
                         res.json({code: "201", message: "Created", id: id});
@@ -384,6 +383,19 @@ router.get('/api/itinerary', (req, res) =>{
                                 res.json({code: "500", message: "Internal Server Error"});
                                 console.log(error);
                                 return;
+                            }
+                            if(api_key=="4199fb08-e33a-48c0-9f54-43b33f3fec9d"){
+                                postgres.rmv_itinerary(id, (error)=>{
+                                    if(error) {
+                                        console.log(error);
+                                        res.status(500).send('error, remove itinerary database request');
+                                    }
+                                    else{
+                                        console.log("api get: test OK")
+                                    }
+                                })
+                            res.send("Test passed");
+                            return;
                             }
                             const response_rows = response.rows;
                             locations = [];

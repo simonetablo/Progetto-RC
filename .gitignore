@@ -1,0 +1,2 @@
+#ignore itineraries database
+postgres/data/
