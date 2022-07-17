@@ -13,11 +13,13 @@ jobs:
       run: docker-compose up -d
     - name: containers list
       run: docker ps
-
-  test:
-    needs: compose
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Test node server and api
+    - name: test api and server
       run: npm test --prefix ./node
+
+  #test:
+  #  needs: compose
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #  - uses: actions/checkout@v3
+  #  - name: Test node server and api
+  #    run: npm test --prefix ./node

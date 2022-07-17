@@ -12,28 +12,46 @@ describe('Rest api test', ()=>{
     describe('GET /api/itineraries', () => {
         it("Should get all the itineraries in db", (done) =>{
             chai.request(SERVER_URL)
-                .get("/api/itineraries?location=&days=")
+                .get("/api/itineraries/?api_key=4199fb08-e33a-48c0-9f54-43b33f3fec9d&location=&days=&architecture=&cultural=&foods=&hotel=&natural=&religion=")
                 .end((err, res) => {
-                    res.should.have.status(200)
+                    res.should.have.status(200);
                     res.text.should.be.an("string");
-                    console.log(res.text)
                 done()
                 })
         })
     })
 
-    describe('POST /api/itineraries', () => {
+    describe('POST /api/itinerary', () => {
         it("Should insert an itinerary in db", (done) =>{
             var data={
-                title: "api_test",
-                itinerary: [{plan:[{id: "R1834818"}]}]
+                "api_key": "4199fb08-e33a-48c0-9f54-43b33f3fec9d",
+                "title": "api_test",
+                "data" : [
+                    {"plan": [
+                        {
+                          "id": "R1834818"
+                        }
+                    ]}]
             }
             chai.request(SERVER_URL)
-                .post("/api/itineraries")
+                .post("/api/itinerary")
                 .type('json')
                 .send(data)
                 .end((err, res) => {
-                    res.should.have.status(200)
+                    res.should.have.status(200);
+                    res.text.should.be.eql("Test passed");
+                done()
+                })
+        })
+    })
+
+    describe('GET /api/itinerary', () => {
+        it("Should get info about the referenced itinerary", (done) =>{
+            chai.request(SERVER_URL)
+                .get("/api/itinerary/?id=ae3286bf-8814-451d-91f1-62b495a7158a&api_key=4199fb08-e33a-48c0-9f54-43b33f3fec9d")
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.text.should.be.an("string");
                 done()
                 })
         })
