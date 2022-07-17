@@ -1,0 +1,19 @@
+name: Docker Image CI
+
+on:
+  push
+
+jobs:
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker-compose up -d
+    - name: containers list
+      run: docker ps
+    - name: docker logs
+      run: sleep 10 && docker-compose logs
+    - name: test api and server
+      run: npm test --prefix ./node
