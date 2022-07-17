@@ -10,6 +10,14 @@ var tripAuthor=params.get("author");
 var tripName=params.get("name");
 var user=username.toLowerCase();
 
+//var calpopupbtn = document.getElementsByClassName("CalPopUpBtn")[0]
+//calpopupbtn.addEventListener('click',(event)=>{
+//    let data = $(event).data() 
+//    console.log(data)
+//    console.log(JSON.stringify(data))
+//    postOnCalendar(data.name,dataCorrente)
+//})
+
 window.addEventListener('load', (event)=>{
     var lPois=document.getElementsByClassName("poi");
     for(i=0; i<lPois.length; i++){
@@ -439,7 +447,8 @@ function outsideCalpopUp_click(e){
 
 let tokenExpired = false
 function postOnCalendar(loc,date_){
-    
+    console.log(date_)
+    console.log(loc)
     var modalCal=document.getElementsByClassName("modalCalVisible")[0]
     calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
     calTime1 = modalCal.getElementsByClassName('CalTime1')[0]
