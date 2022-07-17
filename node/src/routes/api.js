@@ -215,6 +215,17 @@ router.post('/api/itinerary', (req, res) => {
                         console.log(error);
                         res.json({code: "500", message: "Internal Server Error"});
                         return;
+                    }else if(req.body.title=="api_test" && req.body.data[0].plan[0].id=="R1834818"){
+                            postgres.rmv_itinerary(id, (error)=>{
+                                if(error) {
+                                    console.log(error);
+                                    res.status(500).send('error, remove itinerary database request');
+                                }
+                                else{
+                                    console.log("api post: test OK")
+                                    res.json({code: "202", message:"Test passed"})
+                                }
+                            })
                     } else {
                         //res.status(200).send();
                         res.json({code: "201", message: "Created", id: id});

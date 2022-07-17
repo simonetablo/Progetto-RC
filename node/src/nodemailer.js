@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 let transporter = null;
-const USE_NODEMAILER = true;
+const USE_NODEMAILER = false;
 
 const nodemailer_setup = (callback) => {
     if(USE_NODEMAILER == true){
