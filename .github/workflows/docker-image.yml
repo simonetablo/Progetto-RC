@@ -20,4 +20,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Test node server and api
-      run: ./npm test --prefix ./node
+      run: npm test --prefix ./node
