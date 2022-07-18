@@ -4,56 +4,17 @@ on:
   push
 
 jobs:
-#
-#  create_env_file:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Create .env file based on Github Secrets
-#        uses: ozaytsev86/create-env-file-action@v1
-#        with:
-#          ENV_COUCHDB_USER: ${{ secrets.COUCHDB_USER }}
-#          ENV_COUCHDB_PASSWORD: ${{ secrets.COUCHDB_PASSWORD }}
-#          ENV_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-#          ENV_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-#          ENV_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-#          ENV_SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
-#          ENV_EMAIL_APP: ${{ secrets.EMAIL_APP }}
-#          ENV_EMAIL_APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
-#          ENV_EMAIL_SECRET: ${{ secrets.EMAIL_SECRET }}
-#          ENV_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-#          ENV_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-#          ENV_OPENTRIPMAP_KEY: ${{ secrets.OPENTRIPMAP_KEY }}
-#          ENV_OPENWEATHERMAP_KEY: ${{ secrets.OPENWEATHERMAP_KEY }}
-#          ENV_MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
-#          ENV_POSITIONSTACK_KEY: ${{ secrets.POSITIONSTACK_KEY }}
-#
 
   compose:
-#    needs: create_env_file
     runs-on: ubuntu-latest
+    env:
+      ENV_FILE: ${{ secrets.ENV_FILE}}
     steps:
     - uses: actions/checkout@v3
-    - name: Create .env file
-      run: touch .env
     - name: populate .env file
       run: |
-        echo COUCHDB_USER = ${{ secrets.COUCHDB_USER }} >>.env
-        echo COUCHDB_PASSWORD = ${{ secrets.COUCHDB_PASSWORD }} >>.env
-        echo POSTGRES_PASSWORD = ${{ secrets.POSTGRES_PASSWORD }} >>.env
-        echo POSTGRES_USER = ${{ secrets.POSTGRES_USER }} >>.env
-        echo POSTGRES_DB = ${{ secrets.POSTGRES_DB }} >>.env
-        echo SESSION_SECRET_KEY = ${{ secrets.SESSION_SECRET_KEY }} >>.env
-        echo EMAIL_APP = ${{ secrets.EMAIL_APP }} >>.env
-        echo EMAIL_APP_PASSWORD = ${{ secrets.APP_PASSWORD }} >>.env
-        echo EMAIL_SECRET = ${{ secrets.EMAIL_SECRET }} >>.env
-        echo CLIENT_ID = ${{ secrets.CLIENT_ID }} >>.env
-        echo CLIENT_SECRET = ${{ secrets.CLIENT_SECRET }} >>.env
-        echo OPENTRIPMAP_KEY = ${{ secrets.OPENTRIPMAP_KEY }} >>.env
-        echo OPENWEATHERMAP_KEY = ${{ secrets.OPENWEATHERMAP_KEY }} >>.env
-        echo MAPBOX_KEY = ${{ secrets.MAPBOX_KEY }} >>.env
-        echo POSITIONSTACK_KEY = ${{ secrets.POSITIONSTACK_KEY }} >>.env
-    - name: list all files
-      run: ls -a
+        touch .env
+        echo $ENV_FILE | tr " " "\n" >> .env
     - name: see .env file
       run: cat .env
     - name: Build the Docker image
