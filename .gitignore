@@ -2,4 +2,5 @@
 .env
 #ignore itineraries database
 postgres/data/
-
+#ignore user database
+couchdb/data/
