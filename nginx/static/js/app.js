@@ -7,14 +7,7 @@ var tripID=params.get("id");
 var tripAuthor=params.get("author");
 var tripName=params.get("name");
 var user=username.toLowerCase();
-
-//var calpopupbtn = document.getElementsByClassName("CalPopUpBtn")[0]
-//calpopupbtn.addEventListener('click',(event)=>{
-//    let data = $(event).data() 
-//    console.log(data)
-//    console.log(JSON.stringify(data))
-//    postOnCalendar(data.name,dataCorrente)
-//})
+var dataCalendar;
 
 window.addEventListener('load', (event)=>{
     var lPois=document.getElementsByClassName("poi");
@@ -370,10 +363,9 @@ function addToPlanner(e){
         planner.innerHTML+="<button onclick=showInfo(this) class='infobtn btn btn-light'><i class='fa-solid fa-circle-info fa-lg'></i></button>";
         $.ajax({url:'https://localhost:8083/isGoogleAuth', success:function (res){
             if (res.gAuth == true){
-                    planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
-                    planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(data.name,dataCorrente)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></div></div> "
-                    console.log(data.name)
-                    console.log(dataCorrente)
+                planner.innerHTML+="<button onclick = showCalendarPopUp(this) type='button'  class='calendar_post fa-solid fa-calendar'></button>"
+                planner.innerHTML+= " <div class = 'modalCal' > <div class = 'modalCalContent'  > <p class = 'calPopUpText'> Choose a time for your visit to "+data.name+"</p><p class = 'calTime_f'></p> <div class = 'CalendarPopUp' style = 'visibility: hidden' >Start hour <input type='time' class = 'CalTime1' class=' input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the start.</div>End hour <input type='time' class='CalTime2 input_style_sm my-1' required><div class='calPopup-title_f invalid-feedback'>Type an hour for the end.</div><button class='CalPopUpBtn input_style_sm' onclick = 'postOnCalendar(this)' type='button' ><i class='fa-solid fa-calendar'></i></button></div></div></div> "
+                console.log(data.name)
             }
 
         }});
@@ -405,6 +397,10 @@ window.addEventListener('click',outsideCalpopUp_click)
 
 function showCalendarPopUp(e){
     let parent=e.parentElement;
+    let day=parent.parentElement;
+    let date=day.getElementsByClassName("date_elem")[0]
+    dataCalendar=date.value
+    console.log(dataCalendar)
     //let title = parent.getElementsByClassName('calPopUpText')[0]
     //let titleF = parent.getElementsByClassName('calPopup-title_f')[0]
     let modalCalContent = parent.getElementsByClassName('modalCalContent')[0]
@@ -442,16 +438,18 @@ function outsideCalpopUp_click(e){
     }
 }
 
-
-let tokenExpired = false
-function postOnCalendar(loc,date_){
-    console.log(date_)
+var tokenExpired=false;
+function postOnCalendar(e){
+    let nameElem=e.parentNode.parentNode.parentNode.parentNode
+    let name=nameElem.getElementsByClassName("name")[0]
+    var loc=name.innerHTML
+    var date_=dataCalendar
     console.log(loc)
     var modalCal=document.getElementsByClassName("modalCalVisible")[0]
     calTime_f = modalCal.getElementsByClassName('calTime_f')[0]
     calTime1 = modalCal.getElementsByClassName('CalTime1')[0]
     calTime2 = modalCal.getElementsByClassName('CalTime2')[0]
-    if(date_ == undefined){
+    if(date_ == ''){
         calTime_f.innerHTML="you must choose a date in the day box"
         return
     }
@@ -537,11 +535,9 @@ function clonePOI(e){
 }
 
 //FORECAST
-let dataCorrente 
 function forecast_aux(date_element){
-    dataCorrente = date_element.value
     
-    let tmp=date_element.parentNode;
+    let tmp=date_element.parentElement;
     let firstPoi=tmp.parentNode.nextSibling;
     if(firstPoi!=null){
         let lat=$(firstPoi).data().point.lat;

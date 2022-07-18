@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 let transporter = null;
-const USE_NODEMAILER = false;
+const USE_NODEMAILER = process.env.USE_EMAIL_APP;
 
 const nodemailer_setup = (callback) => {
-    if(USE_NODEMAILER == true){
+    if(USE_NODEMAILER == "true"){
         nodemailer.createTestAccount((err, account) => {
             transporter = nodemailer.createTransport(
                 {
@@ -27,7 +27,7 @@ const send_test_email = (message, to) => {
     let mailOptions = {
         from: '<tripplannerservice@gmail.com>',
         to: to,
-        subject: "verify your",
+        subject: "verify your account",
         text: "https://localhost:8083/verify/"+message,
         //html: "<h1>"+"https://localhost:8083/verify/"+message+"</h1>"
     }

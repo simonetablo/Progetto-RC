@@ -156,7 +156,7 @@ router.post('/register/', async (req, res) => {
                                 expiresIn: "1d",
                             },
                         );
-                        if(nodemailer.USE_NODEMAILER == true){
+                        if(nodemailer.USE_NODEMAILER == "true"){
                             nodemailer.send_test_email(email_token, email);
                             res.json({status:"ok"});  //username is valid, the user was successfully registered
                         }else{
@@ -198,7 +198,7 @@ router.get('/verify/:token', (req,res) => {
                     req.session.username = json_response.username;
                     req.session.email = json_response.email;
                     req.session.api_key = json_response.api_key;
-                    if(nodemailer.USE_NODEMAILER == false){
+                    if(nodemailer.USE_NODEMAILER == "false"){
                         res.json({status: "ok"});
                     }
                     else{
