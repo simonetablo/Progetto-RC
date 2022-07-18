@@ -19,7 +19,10 @@
     <nav class="navbar navbar-expand fixed-top bg-dark justify-content-center">
         <div class="container-fluid">
             <a class="navbar-brand px-5 text-white" href="">Trip-Planner</a>
-            <ul class="navbar-nav px-5 ms-auto">
+            <ul class="navbar-nav px-5 ms-auto align-items-center">
+                <li class="nav-item mx-5">
+                    <a class="nav-link text-white" href="./apidoc">API</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a id="bell" class="nav-link text-white px-5" href="" role="button" data-bs-toggle="dropdown">
                         <i class="fa-regular fa-bell fa-lg"><div class=badge>0</div></i>
@@ -44,6 +47,7 @@
                                 <div class="card-header">
                                     <h4 class="card-title"><%=username%></h4>
                                     <p class="card-text"><%=email%></p>
+                                    <p style="font-size: 12px; margin-bottom: 2px">api key:</p>
                                     <p id="apikey" class="card-text hidden" onclick="blurText(this)"><%=api_key%></p>
                                     <script>
                                         var username = "<%=username%>"
@@ -51,7 +55,6 @@
                                     </script>
                                 </div>
                                 <div class="card-body d-grid gap-3">
-                                    <button type="button" class="btn btn-primary input_style_sm btn-block">Settings</button>
                                     <button type="button" id="logout_button" class="btn btn-danger input_style_sm btn-block">Log out</button>
                                 </div>
                             </div>

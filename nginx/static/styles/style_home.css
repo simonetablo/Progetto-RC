@@ -102,6 +102,22 @@ img {
   background-color: rgb(50, 50, 50, 0.3);
 }
 
+
+.custscroll::-webkit-scrollbar {
+  width: 10px;
+}
+.custscroll::-webkit-scrollbar-track {
+  background: none; 
+}
+.custscroll::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 5px;
+}
+.custscroll:-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+
 .dropdown-item > .card-header{
   max-width: 170px;
 }

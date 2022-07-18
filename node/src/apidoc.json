@@ -1,9 +1,9 @@
 {
-    "name": "title",
-    "version": "0.1.0",
-    "description": "description",
+    "name": "Trip-Planner API",
+    "version": "0.0.0",
+    "description": "API to interact with the Trip-Planner itinerary database. \n To use this API a key is required. To get an API key create a Trip-Planner account",
     "apidoc": {
-      "title": "window title",
+      "title": "Trip-Planner - API",
       "url" : "https://localhost:8083/api"
     }
   }

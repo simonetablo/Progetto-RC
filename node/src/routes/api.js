@@ -17,23 +17,20 @@ app.use(bodyParser.json())
 * @apiName GetItineraries
 * @apiGroup Itineraries
 *
-* @apiParam {String} api_key User API key.
-* @apiParam {String} [location] location filter
-* @apiParam {Number} [days] number of days filter
-* @apiParam {String="on"} [architecture] if defined, architecture tag filter will be applied in the itinerary search.
-* @apiParam {String="on"} [cultural] if defined, cultural tag filter will be applied in the itinerary search.
-* @apiParam {String="on"} [foods] if defined, foods tag filter will be applied in the itinerary search.
-* @apiParam {String="on"} [hotel] if defined, hotel tag filter will be applied in the itinerary search.
-* @apiParam {String="on"} [natural] if defined, natural tag filter will be applied in the itinerary search.
-* @apiParam {String="on"} [religion] if defined, religion tag filter will be applied in the itinerary search.
+* @apiParam {String} api_key User API key
+* @apiParam {String} [location] Location filter
+* @apiParam {Number} [days] Number of days filter
+* @apiParam {String="on"} [architecture] Architecture tag filter
+* @apiParam {String="on"} [cultural] Cultural tag filter
+* @apiParam {String="on"} [foods] Foods tag filter
+* @apiParam {String="on"} [hotel] Hotel tag filter
+* @apiParam {String="on"} [natural] Natural tag filter
+* @apiParam {String="on"} [religion] Religion tag filter
 *
-* @apiSuccess {String} title Itienerary title
-* @apiSuccess {String} author Itinerary author
-* @apiSuccess {String} days Itinerary days
-* @apiSuccess {Number} likes Itinerary likes
-* @apiSuccess {Object[]} data Itinerary structure
-* @apiSuccess {String[]} tags Itinerary overall tags
-* @apiSuccess {String[]} locations Itinerary overall locations
+* @apiParamExample {ajax-auto} Request-Example:
+* https://localhost:8083/api/itineraries?location=rome&days=1&architecture=on&api_key=753c0315-8c19-42f7-b346-ab319c5dbe7d
+*
+* @apiSuccess {Object[]} data Array of Itinerary objects result of the search
 *
 * @apiSuccessExample successful response:
 * HTTP/1.1 200 OK
@@ -132,9 +129,11 @@ router.get('/api/itineraries/', (req, res) => {
 * @apiName AddItinerary
 * @apiGroup Itinerary
 *
-* @apiBody {String} api_key user API key.
-* @apiBody {String} title title of the itinerary.
-* @apiBody {Object[]} itinerary structure
+* @apiBody {String} api_key User API key.
+* @apiBody {String} title Itinerary title.
+* @apiBody {Object[]} data Itinerary data: Array of Day objects. 
+* Each Day object has a plan field, array of POI objects. 
+* Each POI object has an id field, the OpenTripMap id for that point of interest.
 *
 * @apiParamExample Example body:
 * {
@@ -151,7 +150,7 @@ router.get('/api/itineraries/', (req, res) => {
 *   ]
 * }
 *
-* @apiSuccess (201) {String} id ID of the created itinerary
+* @apiSuccess (Success 201) {String} id ID of the created itinerary
 *
 * @apiSuccessExample Example successful response:
 * HTTP/1.1 201 OK
@@ -310,14 +309,17 @@ router.post('/api/itinerary', (req, res) => {
 * @apiName GetItinerary
 * @apiGroup Itinerary
 *
-* @apiParam {String} id Itinerary unique ID.
 * @apiParam {String} api_key User API key.
+* @apiParam {String} id Itinerary unique ID.
+*
+* @apiParamExample {ajax-auto} Request-Example:
+* https://localhost:8083/api/itinerary?id=78f2aca6-5c70-4e25-a84b-b148739e2904&api_key=753c0315-8c19-42f7-b346-ab319c5dbe7d
 *
 * @apiSuccess {String} title Itienerary title
 * @apiSuccess {String} author Itinerary author
 * @apiSuccess {String} days Itinerary days
 * @apiSuccess {Number} likes Itinerary likes
-* @apiSuccess {Object[]} data Itinerary structure
+* @apiSuccess {Object[]} data Itinerary data. Contains the day by day plan of the itinerary.
 * @apiSuccess {String[]} tags Itinerary overall tags
 * @apiSuccess {String[]} locations Itinerary overall locations
 *
@@ -415,164 +417,3 @@ router.get('/api/itinerary', (req, res) =>{
 });
 
 module.exports = router;
-/*
-json_to_send = {data: []};
-    //query_string = req.query;
-    //console.log(query_string);
-    tags = [];
-    if(req.query.architecture) tags.push("'architecture'");
-    if(req.query.cultural) tags.push("'cultural'");
-    if(req.query.foods) tags.push("'foods'");
-    if(req.query.hotel) tags.push("'hotel'");
-    if(req.query.natural) tags.push("'natural'");
-    if(req.query.religion) tags.push("'religion'");
-    location = req.query.location;
-    days = req.query.days;
-    set_data = (array) => {
-        if(array.length == 0){
-            //console.log(json_to_send);
-            //console.log()
-            res.json(json_to_send);
-        }
-        else{
-            row = array.shift();
-            //console.log(row)
-            id = row.id
-            postgres.get_itinerary_tags(id, (err, response)=>{
-                //console.log(response);
-                response_tags = response.rows;
-                //console.log(response_tags)
-                tags = [];
-                for (const element of response_tags){
-                    tags.push(element.tag);
-                }
-                //console.log(tags);
-                itinerary = {
-                    id: row.id,
-                    title: row.title,
-                    likes: row.likes,
-                    author: row.author,
-                    tags : tags
-                }
-                json_to_send.data.push(itinerary);
-                set_data(array);
-            })
-            
-        }
-    }
-    postgres.query_itinerary(tags, location, days, (err, result)=>{
-        if(err){
-            console.error(err);
-            res.status(500).send('error');
-        }
-        else{
-            rows = result.rows;
-            set_data(rows);
-            //result.rows
-            //res.status(200).send("ayo");
-
-        }
-    })
-});
-
-router.post('/api/itineraries', (req, res) => {
-    ids = [];
-    for(const day of req.body.itinerary){
-        for(const place of day.plan){
-            ids.push(place.id)
-        }
-    }
-    tags = [];
-    locs = [];
-    get_data = (array) => {
-        if(array.length == 0){
-            id = uuidv4();
-            itinerary = {
-                title : req.body.title,
-                author : req.session.username,
-                data : req.body.itinerary,
-                tags : tags.sort()
-            }
-            postgres.insert_itinerary(itinerary, id, tags, locs , (error) => {
-                if(error) {
-                    console.log(error);
-                    res.status(500).send('error, itinerary database request');  //internal request error
-                } else {
-                    if(req.body.title=="api_test" && req.body.itinerary[0].plan[0].id=="R1834818"){
-                        postgres.rmv_itinerary(id, (error)=>{
-                            if(error) {
-                                console.log(error);
-                                res.status(500).send('error, remove itinerary database request');
-                            }
-                            else{
-                                console.log("api post: test OK")
-                            }
-                        })
-                    }
-                    res.status(200).send();
-                }   
-            });
-        }
-        else{
-            id = array.pop()
-            request({
-                url:"https://api.opentripmap.com/0.1/en/places/xid/"+id+"?apikey="+openTripMapKey,
-                method: "GET",
-                },
-                function(error, response, body){
-                    response_json = JSON.parse(response.body);
-
-                    place_kinds = response_json.kinds;
-                    if(place_kinds.includes("architecture") && !tags.includes("architecture")) tags.push('architecture');
-                    if(place_kinds.includes("cultural") && !tags.includes("cultural")) tags.push('cultural');
-                    if(place_kinds.includes("foods") && !tags.includes("foods")) tags.push('foods');
-                    if(place_kinds.includes("hotel") && !tags.includes("hotel")) tags.push('hotel');
-                    if(place_kinds.includes("natural") && !tags.includes("natural")) tags.push('natural');
-                    if(place_kinds.includes("religion") && !tags.includes("religion")) tags.push('religion');
-
-                    const lon = response_json.point.lon;
-                    const lat = response_json.point.lat;
-                    request({
-                      url:"http://api.positionstack.com/v1/reverse?access_key="+positionstack_key+"&query="+lat+","+lon+"&limit=1",
-                      method: "GET",
-                    },
-                    function(error, response, body){
-                        response_json = JSON.parse(response.body);
-
-                        let area = response_json.data[0].administrative_area;
-                        if(area != null) area = area.toLowerCase();
-                        let region = response_json.data[0].region.toLowerCase();
-                        if(region != null) region = region.toLowerCase();
-                        let country = response_json.data[0].country.toLowerCase();
-                        if(country != null) country = country.toLowerCase();
-                        tuple = [area, region, country];
-
-                        tuple_string = '';
-                        for(const element of tuple){
-                            //console.log(typeof element)
-                            if(element == null){
-                                tuple_string += 'NULL,'
-                            }
-                            else{
-                                tuple_string += "'"+element+"',"
-                            }
-                        }
-                        tuple_string = tuple_string.slice(0, -1);
-
-                        locs.push(tuple_string);
-
-                        get_data(array);
-                    })
-            });
-        }
-    };
-        get_data(ids);
-    
-});
-
-module.exports = router;
-
-app.use(router);
-
-module.exports = app
-*/
