@@ -8,12 +8,12 @@ const params = {
 };
 
 const pool = new Pool({
-    user: 'user',
-    host: 'postgres',
-    database: 'example_db',
-    password: 'password',
-    port: 5432,
-  })
+  user: process.env.POSTGRES_USER,
+  host: 'postgres',
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: 5432,
+})
   
 
 const setup_postgres = (callback) => {

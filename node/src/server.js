@@ -26,13 +26,13 @@ const { OAuth2 } = google.auth
 
 const PORT = 4000
 
-const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
-var openWeatherApiKey = 'd3099b58cf87b418252edf98f8b3a3fb'
-var mapBoxAT="pk.eyJ1Ijoic2ltb25ldGFibG8iLCJhIjoiY2wzMXFvYW0xMDI0ZjNjb2ZmOGx5eWMzMSJ9.D_d2l01EuXlPcVxIdhaRww";
+const openTripMapKey = process.env.OPENTRIPMAP_KEY;
+var openWeatherApiKey = process.env.OPENWEATHERMAP_KEY;
+var mapBoxAT= process.env.MAPBOX_KEY;
 
-const clientSecret = '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'
-const red_uri ='https://localhost:8083/red_uri'
-const client_id = '610781105752-mf7lj82lmrcrbl8o5eostfrqvuoe4hl1.apps.googleusercontent.com'
+const clientSecret = process.env.CLIENT_SECRET;
+const red_uri ='https://localhost:8083/red_uri';
+const client_id = process.env.CLIENT_ID;
 //let googleLogin = false
 //let token_used = false
 
@@ -40,7 +40,6 @@ const client_id = '610781105752-mf7lj82lmrcrbl8o5eostfrqvuoe4hl1.apps.googleuser
 var urlAmqp="amqp://rabbitmq:5672";
 
 function server_start(){
-
     const app = express();
     app.use(cors({
       origin: "*"

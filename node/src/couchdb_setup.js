@@ -8,10 +8,19 @@ const params = {
 
 
 const setup_couchdb = (callback) => {
-    create_db("user_db", () => {
-        create_db("sessions_db", () => {
-            create_user_view(callback);
-        });
+    waitPort(params)
+    .then((open) =>{
+        if(open){
+            create_db("user_db", () => {
+                create_db("sessions_db", () => {
+                    create_user_view(callback);
+                });
+            });
+        }
+        else console.log('The port did not open before the timeout...');
+    })
+    .catch((err) => {
+        console.log(`An unknown error occured while waiting for the port: ${err}`);
     });
 };
 

@@ -12,6 +12,8 @@ services:
     ports:
       - "8080:80"
       - "8083:443"
+    env_file:
+      - ./.env
     cap_add:
       - NET_ADMIN
     depends_on:
@@ -35,9 +37,8 @@ services:
     image: couchdb
     ports:
       - "5984:5984"
-    environment:
-      - COUCHDB_USER=user1234
-      - COUCHDB_PASSWORD=password1234
+    env_file:
+      - ./.env
     volumes:
       - ./couchdb/data:/opt/couchdb/data
       - ./couchdb/etc/local.ini:/opt/couchdb/etc/local.ini
@@ -46,10 +47,8 @@ services:
 
   postgres:
     image: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-      POSTGRES_DB: example_db
+    env_file:
+      - ./.env
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
     ports:
@@ -61,10 +60,12 @@ services:
     build: ./node
 #    container_name: node_cont
     working_dir: /usr/node
-    environment:
-      - COUCHDB_USER=user1234
-      - COUCHDB_PASSWORD=password1234
-      - SESSION_SECRET_KEY=secret
+    env_file:
+      - ./.env
+#    environment:
+#      - COUCHDB_USER=${user1234}
+#      - COUCHDB_PASSWORD=${password1234}
+#      - SESSION_SECRET_KEY=${secret}
     volumes: 
       - ./node/src:/usr/node/src
 #     ports:
@@ -84,10 +85,12 @@ services:
     build: ./node
 #    container_name: node_cont
     working_dir: /usr/node
-    environment:
-      - COUCHDB_USER=user1234
-      - COUCHDB_PASSWORD=password1234
-      - SESSION_SECRET_KEY=secret
+    env_file:
+      - ./.env
+#    environment:
+#      - COUCHDB_USER=${user1234}
+#      - COUCHDB_PASSWORD=${password1234}
+#      - SESSION_SECRET_KEY=${secret}
     volumes: 
       - ./node/src:/usr/node/src
 #     ports:

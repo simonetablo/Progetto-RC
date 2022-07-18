@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require('uuid');
 
-const EMAIL_SECRET = "aooooooo";
+const EMAIL_SECRET = process.env.EMAIL_SECRET;
 
 const nodemailer = require("../nodemailer")
 const couchdb = require("../couchdb");

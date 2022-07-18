@@ -9,8 +9,8 @@ const nodemailer_setup = (callback) => {
                 {
                     service: "Gmail",
                     auth: {
-                        user: "tripplannerservice@gmail.com",
-                        pass: "iuqbwzwytjiazwwt"
+                        user: process.env.EMAIL_APP,
+                        pass: process.env.EMAIL_APP_PASSWORD
                     }
                 }
             );
@@ -27,7 +27,7 @@ const send_test_email = (message, to) => {
     let mailOptions = {
         from: '<tripplannerservice@gmail.com>',
         to: to,
-        subject: "test",
+        subject: "verify your",
         text: "https://localhost:8083/verify/"+message,
         //html: "<h1>"+"https://localhost:8083/verify/"+message+"</h1>"
     }

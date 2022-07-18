@@ -7,8 +7,8 @@ const bodyParser = require('body-parser');
 
 const app=express();
 const router = express.Router();
-const openTripMapKey = "5ae2e3f221c38a28845f05b6e8cfaa33e6a2f1fbe1d1350f053db399";
-const positionstack_key= "6358130f0b66fd2e8cd62f36b84913e1"
+const openTripMapKey = process.env.OPENTRIPMAP_KEY;
+const positionstack_key = process.env.POSITIONSTACK_KEY;
 app.use(bodyParser.json())
 
 //API
