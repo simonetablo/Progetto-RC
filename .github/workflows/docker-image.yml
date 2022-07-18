@@ -33,24 +33,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v1.3
-      with:
-        envkey_COUCHDB_USER: ${{ secrets.COUCHDB_USER }}
-        envkey_COUCHDB_PASSWORD: ${{ secrets.COUCHDB_PASSWORD }}
-        envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        envkey_SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
-        envkey_EMAIL_APP: ${{ secrets.EMAIL_APP }}
-        envkey_EMAIL_APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
-        envkey_EMAIL_SECRET: ${{ secrets.EMAIL_SECRET }}
-        envkey_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        envkey_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        envkey_OPENTRIPMAP_KEY: ${{ secrets.OPENTRIPMAP_KEY }}
-        envkey_OPENWEATHERMAP_KEY: ${{ secrets.OPENWEATHERMAP_KEY }}
-        envkey_MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
-        envkey_POSITIONSTACK_KEY: ${{ secrets.POSITIONSTACK_KEY }}
+    - name: Create .env file
+      run: touch .env
+    - name: populate .env file
+      run: |
+        echo COUCHDB_USER = ${{ secrets.COUCHDB_USER }} >>.env
+        echo COUCHDB_PASSWORD = ${{ secrets.COUCHDB_PASSWORD }} >>.env
+        echo POSTGRES_PASSWORD = ${{ secrets.POSTGRES_PASSWORD }} >>.env
+        echo POSTGRES_USER = ${{ secrets.POSTGRES_USER }} >>.env
+        echo POSTGRES_DB = ${{ secrets.POSTGRES_DB }} >>.env
+        echo SESSION_SECRET_KEY = ${{ secrets.SESSION_SECRET_KEY }} >>.env
+        echo EMAIL_APP = ${{ secrets.EMAIL_APP }} >>.env
+        echo EMAIL_APP_PASSWORD = ${{ secrets.APP_PASSWORD }} >>.env
+        echo EMAIL_SECRET = ${{ secrets.EMAIL_SECRET }} >>.env
+        echo CLIENT_ID = ${{ secrets.CLIENT_ID }} >>.env
+        echo CLIENT_SECRET = ${{ secrets.CLIENT_SECRET }} >>.env
+        echo OPENTRIPMAP_KEY = ${{ secrets.OPENTRIPMAP_KEY }} >>.env
+        echo OPENWEATHERMAP_KEY = ${{ secrets.OPENWEATHERMAP_KEY }} >>.env
+        echo MAPBOX_KEY = ${{ secrets.MAPBOX_KEY }} >>.env
+        echo POSITIONSTACK_KEY = ${{ secrets.POSITIONSTACK_KEY }} >>.env
     - name: list all files
       run: ls -a
     - name: see .env file
