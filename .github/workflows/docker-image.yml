@@ -29,7 +29,7 @@ jobs:
 #
 
   compose:
-    needs: create_env_file
+#    needs: create_env_file
     runs-on: ubuntu-latest
     steps:
     - name: Create .env file based on Github Secrets
