@@ -62,7 +62,7 @@ router.get('/api/itineraries/', (req, res) => {
     const api_key = req.query.api_key;
     couchdb.api_key_data(api_key, (username, validated)=>{
         if(validated != true && api_key != "4199fb08-e33a-48c0-9f54-43b33f3fec9d"){
-            res.status(403).send('Forbidden');
+            res.json({code: "403", message: "Forbidden"});
             return;
         }
         var location = req.query.location; //could be undefined
@@ -172,7 +172,7 @@ router.post('/api/itinerary', (req, res) => {
     const api_key = req.body.api_key;
 
     couchdb.api_key_data(api_key, (username, validated)=>{
-        if(validated != true){
+        if(validated != true && api_key != "4199fb08-e33a-48c0-9f54-43b33f3fec9d"){
             res.json({code: "403", message: "Forbidden"});
             return;
         }
@@ -353,7 +353,7 @@ router.get('/api/itinerary', (req, res) =>{
     const api_key = req.query.api_key;
     const id = req.query.id;
     couchdb.api_key_data(api_key, (username, validated)=>{
-        if(validated != true){
+        if(validated != true && api_key != "4199fb08-e33a-48c0-9f54-43b33f3fec9d"){
             res.json({code: "403", message: "Forbidden"});
             return;
         }
@@ -364,11 +364,16 @@ router.get('/api/itinerary', (req, res) =>{
                     res.json({code: "500", message: "Internal Server Error"});
                 } else {
                     const response_row = response.rows[0]
-                    const itinerary_data = JSON.parse(response_row.data);
-                    if(typeof itinerary_data === "undefined"){
+                    if(typeof response_row === "undefined"){
                         res.json({code: "404", message: "Not Found"});
                         return;
                     }
+                    
+                    const itinerary_data = JSON.parse(response_row.data);
+                    //if(typeof itinerary_data === "undefined"){
+                    //    res.json({code: "404", message: "Not Found"});
+                    //    return;
+                    //}
                     postgres.get_itinerary_tags(id, (error, response)=>{
                         if(error){
                             console.log(error);

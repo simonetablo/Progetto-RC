@@ -20,7 +20,7 @@ window.addEventListener('load', (event)=>{
             lpoi.removeAttribute("value");
         }
     }
-    if(params.get('id')!=null && tripAuthor!=user){
+    if(params.get('id')!=null && tripAuthor!=user && tripAuthor!=email){
         document.getElementById("like").style.visibility="visible";
     }
 })

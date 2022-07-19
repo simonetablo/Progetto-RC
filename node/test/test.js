@@ -21,6 +21,18 @@ describe('Rest api test', ()=>{
         })
     })
 
+    describe('GET /api/itineraries wrong key', () => {
+        it("Should get code '403'", (done) =>{
+            chai.request(SERVER_URL)
+                .get("/api/itineraries/?api_key=7199fb08-e33a-48c0-9f54-43b33f3fec9d&location=&days=&architecture=&cultural=&foods=&hotel=&natural=&religion=")
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.code.should.be.eql("403");
+                done()
+                })
+        })
+    })
+
     var id;
 
     describe('POST /api/itinerary', () => {
@@ -48,6 +60,53 @@ describe('Rest api test', ()=>{
         })
     })
 
+    describe('POST /api/itinerary wrong key', () => {
+        it("Should return code '403'", (done) =>{
+            var data={
+                "api_key": "9199fb08-e33a-48c0-9f54-43b33f3fec9d",
+                "title": "api_test",
+                "data" : [
+                    {"plan": [
+                        {
+                          "id": "R1834818"
+                        }
+                    ]}]
+            }
+            chai.request(SERVER_URL)
+                .post("/api/itinerary")
+                .type('json')
+                .send(data)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.code.should.be.eql("403");
+                done()
+                })
+        })
+    })
+
+    describe('POST /api/itinerary wrong body', () => {
+        it("Should return code '400'", (done) =>{
+            var data={
+                "api_key": "4199fb08-e33a-48c0-9f54-43b33f3fec9d",
+                "title": "api_test",
+                "data" : [
+                    {"plan": [
+                        {
+                        }
+                    ]}]
+            }
+            chai.request(SERVER_URL)
+                .post("/api/itinerary")
+                .type('json')
+                .send(data)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.code.should.be.eql("400");
+                done()
+                })
+        })
+    })
+
     describe('GET /api/itinerary', () => {
         it("Should get info about the referenced itinerary", (done) =>{
             chai.request(SERVER_URL)
@@ -55,6 +114,30 @@ describe('Rest api test', ()=>{
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.text.should.be.an("string");
+                done()
+                })
+        })
+    })
+
+    describe('GET /api/itinerary wrong key', () => {
+        it("Should return code '403'", (done) =>{
+            chai.request(SERVER_URL)
+                .get("/api/itinerary/?id="+id+"&api_key=8199fb08-e33a-48c0-9f54-43b33f3fec9d")
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.code.should.be.eql("403");
+                done()
+                })
+        })
+    })
+
+    describe('GET /api/itinerary wrong id', () => {
+        it("Should return code '404'", (done) =>{
+            chai.request(SERVER_URL)
+                .get("/api/itinerary/?id="+"wrongID"+"&api_key=4199fb08-e33a-48c0-9f54-43b33f3fec9d")
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.code.should.be.eql("404");
                 done()
                 })
         })

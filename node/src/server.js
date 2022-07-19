@@ -169,8 +169,8 @@ function server_start(){
               })
           })
           socket.on('disconnect', function(){
-              console.log('user disconnected');
-              connection.close();
+            console.log('user disconnected');
+            connection.close();
           })
       });
   })
@@ -541,9 +541,6 @@ function server_start(){
         )
 
     })
-
-
-
 
 
     app.get('/isGoogleAuth',function(req,res){
