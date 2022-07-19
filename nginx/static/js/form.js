@@ -105,8 +105,8 @@ $('.dropdown-menu').on('click', function(e) {
 							$("#itineraries").append(`<div class="d-flex card_itinerary p-2 justify-content-between m-3">
 							<div class="d-flex text-start align-items-center mx-3">
 								<div>
-									<h5 class="card-title small m-0 mb-2">${title}</h5>
-									<p class="card-text small">by: ${author}</p>
+									<h5 class="custscroll card-title small m-0 mb-2">${title}</h5>
+									<p class="custscroll card-text small">by: ${author}</p>
 								</div>
 							</div>
 							<div class="d-flex align-items-center">

@@ -400,7 +400,6 @@ function showCalendarPopUp(e){
     let day=parent.parentElement;
     let date=day.getElementsByClassName("date_elem")[0]
     dataCalendar=date.value
-    console.log(dataCalendar)
     //let title = parent.getElementsByClassName('calPopUpText')[0]
     //let titleF = parent.getElementsByClassName('calPopup-title_f')[0]
     let modalCalContent = parent.getElementsByClassName('modalCalContent')[0]
